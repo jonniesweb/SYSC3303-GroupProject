@@ -64,6 +64,7 @@ public class GameBoard {
 				} else {
 					entityType = 7;
 				} // floor tile
+
 				entitiesArray[entityType].setPos(k, i);
 				entitiesArray[entityType].draw();
 			}
