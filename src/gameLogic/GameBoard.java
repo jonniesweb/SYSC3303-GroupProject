@@ -10,7 +10,7 @@ public class GameBoard implements Runnable{
 		PLAYER, WALL, DOOR, BOMB, EXPLOSION, POWERUP, ENEMY, FLOOR
 	};
 
-	private TILES[][] board;
+	private Entity[][] board;
 	private int width;
 	private int height;
 
@@ -19,15 +19,22 @@ public class GameBoard implements Runnable{
 	public GameBoard() {
 		this(3, 3);
 		// Testing
-		board = new TILES[][] { { TILES.FLOOR, TILES.PLAYER, TILES.WALL },
-				{ TILES.DOOR, TILES.BOMB, TILES.EXPLOSION },
-				{ TILES.POWERUP, TILES.ENEMY, TILES.FLOOR } };
+		board = new Entity[][] { {new Entity(), new Player(), new Wall()},
+				{ new Door(), new Bomb(), new Explosion()},
+				{ new PowerUp(), new Enemy(), new Entity() } };
 	}
 
 	public GameBoard(int sizeX, int sizeY) {
-		this.board = new TILES[sizeX][sizeY];
+		this.board = new Entity[sizeX][sizeY];
 		this.width = sizeX;
 		this.height = sizeY;
+
+		// initialize TILES array
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				board[i][j] = new Entity();
+			}
+		}
 
 		entitiesArray = new Entity[8];
 		entitiesArray[0] = new Player();
@@ -40,36 +47,39 @@ public class GameBoard implements Runnable{
 		entitiesArray[7] = new Entity();
 	}
 
-	public TILES[][] getBoard() {
+	public  Entity[][] getBoard() {
 		return board;
 	}
 
+	/**
+	 * @deprecated Removing draw functionality from the model, should be put in the GUI/view
+	 */
 	public void draw() {
-		int entityType;
-		for (int i = 0; i < height; i++) {
-			for (int k = 0; k < width; k++) {
-				if (board[k][i] == TILES.PLAYER) {
-					entityType = 0;
-				} else if (board[k][i] == TILES.WALL) {
-					entityType = 1;
-				} else if (board[k][i] == TILES.DOOR) {
-					entityType = 2;
-				} else if (board[k][i] == TILES.BOMB) {
-					entityType = 3;
-				} else if (board[k][i] == TILES.EXPLOSION) {
-					entityType = 4;
-				} else if (board[k][i] == TILES.POWERUP) {
-					entityType = 5;
-				} else if (board[k][i] == TILES.ENEMY) {
-					entityType = 6;
-				} else {
-					entityType = 7;
-				} // floor tile
-
-				entitiesArray[entityType].setPos(k, i);
-				entitiesArray[entityType].draw();
-			}
-		}
+//		int entityType;
+//		for (int i = 0; i < height; i++) {
+//			for (int k = 0; k < width; k++) {
+//				if (board[k][i] == TILES.PLAYER) {
+//					entityType = 0;
+//				} else if (board[k][i] == TILES.WALL) {
+//					entityType = 1;
+//				} else if (board[k][i] == TILES.DOOR) {
+//					entityType = 2;
+//				} else if (board[k][i] == TILES.BOMB) {
+//					entityType = 3;
+//				} else if (board[k][i] == TILES.EXPLOSION) {
+//					entityType = 4;
+//				} else if (board[k][i] == TILES.POWERUP) {
+//					entityType = 5;
+//				} else if (board[k][i] == TILES.ENEMY) {
+//					entityType = 6;
+//				} else {
+//					entityType = 7;
+//				} // floor tile
+//
+//				entitiesArray[entityType].setPos(k, i);
+//				entitiesArray[entityType].draw();
+//			}
+//		}
 	}
 	
 	public void run(){}

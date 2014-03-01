@@ -9,19 +9,24 @@ package entities;
 public class Player extends Entity {
 
 	private int lives;
+	private String name;
 	
 	//Constructors
 	//Initialize the player with one life.
 	public Player(){
 		this.lives = 1;
 	}
-	public Player(int x, int y){
+	public Player(int x, int y, String name){
 		super(x,y);
 		this.lives = 1;
+		this.name = name;
 	}
 	
 	//Methods
 	
+	public String getName() {
+		return name;
+	}
 	//Is the player alive? Not really useful if
 	//We don't make use of increaseLife(int)
 	public boolean isAlive(){ 
