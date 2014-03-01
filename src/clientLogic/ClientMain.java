@@ -13,8 +13,9 @@ public class ClientMain {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println("The Client is Running");
-		ClientGUI view = new ClientGUI();
-		GameBoard game = new GameBoard();//Testing purposes
+
+
+		new Thread(new TestDriver("testNumber1.txt")).start();
 		
 		//	Loop while running
 		//		Establish Connection
