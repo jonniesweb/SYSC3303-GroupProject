@@ -1,5 +1,7 @@
 package gameLogic;
 
+import java.io.*;
+
 import entities.*;
 
 
@@ -83,4 +85,55 @@ public class GameBoard implements Runnable{
 	}
 	
 	public void run(){}
+public void generateFloor(String filename){
+		
+		FileReader fileReader = null;
+		try {
+			fileReader = new FileReader(new File(filename));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		 BufferedReader br = new BufferedReader(fileReader);
+
+		 String line = null;
+		 // if no more lines the readLine() returns null
+		 int i =0;
+		 try {
+			while ((line = br.readLine()) != null) {
+			      for(int j = 0;j<7;j++){
+			    	  if(line.charAt(j) == 'W')
+			    		  board[i][j] = new Wall(i,j);
+			    	  else if(line.charAt(j) == '.')
+			    		  board[i][j] = new Entity(i,j);
+			      }
+			      i++;
+
+			 }
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 try {
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public Entity getEntityAt(int x,int y){
+		return board[x][y];
+	}
+	public String toString(){
+		String s = "";
+		for(int i = 0;i<7;i++){
+			for(int j = 0;j<7;j++){
+				if(board[i][j] instanceof Wall) s+="W";
+				else s+=".";
+			}
+			s+="\n";
+		}
+		return s;
+	}
 }
