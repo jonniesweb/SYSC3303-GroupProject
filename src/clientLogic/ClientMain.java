@@ -16,9 +16,13 @@ public class ClientMain {
 		ClientGUI view = new ClientGUI();
 		GameBoard game = new GameBoard();//Testing purposes
 		
-		view.update(game);
-		
-		System.out.println("The Client is closing");
+		//	Loop while running
+		//		Establish Connection
+		// 		Loop
+		//			Update Gameboard
+		//			Check player life status
+		//			Send command
+		//		Kill Connection
 
 	}
 
