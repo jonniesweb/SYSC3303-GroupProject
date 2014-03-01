@@ -4,8 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 
-	//private String log;
-
 public class Logger {
 	
 	PrintWriter out;
@@ -32,6 +30,8 @@ public class Logger {
 			out.println();
 		}
 	}
+	
+
 	
 	public void run(){}
 	
