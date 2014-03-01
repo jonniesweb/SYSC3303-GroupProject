@@ -1,11 +1,21 @@
 package gameLogic;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
-import entities.*;
+import entities.Bomb;
+import entities.Door;
+import entities.Enemy;
+import entities.Entity;
+import entities.Explosion;
+import entities.Player;
+import entities.PowerUp;
+import entities.Wall;
 
-
-public class GameBoard implements Runnable{
+public class GameBoard implements Runnable {
 
 	// use these enums!
 	public enum TILES {
@@ -21,8 +31,8 @@ public class GameBoard implements Runnable{
 	public GameBoard() {
 		this(3, 3);
 		// Testing
-		board = new Entity[][] { {new Entity(), new Player(), new Wall()},
-				{ new Door(), new Bomb(), new Explosion()},
+		board = new Entity[][] { { new Entity(), new Player(), new Wall() },
+				{ new Door(), new Bomb(), new Explosion() },
 				{ new PowerUp(), new Enemy(), new Entity() } };
 	}
 
@@ -49,44 +59,23 @@ public class GameBoard implements Runnable{
 		entitiesArray[7] = new Entity();
 	}
 
-	public  Entity[][] getBoard() {
+	public Entity[][] getBoard() {
 		return board;
 	}
 
-	/**
-	 * @deprecated Removing draw functionality from the model, should be put in the GUI/view
-	 */
-	public void draw() {
-//		int entityType;
-//		for (int i = 0; i < height; i++) {
-//			for (int k = 0; k < width; k++) {
-//				if (board[k][i] == TILES.PLAYER) {
-//					entityType = 0;
-//				} else if (board[k][i] == TILES.WALL) {
-//					entityType = 1;
-//				} else if (board[k][i] == TILES.DOOR) {
-//					entityType = 2;
-//				} else if (board[k][i] == TILES.BOMB) {
-//					entityType = 3;
-//				} else if (board[k][i] == TILES.EXPLOSION) {
-//					entityType = 4;
-//				} else if (board[k][i] == TILES.POWERUP) {
-//					entityType = 5;
-//				} else if (board[k][i] == TILES.ENEMY) {
-//					entityType = 6;
-//				} else {
-//					entityType = 7;
-//				} // floor tile
-//
-//				entitiesArray[entityType].setPos(k, i);
-//				entitiesArray[entityType].draw();
-//			}
-//		}
+	public int getWidth() {
+		return width;
 	}
-	
-	public void run(){}
-public void generateFloor(String filename){
-		
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void run() {
+	}
+
+	public void generateFloor(String filename) {
+
 		FileReader fileReader = null;
 		try {
 			fileReader = new FileReader(new File(filename));
@@ -95,44 +84,48 @@ public void generateFloor(String filename){
 			e.printStackTrace();
 		}
 
-		 BufferedReader br = new BufferedReader(fileReader);
+		BufferedReader br = new BufferedReader(fileReader);
 
-		 String line = null;
-		 // if no more lines the readLine() returns null
-		 int i =0;
-		 try {
+		String line = null;
+		// if no more lines the readLine() returns null
+		int i = 0;
+		try {
 			while ((line = br.readLine()) != null) {
-			      for(int j = 0;j<7;j++){
-			    	  if(line.charAt(j) == 'W')
-			    		  board[i][j] = new Wall(i,j);
-			    	  else if(line.charAt(j) == '.')
-			    		  board[i][j] = new Entity(i,j);
-			      }
-			      i++;
+				for (int j = 0; j < 7; j++) {
+					if (line.charAt(j) == 'W')
+						board[i][j] = new Wall(i, j);
+					else if (line.charAt(j) == '.')
+						board[i][j] = new Entity(i, j);
+				}
+				i++;
 
-			 }
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 try {
+		try {
 			br.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public Entity getEntityAt(int x,int y){
+
+	public Entity getEntityAt(int x, int y) {
 		return board[x][y];
 	}
-	public String toString(){
+
+	public String toString() {
 		String s = "";
-		for(int i = 0;i<7;i++){
-			for(int j = 0;j<7;j++){
-				if(board[i][j] instanceof Wall) s+="W";
-				else s+=".";
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				if (board[i][j] instanceof Wall)
+					s += "W";
+				else
+					s += ".";
 			}
-			s+="\n";
+			s += "\n";
 		}
 		return s;
 	}
