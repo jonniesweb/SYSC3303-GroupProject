@@ -11,13 +11,14 @@ import java.util.concurrent.*;
 public class Network extends Thread{
 	private DatagramSocket socket;
 	private ExecutorService pool;
-	private LinkedList<InMessage> inbox;
-	int port = 8888;
+	private List<InMessage> inbox;
+	int port;;
 	
 	// constructor 
-	public Network(){
+	public Network(int p){
+		port = p;
 		pool = Executors.newCachedThreadPool();
-		inbox = (LinkedList<InMessage>)Collections.synchronizedList(new LinkedList<InMessage>());
+		inbox = Collections.synchronizedList(new LinkedList<InMessage>());
 	}
 	// check if we have something in inbox
 	public boolean hasMessage(){
@@ -75,6 +76,7 @@ public class Network extends Thread{
 	}
 	// threaded message accepting
 	private void acceptLoop() throws IOException{
+		System.out.println("listening on port: "+port);
 		while(true){
 			byte[] inBuffer = new byte[1024];
 			DatagramPacket receivePacket = new DatagramPacket(inBuffer, inBuffer.length);
@@ -99,6 +101,7 @@ public class Network extends Thread{
 			packetPort = p.getPort();
 		}
 		public void run(){
+			System.out.println("got message");
 			inbox.add(this);
 		}
 	}
@@ -120,6 +123,12 @@ public class Network extends Thread{
 			}catch(Exception e){System.out.println(e);}
 		}
 	}
-
+	
+	public static void main(String[] args){
+		Network net1 = new Network(40004);
+		Network net2 = new Network(40007);
+		net1.start();
+		net2.start();
+	}
 // end of file
 }

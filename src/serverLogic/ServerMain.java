@@ -1,5 +1,5 @@
 package serverLogic;
-
+import Networking.*;
 import gameLogic.*;
 import testing.Logger;
 
@@ -14,7 +14,7 @@ public class ServerMain {
 		Thread[] threads = new Thread[3];
 		
 		while(running){
-			threads[0] = new Thread(new Networking(), "Networking Main Thread");
+			threads[0] = new Thread(new Network(8888), "Networking Main Thread");
 			threads[1] = new Thread(new GameBoard(), "Gameboard thread");
 			threads[2] = new Thread(new Logger(), "Logging Thread");
 			
