@@ -4,6 +4,9 @@ import entities.*;
 
 public class GameBoard {
 	
+	// use these enums!
+	public enum TILES {PLAYER, WALL, DOOR, BOMB, EXPLOSION, POWERUP, ENEMY, FLOOR};
+	
 	private char[][] board;
 	private int width;
 	private int height;
