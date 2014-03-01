@@ -47,7 +47,8 @@ public class GameBoard {
 				else if (board[k][i] == '3'){entityType = 3;}
 				else if (board[k][i] == '4'){entityType = 4;}
 				else if (board[k][i] == '5'){entityType = 5;}
-				else {entityType = 6;}
+				else if (board[k][i] == '6'){entityType = 6;}
+				else {entityType = 7;}
 				entitiesArray[entityType].setPos(k, i);
 				entitiesArray[entityType].draw();
 			}
