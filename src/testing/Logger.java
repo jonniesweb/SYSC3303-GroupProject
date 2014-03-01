@@ -3,7 +3,7 @@ package testing;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-public class Logger {
+public class Logger implements Runnable{
 	//private String log;
 	PrintWriter out;
 	public Logger(){
@@ -18,5 +18,7 @@ public class Logger {
 		out.println(log);
 		//log+= "\n";
 	}
+	
+	public void run(){}
 	
 }

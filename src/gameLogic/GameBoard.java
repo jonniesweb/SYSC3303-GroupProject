@@ -2,7 +2,7 @@ package gameLogic;
 
 import entities.*;
 
-public class GameBoard {
+public class GameBoard implements Runnable{
 	
 	// use these enums!
 	public enum TILES {PLAYER, WALL, DOOR, BOMB, EXPLOSION, POWERUP, ENEMY, FLOOR};
@@ -57,5 +57,7 @@ public class GameBoard {
 			}
 		}
 	}
+	
+	public void run(){}
 
 }
