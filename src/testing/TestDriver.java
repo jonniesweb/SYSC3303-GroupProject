@@ -3,14 +3,17 @@ package testing;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.lang.String;
+import java.util.concurrent.Semaphore;
+import Networking.*;
 
-import Networking.Network;
 
 public class TestDriver implements Runnable {
 
 	String file;
 	String[] list = new String[100];
 	int count = 0;
+	String serverIp = "127.0.0.1";
+	int serverPort = Network.SEVER_PORT_NO;
 
 	public TestDriver(String filename) {
 		this.file = filename;
@@ -47,9 +50,9 @@ public class TestDriver implements Runnable {
 		/*
 		 * send list of test messages to server
 		 */
-		Network net = new Network(Network.PORT_NO);
+		Network net = new Network(Network.CLIENT_PORT_NO, new Semaphore(0));
 		for (String command : list) {
-			net.sendMessage(command);
+			net.sendMessage(new Message(command,serverIp,serverPort));
 		}
 	}
 
