@@ -19,6 +19,7 @@ public class Logger implements Runnable {
 	
 	PrintWriter out;
 	ArrayList<String> log;
+	
 	public Logger(){
 		log = new ArrayList<String>();
 		
@@ -30,11 +31,17 @@ public class Logger implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	//Every command player made
-	public void commandLog(String command){
+	
+	/**
+	 * Accept message to be queued into log
+	 * 
+	 * @param command 
+	 */
+	public void acceptMessage(String command){
 		log.add(command);
 		
 	}
+	
 	/**
 	 * Write each message in queue log into file
 	 * Remove message written
@@ -44,31 +51,29 @@ public class Logger implements Runnable {
 		while(true){
 			try{
 				out.println(log.get(0));
+				System.out.println(log.get(0));
 			}
 			catch (IndexOutOfBoundsException e) {
 				break;
 			}
 			log.remove(0);
-		}
-		
+		}	
 	}
 	
-	//Board update
-	public void boardLog(char[][] board){
-		for(int row=0;row < board.length;row++){
-			for(int col=0;col < board[0].length;col++){
-				out.print(board[row][col]);
-			}
-			out.println();
-		}
+	/**
+	 * If server ended and no log needed anymore
+	 * file will be closed
+	 */
+	public void endLog(){
+		out.close();
 	}
-	
 
 	
-	public void run(){}
-	
-	public static void main(String[] args) {
+	public void run(){
 		
 	}
+	
+	
+		
 	
 }
