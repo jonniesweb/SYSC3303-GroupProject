@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 public class Network extends Thread {
 	private DatagramSocket socket;
 	private ExecutorService pool;
@@ -72,8 +73,9 @@ public class Network extends Thread {
 		}
 	}
 
+	// TODO: why not pool.submit() with this method? 
 	/**
-	 * sendMessage client version
+	 * sendMessage to client version
 	 * @param m
 	 */
 	public void sendMessage(String m) {
