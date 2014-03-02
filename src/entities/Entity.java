@@ -12,8 +12,8 @@ import java.lang.String;
 
 public class Entity {
 	
-	private int posX; //X position of the Entity
-	private int posY; //Y position of the Entity
+	protected int posX; //X position of the Entity
+	protected int posY; //Y position of the Entity
 	
 	
 	//Constructors
@@ -28,6 +28,12 @@ public class Entity {
 	
 	//Methods
 	
+	public void setPosX(int x){
+		posX = x;
+	}
+	public void setPosY(int y){
+		posY = y;
+	}
 	public void setPos(int x, int y) {
 		posX = x;
 		posY = y;
