@@ -2,14 +2,28 @@ package clientLogic;
 
 import gameLogic.GameBoard;
 
+/**
+ * Main GUI class. This class should be the Facade in the Facade design pattern.
+ * 
+ * @author jonsimpson
+ * 
+ */
 public class ClientGUI {
 
-	public void update(GameBoard game){
+	ClientGUIFrame guiFrame;
+
+	public ClientGUI(GameBoard gameBoard) {
+
+		guiFrame = new ClientGUIFrame(gameBoard);
+
+	}
+
+	public void update(GameBoard gameBoard) {
 		System.out.println("The Client GUI is updating");
-		//Do the updating
-		game.draw();
-		
+
+		guiFrame.update(gameBoard);
+
 		System.out.println("The Client GUI has finished updating");
 	}
-	
+
 }

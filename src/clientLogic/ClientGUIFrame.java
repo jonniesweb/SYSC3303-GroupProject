@@ -50,14 +50,11 @@ public class ClientGUIFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					final ClientGUIFrame frame = new ClientGUIFrame(10, 10,
-							testData()); // XXX: constructor call for
-													// testing only
+					// XXX: constructor call for testing only
+					final ClientGUIFrame frame = new ClientGUIFrame(testData());
 					frame.setVisible(true);
-					
-					
-					frame.update(testData()); // XXX: test
 
+					frame.update(testData()); // XXX: test
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -67,13 +64,50 @@ public class ClientGUIFrame extends JFrame {
 	}
 
 	/**
+	 * Create the frame.
+	 * 
+	 * @param gameBoard
+	 */
+	public ClientGUIFrame(GameBoard gameBoard) {
+		this.width = gameBoard.getWidth();
+		this.height = gameBoard.getHeight();
+
+		buttonGameBoard = new JButton[width][height];
+
+		// init images for the gameboard JButtons
+		// commented out since images havent been graphically designed yet
+		// initImages();
+
+		// GUI configuration
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[] { 0, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 0, 0 };
+		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0,
+				Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+		contentPane.setLayout(gbl_contentPane);
+
+		// init buttongameboard
+
+		// gameboard configuration
+		update(gameBoard);
+
+	}
+
+	/**
 	 * Creates a 10x10 gameboard for very quick testing
+	 * 
 	 * @return
 	 */
 	private static GameBoard testData() {
 		GameBoard board = new GameBoard(10, 10);
 		Random r = new Random();
-		
+
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
 				if (r.nextInt(10) < 7) {
@@ -83,44 +117,18 @@ public class ClientGUIFrame extends JFrame {
 				}
 			}
 		}
-		
-		
+
 		return board;
 	}
 
 	/**
-	 * Create the frame.
+	 * Helper method to quickly put the given JButton into the given x,y
+	 * position on the gameboard
+	 * 
+	 * @param button
+	 * @param x
+	 * @param y
 	 */
-	public ClientGUIFrame(int width, int height, GameBoard gameBoard) {
-		this.width = width;
-		this.height = height;
-		buttonGameBoard = new JButton[width][height];
-		
-		// init images for the gameboard JButtons
-		// commented out since images havent been graphically designed yet
-//		initImages();
-
-		// GUI configuration
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-		contentPane.setLayout(gbl_contentPane);
-
-		// init buttongameboard
-		
-
-		// gameboard configuration
-		update(gameBoard);
-
-	}
-	
 	private void setButton(JButton button, int x, int y) {
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.gridx = x;
@@ -130,6 +138,7 @@ public class ClientGUIFrame extends JFrame {
 
 	/**
 	 * Helper method to load all images for the buttons
+	 * 
 	 * @return
 	 */
 	private boolean initImages() {
@@ -162,10 +171,11 @@ public class ClientGUIFrame extends JFrame {
 
 	/**
 	 * updates and draws the GUI gameboard with the current gameboard state
+	 * 
 	 * @param gameBoard
 	 */
 	public void update(GameBoard gameBoard) {
-		
+
 		System.out.println("called GUI update");
 		Entity[][] entityArray = gameBoard.getBoard();
 
@@ -175,31 +185,31 @@ public class ClientGUIFrame extends JFrame {
 				JButton button;
 
 				if (entity instanceof Player) {
-//					button = new JButton(new ImageIcon(playerImg));
+					// button = new JButton(new ImageIcon(playerImg));
 					button = new JButton("Player");
 				} else if (entity instanceof Bomb) {
-//					button = new JButton(new ImageIcon(bombImg));
+					// button = new JButton(new ImageIcon(bombImg));
 					button = new JButton("Bomb");
 				} else if (entity instanceof Door) {
-//					button = new JButton(new ImageIcon(doorImg));
+					// button = new JButton(new ImageIcon(doorImg));
 					button = new JButton("Door");
 				} else if (entity instanceof Enemy) {
-//					button = new JButton(new ImageIcon(enemyImg));
+					// button = new JButton(new ImageIcon(enemyImg));
 					button = new JButton("Enemy");
 				} else if (entity instanceof Explosion) {
-//					button = new JButton(new ImageIcon(explosionImg));
+					// button = new JButton(new ImageIcon(explosionImg));
 					button = new JButton("Explosion");
 				} else if (entity instanceof PowerUp) {
-//					button = new JButton(new ImageIcon(powerupImg));
+					// button = new JButton(new ImageIcon(powerupImg));
 					button = new JButton("Powerup");
 				} else if (entity instanceof Wall) {
-//					button = new JButton(new ImageIcon(wallImg));
+					// button = new JButton(new ImageIcon(wallImg));
 					button = new JButton("Wall");
 				} else {
-//					button = new JButton(new ImageIcon(floorImg));
+					// button = new JButton(new ImageIcon(floorImg));
 					button = new JButton("Floor");
 				}
-				
+
 				setButton(button, i, j);
 			}
 		}
