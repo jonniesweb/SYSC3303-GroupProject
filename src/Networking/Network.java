@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
+// TODO: add timestamp to all sent commands, then add to inbox SortedList
 public class Network extends Thread {
 	private DatagramSocket socket;
 	private ExecutorService pool;

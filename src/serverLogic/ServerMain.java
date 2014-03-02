@@ -1,4 +1,5 @@
 package serverLogic;
+import entities.Player;
 import Networking.*;
 import gameLogic.*;
 import testing.Logger;
@@ -31,21 +32,46 @@ public class ServerMain {
 			}
 		}
 		
+		// Network THREAD
+		//
+		// Loop
+		//		If START_GAME from P1
+		//			set GAMEINPROGRESS to true
+		//		If NOT GAMEINPROGRESS, then
+		//			If JOIN_GAME, add to player list
+		//		else
+		//			add to spectator list, then add them to the new game afterwards
+		//		If SPECTATOR_JOIN
+		//			add to spectators
+		//		If END_GAME remove player
+		//			If GAMEINPROGRESS && players == 0 
+		//				stop game, set GAMEINPROGRESS to false, wait for players
+		//      IF GAMEINPROGRESS,
+		//			IF GAMECOMMAND
+		//				notify()
 		
-		//	Begin listening
+		
+		//	Update Thread/ logic thread
+		//
+		//	
 		//	Loop
-		//		Establish Connection
-		//		Populate Gameboard
-		// 		Loop
-		//			Send Gameboard Status
-		//			Check for and Execute Commands
-		// 			Update Gameboard
-		//			Check Player Life Status
-		// 		Kill Connection
-		// 		Wait for new connection
+		//		wait()
+		//		IF COMMAND
+		//			do command
+		//		send GameBoard to all players
+		//		log gameboard
 		
 		
+		// 	Bomb Thread - for later
+		//		
 		
+		//	Player Manager Class
+		// 	members: currentPlayerList, futurePlayerList, observerList
+		//	getCurrentPlayers(): PlayerEntityList
+		
+		
+		// logic class
+		// action(player, action)
 
 	}
 
