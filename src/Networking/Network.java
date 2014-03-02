@@ -15,11 +15,12 @@ public class Network extends Thread {
 	private DatagramSocket socket;
 	private ExecutorService pool;
 	private List<InMessage> inbox;
+	public static final int PORT_NO = 8888;
 	int port;
 
 	// constructor
 	public Network(int p) {
-		port = p;
+		port = PORT_NO;
 		pool = Executors.newCachedThreadPool();
 		inbox = Collections.synchronizedList(new LinkedList<InMessage>());
 	}
@@ -145,7 +146,7 @@ public class Network extends Thread {
 			inbox.add(this);
 		}
 	}
-
+	// inner class for sending message in new threads
 	public class OutMessage implements Runnable {
 		private int packetPort;
 		private InetAddress ip;
