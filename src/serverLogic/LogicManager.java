@@ -22,6 +22,8 @@ import entities.Player;
 import entities.PowerUp;
 import entities.Wall;
 
+import testing.Logger;
+
 import gameLogic.GameBoard;
 
 import Networking.Message;
@@ -42,12 +44,15 @@ public class LogicManager implements Runnable {
 	
 	private int playerCount;
 	
+	private Logger log;
 	
-	public LogicManager(UserManager uManager, NetworkManager nManager){
+	
+	public LogicManager(UserManager uManager, Logger l, NetworkManager nManager){
 		this.board = new GameBoard(uManager);
-		networkManager = nManager;
-		userManager = uManager;
-		playerCount = (uManager.getPlayerList()).size();
+		this.networkManager = nManager;
+		this.userManager = uManager;
+		this.playerCount = (uManager.getCurrentPlayerList()).size();
+		this.log = l;
 	}
 	
 	/**
@@ -101,7 +106,7 @@ public class LogicManager implements Runnable {
 	public void run(){
 		Message m;
 		String command;
-		String playerIP;
+		String uuid;
 		Player p;
 		
 		try{
@@ -110,14 +115,14 @@ public class LogicManager implements Runnable {
 				m = commandQueue.take();
 				
 				command = new String(m.datagram.getData());
-				playerIP = m.datagram.getAddress().toString();
+				uuid = m.datagram.getAddress().toString() + m.datagram.getPort();
 				
-				System.out.println("Execute Command/PlayerID Pair - "+command+":"+playerIP);
+				//System.out.println("Execute Command/PlayerID Pair - "+command+":"+uuid);
 				
 				
 				for(User u: userManager.getCurrentPlayerList()){
-					p = u.player;
-					if(u.ip.equals(playerIP)){
+					p = u.getPlayer();
+					if(u.getUUID().equals(uuid)){
 						if(command.equals("UP")){
 							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
 								p.loseLife();
@@ -166,10 +171,10 @@ public class LogicManager implements Runnable {
 					}
 				}
 				networkManager.sendBoardToAllClients();
+				log.acceptMessage(board.toString());
 			}
 			
 			networkManager.sendEndGameToAllClients();
-			//networkManager.sendMessage(board.getBoard(), )
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -7,6 +7,8 @@ import java.util.concurrent.Semaphore;
 import Networking.Message;
 import Networking.Network;
 
+import testing.Logger;
+
 import java.util.List;
 
 
@@ -19,6 +21,8 @@ public class NetworkManager implements Runnable{
 	private Network net;
 	private LogicManager logic;
 	private UserManager userManager;
+	private Logger log;
+	private boolean running;
 	
 	public NetworkManager() {
 		gameInProgress = false;
@@ -34,20 +38,21 @@ public class NetworkManager implements Runnable{
 	 * 
 	 */
 	public void run(){
-		
-		
-		
+
 		new Thread(net).start();
-		
+		running = true;
 		Message message;
 		
-		while(true){
+		log = new Logger();
+		
+		while(running){
 			
 			message = readInbox();
+			log.acceptMessage(new String(message.datagram.getData()));
 			
 			if (readCommand(message).equals("START_GAME")){
 				gameInProgress = true;
-				logic = new LogicManager(userManager, this);
+				logic = new LogicManager(userManager, log, this);
 			}
 			
 			if (readCommand(message).equals("JOIN_GAME")){
@@ -63,8 +68,7 @@ public class NetworkManager implements Runnable{
 				if(gameInProgress)
 					logic.execute(message);
 			}	
-		}
-		
+		}	
 	}
 	
 	/**
@@ -85,7 +89,7 @@ public class NetworkManager implements Runnable{
 	/**
 	 * @deprecated
 	 */
-	private void sendBoardToAllClients() {
+	public void sendBoardToAllClients() {
 		String board = "NULL";// = logic.getBoard();
 		List<User> users = userManager.getAllUsers();
 		for(int i=0; i< users.size(); i++){
@@ -106,26 +110,13 @@ public class NetworkManager implements Runnable{
 			net.sendMessage(m);
 		}
 		gameInProgress = false;
+		log.writeLog();
+		
 	}
 
 	private String readCommand(Message m) {
 		return new String(m.datagram.getData());
 	}
-	
-
-	//TODO tell logicManager to setGameBoard when we get start command
-	/*private void startCommand(String playerIP, int playerPort){
-		// you must join game before starting
-		if (userManager.getAllUsers().size() == 0) {
-			System.out.println("User attempted to start game before join");
-			return;
-		}
-		logic.start();
-
-	}
-
-
-	}*/
 	
 	private void endGameCommand(String playerIP, int playerPort){
 		// remove player current playerlist
