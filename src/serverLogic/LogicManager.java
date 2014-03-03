@@ -1,5 +1,8 @@
 package serverLogic;
+//TODO: add start method that resets gameBoard with all players in player List and sets
+// gameInpgress to true
 
+//TODO: add method to tell when game is over
 import java.lang.String;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -28,12 +31,13 @@ public class LogicManager implements Runnable {
 	private BlockingQueue<String> playerQueue = new LinkedBlockingQueue<String>();
 	
 	private List<Player> playerList;
-	
+	private boolean gameInProgress;
 	private GameBoard board;
 	
-	public LogicManager(LinkedList<Player> players){
-		this.playerList = players;
+	public LogicManager(List<Player> playerList2, boolean gameState){
+		this.playerList = playerList2;
 		this.board = new GameBoard();
+		gameInProgress = gameState;
 	}
 	
 	/**
@@ -89,32 +93,31 @@ public class LogicManager implements Runnable {
 		Entity entity;
 		try{
 			while(true){
-				command = commandQueue.take();
-				playerID = playerQueue.take();
-				System.out.println("Execute Command/PlayerID Pair - "+command+":"+playerID);
-				
-				
-				for(Player p: playerList){
-					
-					if(p.getName().equals(playerID)){
+				if(gameInProgress){
+					command = commandQueue.take();
+					playerID = playerQueue.take();
+					System.out.println("Execute Command/PlayerID Pair - "+command+":"+playerID);
+					for(Player p: playerList){
+						if(p.getName().equals(playerID)){
 						
-						if(command.equals("UP")){
-							if (!safeMove(p.getPosX(), p.getPosY() + 1)){p.loseLife();}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveUp();}
-						}
-						else if(command.equals("DOWN")){
-							if (!safeMove(p.getPosX(), p.getPosY() - 1)){p.loseLife();}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveDown();}
-						}
-						else if(command.equals("LEFT")){
-							if (!safeMove(p.getPosX() - 1, p.getPosY())){p.loseLife();}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveLeft();}
-						}
-						else if(command.equals("RIGHT")){
-							if (!safeMove(p.getPosX() + 1, p.getPosY())){p.loseLife();}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveRight();}
-						}
+							if(command.equals("UP")){
+								if (!safeMove(p.getPosX(), p.getPosY() + 1)){p.loseLife();}
+								else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveUp();}
+							}
+							else if(command.equals("DOWN")){
+								if (!safeMove(p.getPosX(), p.getPosY() - 1)){p.loseLife();}
+								else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveDown();}
+							}
+							else if(command.equals("LEFT")){
+								if (!safeMove(p.getPosX() - 1, p.getPosY())){p.loseLife();}
+								else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveLeft();}
+							}
+							else if(command.equals("RIGHT")){
+								if (!safeMove(p.getPosX() + 1, p.getPosY())){p.loseLife();}
+								else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveRight();}
+							}
 						//else if(command.equals("BOMB"))
+						}
 					}
 				}
 			}		
