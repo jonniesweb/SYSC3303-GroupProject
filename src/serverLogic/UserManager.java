@@ -146,33 +146,32 @@ public class UserManager {
 	}
 
 	// TODO return all users so i can send them gameboard
+	/**
+	 * @deprecated use the other getter methods below since you can get
+	 *             currentPlayers, futurePlayers or spectators
+	 * @return
+	 */
 	public List<User> getAllUsers() {
 		return null;
 		// return all users so i can send them the game board
 	}
-
-	/**
-	 * Represents a user's network connection and Player Entity.
-	 * 
-	 * The uuid is a unique identifier that should try to differentiate one user
-	 * connection from the other. The reason for this is to try and solve the
-	 * possible issue of having two User instances with the exact same IP and
-	 * Port (or I'm wrong since that usage case can't exist).
-	 * 
-	 */
-	class User {
-		String uuid;
-		String ip;
-		int port;
-		Player player;
-
-		public User(String uuid, String ip, int port) {
-			this.uuid = uuid;
-			this.ip = ip;
-			this.port = port;
-		}
-
+	
+	public List<User> getCurrentPlayerList() {
+		return currentPlayerList.values();
 	}
+	
+	public List<User> getFuturePlayerList() {
+		return futurePlayerList.values();
+	}
+	
+	public List<User> getSpectatorList() {
+		return spectatorList.values();
+	}
+	
+	public List<User> getAllUsers() {
+		
+	}
+
 
 	class OverwroteUserInMapException extends Exception {
 	}

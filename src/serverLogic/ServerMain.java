@@ -33,7 +33,7 @@ public class ServerMain {
 				}
 			}
 		}
-		
+		///????/ who inits player positions when they are added??????
 		// Network THREAD
 		//
 		// Loop
