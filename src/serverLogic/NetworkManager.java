@@ -13,7 +13,7 @@ import java.util.List;
 
 //TODO: construct logic Manager with playerlist 
 //TODO: add mainLoop
-public class NetworkManager {
+public class NetworkManager implements Runnable{
 	private boolean gameInProgress;
 	private Semaphore inboxLock;
 	private Network net;
@@ -22,20 +22,51 @@ public class NetworkManager {
 	
 	public NetworkManager() {
 		gameInProgress = false;
-		userManager = new UserManager();
-		logic = new LogicManager(userManager.getPlayerList(),gameInProgress);
-		// create userManger
-		userManager = new UserManager();
-		// create logic manager with empty playerlist that we both share
-		logic = new LogicManager(userManager.getPlayerList(),gameInProgress);
-		// create network listening with messageinobx semaphore
+		
 		inboxLock = new Semaphore(0);
 		net = new Network(Network.SEVER_PORT_NO, inboxLock);
-		// start threads
-		new Thread(net).start();
-		new Thread(logic).start();
+		
+		userManager = new UserManager();
 
 	}
+	
+	/**
+	 * 
+	 */
+	public void run(){
+		
+		
+		
+		new Thread(net).start();
+		
+		Message message;
+		
+		while(true){
+			
+			message = readInbox();
+			
+			if (message.getMessage().equals("START_GAME")){
+				gameInProgress = true;
+				logic = new LogicManager(userManager, this);
+			}
+			
+			if (message.getMessage().equals("JOIN_GAME")){
+				joinCommand(message.getIP(), message.getPort());
+			}
+			else if (message.getMessage().equals("SPECTATE_GAME")){
+				specateCommand(message.getIP(), message.getPort());
+			}
+			else if (message.getMessage().equals("END_GAME") && gameInProgress){
+				endGameCommand(message.getIP(), message.getPort());
+			}
+			else {
+				if(gameInProgress)
+					logic.execute(message.getMessage(), message.getIP());
+			}	
+		}
+		
+	}
+	
 	/**
 	 * 
 	 * @return
@@ -50,8 +81,11 @@ public class NetworkManager {
 		return net.getMessage();
 	}
 	
+	/**
+	 * @deprecated
+	 */
 	private void sendBoardToAllClients(){
-		String board = logic.getBoard();
+		String board = "NULL";// = logic.getBoard();
 		List<User> users = userManager.getAllUsers();
 		for(int i=0; i< users.size(); i++){
 			String ip = users.get(i).ip;
