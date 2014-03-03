@@ -1,19 +1,26 @@
 package serverLogic;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import entities.Player;
 
 // TODO: hold each player/spectator's ip and port
 // TODO: add getters and methods that move players to other lists
+// TODO: when adding player to current hashmap add them to playerList (used by logicManager)
+//TODO return all users so i can send them gameboard
 public class UserManager {
 
 	HashMap<String, User> currentPlayerList, futurePlayerList, spectatorList;
+	// needed by logic Manager to iterate over all current players
+	private List<Player> playerList;
 
 	public UserManager() {
 
 		final int initialMapSize = 2;
-
+		playerList = Collections.synchronizedList(new LinkedList<Player>());
 		currentPlayerList = new HashMap<String, User>(initialMapSize);
 		futurePlayerList = new HashMap<String, User>(initialMapSize);
 		spectatorList = new HashMap<String, User>(initialMapSize);
@@ -21,7 +28,11 @@ public class UserManager {
 
 	public enum Type {
 		PLAYER, SPECTATOR
-	};
+	}
+
+	public List<Player> getCurrentPlayerList() {
+		return playerList;
+	}
 
 	/**
 	 * Adds a user to the currentPlayerList list
@@ -38,7 +49,8 @@ public class UserManager {
 	}
 
 	/**
-	 * Adds a user to the futurePlayerList list
+	 * Adds a user to the futurePlayerList list ??? Possibly add player to
+	 * playerList also????
 	 * 
 	 * @param ip
 	 * @param port
@@ -131,6 +143,12 @@ public class UserManager {
 	public void moveCurrentToFuture(User user)
 			throws OverwroteUserInMapException, NoUserExistsWithUUIDException {
 		moveCurrentToFuture(user.uuid);
+	}
+
+	// TODO return all users so i can send them gameboard
+	public List<User> getAllUsers() {
+		return null;
+		// return all users so i can send them the game board
 	}
 
 	/**
