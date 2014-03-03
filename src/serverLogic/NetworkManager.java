@@ -32,9 +32,7 @@ public class NetworkManager implements Runnable{
 	 * 
 	 */
 	public void run(){
-		
-		
-		
+
 		new Thread(net).start();
 		
 		Message message;
@@ -61,8 +59,7 @@ public class NetworkManager implements Runnable{
 				if(gameInProgress)
 					logic.execute(message);
 			}	
-		}
-		
+		}	
 	}
 	
 	/**
