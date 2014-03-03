@@ -61,7 +61,7 @@ public class NetworkManager implements Runnable{
 			}
 			else {
 				if(gameInProgress)
-					logic.execute(message.getMessage(), message.getIP());
+					logic.execute(message);
 			}	
 		}
 		

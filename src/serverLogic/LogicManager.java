@@ -24,6 +24,8 @@ import entities.Wall;
 
 import gameLogic.GameBoard;
 
+import Networking.Message;
+
 /**
  * 
  * @author zachstoner
@@ -31,8 +33,7 @@ import gameLogic.GameBoard;
  */
 public class LogicManager implements Runnable {
 	
-	private BlockingQueue<String> commandQueue = new LinkedBlockingQueue<String>();
-	private BlockingQueue<String> playerQueue = new LinkedBlockingQueue<String>();
+	private BlockingQueue<Message> commandQueue = new LinkedBlockingQueue<Message>();
 	
 	private List<Player> playerList;
 	
@@ -56,12 +57,9 @@ public class LogicManager implements Runnable {
 	 * @param command
 	 * @param playerID
 	 */
-	public void execute(String command, String playerID){
+	public void execute(Message m){
 		try{
-			commandQueue.put(command);
-			playerQueue.put(playerID);
-			
-			
+			commandQueue.put(m);			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -99,23 +97,25 @@ public class LogicManager implements Runnable {
 	 * 
 	 */
 	public void run(){
+		Message m;
 		String command;
-		String playerID;
+		String playerIP;
 		Player p;
 		
 		try{
 			while(playerCount > 0){
 				
-				command = commandQueue.take();
-				playerID = playerQueue.take();
+				m = commandQueue.take();
 				
-				System.out.println("Execute Command/PlayerID Pair - "+command+":"+playerID);
+				command = new String(m.datagram.getData());
+				playerIP = m.datagram.getAddress().toString();
+				
+				System.out.println("Execute Command/PlayerID Pair - "+command+":"+playerIP);
 				
 				
-				//TODO: Replace Player with User
 				for(User u: userManager.getCurrentPlayerList()){
 					p = u.player;
-					if(p.getName().equals(playerID)){
+					if(u.ip.equals(playerIP)){
 						if(command.equals("UP")){
 							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
 								p.loseLife();
