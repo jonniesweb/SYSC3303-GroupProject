@@ -98,9 +98,11 @@ public class LogicManager implements Runnable {
 	}
 	
 	//TODO: init gameBoard with playerList setGameInProgress = true
+
 	public void start(){
 		gameInProgress = true;
 		board = new GameBoard(playerList);
+
 		
 	}
 	//TODO: return gameboard as string so we can send to all players

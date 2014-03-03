@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.*;
 
 import entities.Player;
 
@@ -16,7 +17,9 @@ public class UserManager {
 	HashMap<String, User> currentPlayerList, futurePlayerList, spectatorList;
 	// needed by logic Manager to iterate over all current players
 	private List<Player> playerList;
+
 	int MAX_PLAYERCOUNT;
+
 
 	public UserManager() {
 
@@ -31,7 +34,7 @@ public class UserManager {
 		PLAYER, SPECTATOR
 	}
 
-	public List<Player> getCurrentPlayerList() {
+	public List<Player> getPlayerList() {
 		return playerList;
 	}
 
@@ -151,22 +154,32 @@ public class UserManager {
 		moveCurrentToFuture(user.uuid);
 	}
 
-	// TODO return all users so i can send them gameboard
-	public List<User> getAllUsers() {
-		return null;
-		// return all users so i can send them the game board
-	}
+
+
 
 	/**
-	 * Represents a user's network connection and Player Entity.
-	 * 
-	 * The uuid is a unique identifier that should try to differentiate one user
-	 * connection from the other. The reason for this is to try and solve the
-	 * possible issue of having two User instances with the exact same IP and
-	 * Port (or I'm wrong since that usage case can't exist).
-	 * 
+	 * @deprecated use the other getter methods below since you can get
+	 *             currentPlayers, futurePlayers or spectators
+	 * @return
 	 */
+
+
 	
+	public Collection<User> getCurrentPlayerList() {
+		return currentPlayerList.values();
+	}
+	
+	public Collection<User> getFuturePlayerList() {
+		return futurePlayerList.values();
+	}
+	
+	public Collection<User> getSpectatorList() {
+		return spectatorList.values();
+	}
+	
+	public List<User> getAllUsers(){
+		return null;
+	}
 
 	class OverwroteUserInMapException extends Exception {
 	}
