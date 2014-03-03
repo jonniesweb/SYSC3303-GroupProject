@@ -2,28 +2,44 @@ package serverLogic;
 
 import entities.Player;
 
-
-
-
 /**
  * Represents a user's network connection and Player Entity.
  * 
- * The uuid is a unique identifier that should try to differentiate one user
- * connection from the other. The reason for this is to try and solve the
- * possible issue of having two User instances with the exact same IP and
- * Port (or I'm wrong since that usage case can't exist).
+ * The UUID should be ip+port. The purpose of the UUID is to differentiate
+ * multiple users on the same computer. Setting the uuid to just the IP address
+ * could create a conflict if two users were on the same IP address.
  * 
  */
 class User {
-	String ip;
-	int port;
-	Player player;
-	String uuid;
+	private String ip;
+	private int port;
+	private Player player;
+	private String uuid;
 
-	public User(String uid, String ip, int port) {
-		this.uuid = uid;
+	public User(String uuid, String ip, int port) {
+		this.uuid = uuid;
 		this.ip = ip;
 		this.port = port;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public String getUUID() {
+		return uuid;
 	}
 
 }
