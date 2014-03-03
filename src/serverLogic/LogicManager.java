@@ -93,6 +93,10 @@ public class LogicManager implements Runnable {
 		else { return true; }
 	}
 	
+	public String getBoard(){
+		return board.toString();
+	}
+	
 	/**
 	 * 
 	 */
@@ -163,8 +167,10 @@ public class LogicManager implements Runnable {
 						//else if(command.equals("BOMB"))
 					}
 				}
+				networkManager.sendBoardToAllClients();
 			}
 			
+			networkManager.sendEndGameToAllClients();
 			//networkManager.sendMessage(board.getBoard(), )
 		}catch(Exception e){
 			e.printStackTrace();

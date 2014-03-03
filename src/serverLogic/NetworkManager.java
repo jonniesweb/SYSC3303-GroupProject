@@ -45,19 +45,19 @@ public class NetworkManager implements Runnable{
 			
 			message = readInbox();
 			
-			if (message.getMessage().equals("START_GAME")){
+			if (readCommand(message).equals("START_GAME")){
 				gameInProgress = true;
 				logic = new LogicManager(userManager, this);
 			}
 			
-			if (message.getMessage().equals("JOIN_GAME")){
-				joinCommand(message.getIP(), message.getPort());
+			if (readCommand(message).equals("JOIN_GAME")){
+				joinCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
-			else if (message.getMessage().equals("SPECTATE_GAME")){
-				specateCommand(message.getIP(), message.getPort());
+			else if (readCommand(message).equals("SPECTATE_GAME")){
+				specateCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
-			else if (message.getMessage().equals("END_GAME") && gameInProgress){
-				endGameCommand(message.getIP(), message.getPort());
+			else if (readCommand(message).equals("END_GAME") && gameInProgress){
+				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
 			else {
 				if(gameInProgress)
@@ -81,11 +81,9 @@ public class NetworkManager implements Runnable{
 		return net.getMessage();
 	}
 	
-	/**
-	 * @deprecated
-	 */
-	private void sendBoardToAllClients(){
-		String board = "NULL";// = logic.getBoard();
+
+	public void sendBoardToAllClients(){
+		String board = logic.getBoard();
 		List<User> users = userManager.getAllUsers();
 		for(int i=0; i< users.size(); i++){
 			String ip = users.get(i).ip;
@@ -93,6 +91,18 @@ public class NetworkManager implements Runnable{
 			Message m = new Message(board,ip,port);
 			net.sendMessage(m);
 		}
+	}
+	
+	public void sendEndGameToAllClients(){
+		String board = "END_GAME";
+		List<User> users = userManager.getAllUsers();
+		for(int i=0; i< users.size(); i++){
+			String ip = users.get(i).ip;
+			int port = users.get(i).port;
+			Message m = new Message(board,ip,port);
+			net.sendMessage(m);
+		}
+		gameInProgress = false;
 	}
 	
 	private String readCommand(Message m){
