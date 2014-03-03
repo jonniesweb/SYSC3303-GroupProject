@@ -64,8 +64,12 @@ public class NetworkManager {
 	
 	//TODO tell logicManager to setGameBoard when we get start command
 	private void startCommand(String playerIP, int playerPort){
-		
-		// ???? logicManager.start()
+		// you must join game before starting
+		if(userManager.getAllUsers().size() == 0){
+			System.out.println("User attempted to start game before join");
+			return;
+		}
+		 logic.start();
 	}
 	private void endGameCommand(String playerIP, int playerPort){
 		// remove player current playerlist
@@ -81,6 +85,7 @@ public class NetworkManager {
 			catch(Exception E){System.out.println("Added same player to future twice");}
 		}else{
 			try{
+				
 				userManager.addPlayerToCurrent(playerIP, playerPort);
 			}
 			catch(Exception E){System.out.println("Added same player to current twice");}

@@ -16,6 +16,7 @@ public class UserManager {
 	HashMap<String, User> currentPlayerList, futurePlayerList, spectatorList;
 	// needed by logic Manager to iterate over all current players
 	private List<Player> playerList;
+	int MAX_PLAYERCOUNT;
 
 	public UserManager() {
 
@@ -41,7 +42,8 @@ public class UserManager {
 	 * @throws OverwroteUserInMapException
 	 */
 	public void addPlayerToCurrent(String ip, int port)
-			throws OverwroteUserInMapException {
+	throws OverwroteUserInMapException {
+		if(currentPlayerList.size() == MAX_PLAYERCOUNT)
 		if (currentPlayerList.put(ip, new User(ip, port)) != null) {
 			throw new OverwroteUserInMapException();
 		}

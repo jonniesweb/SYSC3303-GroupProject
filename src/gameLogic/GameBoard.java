@@ -15,7 +15,8 @@ import entities.Explosion;
 import entities.Player;
 import entities.PowerUp;
 import entities.Wall;
-
+import java.util.*;
+//TODO: gameboard should be init with a list of players
 public class GameBoard implements Runnable {
 
 	// use these enums!
@@ -29,7 +30,8 @@ public class GameBoard implements Runnable {
 
 	Entity[] entitiesArray;
 
-	public GameBoard() {
+	//TODO: gameboard is init with player list
+	public GameBoard(List<Player> playerList) {
 		this(3, 3);
 		// Testing
 		board = new Entity[][] { { new Entity(), new Player(), new Wall() },

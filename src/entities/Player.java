@@ -62,7 +62,7 @@ public class Player extends Entity {
 	 * @return
 	 */
 	public boolean isAlive(){ 
-		if (lives < 1) {
+		if (lives >=  1) {
 			return true;
 		} else {
 			return false;
