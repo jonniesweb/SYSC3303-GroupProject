@@ -30,9 +30,9 @@ public class UserManager {
 	 * @param port
 	 * @throws OverwroteUserInMapException
 	 */
-	public void addPlayerToCurrent(String ip, int port)
+	public void addPlayerToCurrent(String uuid, String ip, int port)
 			throws OverwroteUserInMapException {
-		if (currentPlayerList.put(ip, new User(ip, port)) != null) {
+		if (currentPlayerList.put(uuid, new User(uuid, ip, port)) != null) {
 			throw new OverwroteUserInMapException();
 		}
 	}
@@ -44,9 +44,9 @@ public class UserManager {
 	 * @param port
 	 * @throws OverwroteUserInMapException
 	 */
-	public void addPlayerToFuture(String ip, int port)
+	public void addPlayerToFuture(String uuid, String ip, int port)
 			throws OverwroteUserInMapException {
-		if (futurePlayerList.put(ip, new User(ip, port)) != null) {
+		if (futurePlayerList.put(uuid, new User(uuid, ip, port)) != null) {
 			throw new OverwroteUserInMapException();
 		}
 	}
@@ -58,23 +58,98 @@ public class UserManager {
 	 * @param port
 	 * @throws OverwroteUserInMapException
 	 */
-	public void addSpectator(String ip, int port)
+	public void addSpectator(String uuid, String ip, int port)
 			throws OverwroteUserInMapException {
-		if (spectatorList.put(ip, new User(ip, port)) != null) {
+		if (spectatorList.put(uuid, new User(uuid, ip, port)) != null) {
 			throw new OverwroteUserInMapException();
 		}
 	}
 
 	/**
-	 * Represents a user's network connection and Player Entity, if required.
+	 * Moves the player with the specified uuid from the futurePlayerList to
+	 * currentPlayerList.
+	 * 
+	 * @param uuid
+	 * @throws OverwroteUserInMapException
+	 * @throws NoUserExistsWithUUIDException
+	 */
+	public void moveFutureToCurrent(String uuid)
+			throws OverwroteUserInMapException, NoUserExistsWithUUIDException {
+		if (futurePlayerList.containsKey(uuid)) {
+			if (currentPlayerList.put(uuid, futurePlayerList.remove(uuid)) == null) {
+				return; // success!
+			} else {
+				throw new OverwroteUserInMapException();
+			}
+		} else {
+			throw new NoUserExistsWithUUIDException();
+		}
+	}
+
+	/**
+	 * Moves the player with the specified uuid from the currentPlayerList to
+	 * futurePlayerList.
+	 * 
+	 * @param uuid
+	 * @throws OverwroteUserInMapException
+	 * @throws NoUserExistsWithUUIDException
+	 */
+	public void moveCurrentToFuture(String uuid)
+			throws OverwroteUserInMapException, NoUserExistsWithUUIDException {
+		if (futurePlayerList.containsKey(uuid)) {
+			if (futurePlayerList.put(uuid, currentPlayerList.remove(uuid)) == null) {
+				return; // success!
+			} else {
+				throw new OverwroteUserInMapException();
+			}
+		} else {
+			throw new NoUserExistsWithUUIDException();
+		}
+	}
+
+	/**
+	 * Moves the player with the specified uuid from the futurePlayerList to
+	 * currentPlayerList.
+	 * 
+	 * @param user
+	 * @throws OverwroteUserInMapException
+	 * @throws NoUserExistsWithUUIDException
+	 */
+	public void moveFutureToCurrent(User user)
+			throws OverwroteUserInMapException, NoUserExistsWithUUIDException {
+		moveFutureToCurrent(user.uuid);
+	}
+
+	/**
+	 * Moves the player with the specified uuid from the currentPlayerList to
+	 * futurePlayerList.
+	 * 
+	 * @param user
+	 * @throws OverwroteUserInMapException
+	 * @throws NoUserExistsWithUUIDException
+	 */
+	public void moveCurrentToFuture(User user)
+			throws OverwroteUserInMapException, NoUserExistsWithUUIDException {
+		moveCurrentToFuture(user.uuid);
+	}
+
+	/**
+	 * Represents a user's network connection and Player Entity.
+	 * 
+	 * The uuid is a unique identifier that should try to differentiate one user
+	 * connection from the other. The reason for this is to try and solve the
+	 * possible issue of having two User instances with the exact same IP and
+	 * Port (or I'm wrong since that usage case can't exist).
 	 * 
 	 */
 	class User {
+		String uuid;
 		String ip;
 		int port;
 		Player player;
 
-		public User(String ip, int port) {
+		public User(String uuid, String ip, int port) {
+			this.uuid = uuid;
 			this.ip = ip;
 			this.port = port;
 		}
@@ -82,5 +157,9 @@ public class UserManager {
 	}
 
 	class OverwroteUserInMapException extends Exception {
+	}
+
+	class NoUserExistsWithUUIDException extends Exception {
+
 	}
 }
