@@ -135,24 +135,48 @@ public class LogicManager implements Runnable {
 				for(Player p: userManager.getPlayerList()){
 					if(p.getName().equals(playerID)){
 						if(command.equals("UP")){
-							if (!safeMove(p.getPosX(), p.getPosY() + 1)){p.loseLife();}
+							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
+								p.loseLife();
+								if(!p.isAlive()){
+									playerCount--;
+									//Move from Current to Future
+								}
+							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveUp();}
 						}
 						else if(command.equals("DOWN")){
-							if (!safeMove(p.getPosX(), p.getPosY() - 1)){p.loseLife();}
+							if (!safeMove(p.getPosX(), p.getPosY() - 1)){
+								p.loseLife();
+								if(!p.isAlive()){
+									playerCount--;
+									//Move from Current to Future
+								}
+							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveDown();}
 						}
 						else if(command.equals("LEFT")){
-							if (!safeMove(p.getPosX() - 1, p.getPosY())){p.loseLife();}
+							if (!safeMove(p.getPosX() - 1, p.getPosY())){
+								p.loseLife();
+								if(!p.isAlive()){
+									playerCount--;
+									//Move from Current to Future
+								}
+							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveLeft();}
 						}
 						else if(command.equals("RIGHT")){
-							if (!safeMove(p.getPosX() + 1, p.getPosY())){p.loseLife();}
+							if (!safeMove(p.getPosX() + 1, p.getPosY())){
+								p.loseLife();
+								if(!p.isAlive()){
+									playerCount--;
+									//Move from Current to Future
+								}
+							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveRight();}
 						}
 						else if(command.equals("END_GAME")){
 							playerCount--;
-							
+							//Remove from Current
 						}
 						//else if(command.equals("BOMB"))
 					}
