@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * In another thread:
  * 		write each message from log list to file
  */
-public class Logger implements Runnable {
+public class Logger{
 	
 	PrintWriter out;
 	ArrayList<String> log;
@@ -67,13 +67,6 @@ public class Logger implements Runnable {
 	public void endLog(){
 		out.close();
 	}
-
-	
-	public void run(){
-		
-	}
-	
-	
 		
 	
 }

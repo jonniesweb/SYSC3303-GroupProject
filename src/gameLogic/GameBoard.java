@@ -22,7 +22,7 @@ import java.util.*;
 
 
 //TODO: gameboard should be init with a list of players
-public class GameBoard implements Runnable {
+public class GameBoard {
 
 	// use these enums!
 	public enum TILES {
@@ -55,9 +55,6 @@ public class GameBoard implements Runnable {
 
 	public int getHeight() {
 		return height;
-	}
-
-	public void run() {
 	}
 	
 	public void placePlayers(int playerCount){
