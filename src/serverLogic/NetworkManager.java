@@ -5,26 +5,29 @@ import java.util.concurrent.Semaphore;
 import entities.*;
 import Networking.Message;
 import Networking.Network;
-import java.util.Collections;
+import java.util.*;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+
 //TODO: construct logic Manager with playerlist 
 //TODO: add mainLoop
 public class NetworkManager {
+	private boolean gameInProgress;
 	private Semaphore inboxLock;
 	private Network net;
 	private LogicManager logic;
-	private boolean gameInProgress;
 	private UserManager userManager;
 	
 	public NetworkManager() {
 		gameInProgress = false;
+		userManager = new UserManager();
+		logic = new LogicManager(userManager.getPlayerList(),gameInProgress);
 		// create userManger
 		userManager = new UserManager();
 		// create logic manager with empty playerlist that we both share
-		logic = new LogicManager(userManager.getCurrentPlayerList(),gameInProgress);
+		logic = new LogicManager(userManager.getPlayerList(),gameInProgress);
 		// create network listening with messageinobx semaphore
 		inboxLock = new Semaphore(0);
 		net = new Network(Network.SEVER_PORT_NO, inboxLock);
@@ -64,9 +67,15 @@ public class NetworkManager {
 	
 	//TODO tell logicManager to setGameBoard when we get start command
 	private void startCommand(String playerIP, int playerPort){
-		
-		// ???? logicManager.start()
+		// you must join game before starting
+		if(userManager.getAllUsers().size() == 0){
+			System.out.println("User attempted to start game before join");
+			return;
+		}
+		 logic.start();
+
 	}
+	
 	private void endGameCommand(String playerIP, int playerPort){
 		// remove player current playerlist
 	}
@@ -76,7 +85,10 @@ public class NetworkManager {
 	private void joinCommand(String playerIP, int playerPort){
 		if(gameInProgress){
 			try{
-				userManager.addPlayerToFuture(playerIP, playerPort);
+
+				userManager.addPlayerToFuture(playerIP,playerIP, playerPort);
+
+
 			}
 			catch(Exception E){System.out.println("Added same player to future twice");}
 		}else{
@@ -89,7 +101,13 @@ public class NetworkManager {
 	
 	private void specateCommand(String playerIp, int playerPort){
 		try{
-		userManager.addSpectator(playerIp, playerPort);
+
+		userManager.addSpectator(playerIp,playerIp, playerPort);
 		}catch(Exception E){System.out.println("added same player to specator twice");}
 	}
+
+
+
+	
 }
+

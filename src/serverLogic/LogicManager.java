@@ -42,7 +42,7 @@ public class LogicManager implements Runnable {
 	
 	public LogicManager(List<Player> playerList2, boolean gameState){
 		this.playerList = playerList2;
-		this.board = new GameBoard();
+		this.board = new GameBoard(playerList);
 		gameInProgress = gameState;
 	}
 	
@@ -89,9 +89,20 @@ public class LogicManager implements Runnable {
 		if(entity instanceof Bomb || entity instanceof Wall) { return false; }
 		else { return true; }
 	}
+	private boolean checkGameEnd(){
+		for(Player p: playerList){
+				if(p.isAlive())
+					return false;
+		}
+		return true;
+	}
 	
 	//TODO: init gameBoard with playerList setGameInProgress = true
-	public void Start(){
+
+	public void start(){
+		gameInProgress = true;
+		board = new GameBoard(playerList);
+
 		
 	}
 	//TODO: return gameboard as string so we can send to all players
@@ -134,6 +145,9 @@ public class LogicManager implements Runnable {
 						}
 					}
 				}
+					if(checkGameEnd()){
+						gameInProgress = false;
+					}
 			}		
 		}catch(Exception e){
 			e.printStackTrace();

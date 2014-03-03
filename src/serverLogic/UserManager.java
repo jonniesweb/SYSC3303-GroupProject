@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.*;
 
 import entities.Player;
 
@@ -16,6 +17,9 @@ public class UserManager {
 	HashMap<String, User> currentPlayerList, futurePlayerList, spectatorList;
 	// needed by logic Manager to iterate over all current players
 	private List<Player> playerList;
+
+	int MAX_PLAYERCOUNT;
+
 
 	public UserManager() {
 
@@ -30,7 +34,7 @@ public class UserManager {
 		PLAYER, SPECTATOR
 	}
 
-	public List<Player> getCurrentPlayerList() {
+	public List<Player> getPlayerList() {
 		return playerList;
 	}
 
@@ -41,12 +45,17 @@ public class UserManager {
 	 * @param port
 	 * @throws OverwroteUserInMapException
 	 */
-	public void addPlayerToCurrent(String uuid, String ip, int port)
-			throws OverwroteUserInMapException {
-		if (currentPlayerList.put(uuid, new User(uuid, ip, port)) != null) {
+
+	public void addPlayerToCurrent(String ip, int port)
+	throws OverwroteUserInMapException {
+		if(currentPlayerList.size() == MAX_PLAYERCOUNT)
+			addPlayerToFuture(ip,ip,port);
+		
+		if (currentPlayerList.put(ip, new User(ip,ip, port)) != null) {
 			throw new OverwroteUserInMapException();
+			}
 		}
-	}
+
 
 	/**
 	 * Adds a user to the futurePlayerList list ??? Possibly add player to
@@ -145,33 +154,32 @@ public class UserManager {
 		moveCurrentToFuture(user.uuid);
 	}
 
-	// TODO return all users so i can send them gameboard
+
+
+
 	/**
 	 * @deprecated use the other getter methods below since you can get
 	 *             currentPlayers, futurePlayers or spectators
 	 * @return
 	 */
-	public List<User> getAllUsers() {
-		return null;
-		// return all users so i can send them the game board
-	}
+
+
 	
-	public List<User> getCurrentPlayerList() {
+	public Collection<User> getCurrentPlayerList() {
 		return currentPlayerList.values();
 	}
 	
-	public List<User> getFuturePlayerList() {
+	public Collection<User> getFuturePlayerList() {
 		return futurePlayerList.values();
 	}
 	
-	public List<User> getSpectatorList() {
+	public Collection<User> getSpectatorList() {
 		return spectatorList.values();
 	}
 	
-	public List<User> getAllUsers() {
-		
+	public List<User> getAllUsers(){
+		return null;
 	}
-
 
 	class OverwroteUserInMapException extends Exception {
 	}

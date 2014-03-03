@@ -2,6 +2,9 @@ package serverLogic;
 
 import entities.Player;
 
+
+
+
 /**
  * Represents a user's network connection and Player Entity.
  * 
@@ -15,8 +18,10 @@ class User {
 	String ip;
 	int port;
 	Player player;
+	String uuid;
 
-	public User(String ip, int port) {
+	public User(String uid, String ip, int port) {
+		this.uuid = uid;
 		this.ip = ip;
 		this.port = port;
 	}
