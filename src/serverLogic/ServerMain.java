@@ -13,24 +13,14 @@ public class ServerMain {
 		
 		boolean running = true;
 		
-		Thread[] threads = new Thread[3];
+		Thread thread = new Thread(new NetworkManager());
 		
 		while(running){
-			Semaphore inboxLock = new Semaphore(0);
-			threads[0] = new Thread(new Network(8888,inboxLock), "Networking Main Thread");
-			//threads[1] = new Thread(new GameBoard(), "Gameboard thread");
-			threads[2] = new Thread(new Logger(), "Logging Thread");
-			
-			for (int i = 0; i < 3; i++){
-				threads[i].start();
-			}
-			
-			for(int i = 0; i < 3; i ++){
-				try{
-					threads[i].join();
-				} catch(Exception e){
-					e.printStackTrace();
-				}
+			try{
+				thread.start();
+				thread.join();
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 		}
 		///????/ who inits player positions when they are added??????
