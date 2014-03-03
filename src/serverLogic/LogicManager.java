@@ -35,8 +35,6 @@ public class LogicManager implements Runnable {
 	
 	private BlockingQueue<Message> commandQueue = new LinkedBlockingQueue<Message>();
 	
-	private List<Player> playerList;
-	
 	private GameBoard board;
 	
 	private NetworkManager networkManager;
