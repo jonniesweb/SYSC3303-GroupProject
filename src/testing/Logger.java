@@ -2,6 +2,7 @@ package testing;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 // TODO: add a queue for incoming items
 /*
@@ -17,32 +18,62 @@ import java.io.PrintWriter;
 public class Logger implements Runnable {
 	
 	PrintWriter out;
+	ArrayList<String> log;
+	
 	public Logger(){
+		log = new ArrayList<String>();
 		
 		try {
 			out = new PrintWriter("Log.txt");
+			
 		} 
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	//Every command player made
-	public void commandLog(String log){
-		out.println(log);
+	
+	/**
+	 * Accept message to be queued into log
+	 * 
+	 * @param command 
+	 */
+	public void acceptMessage(String command){
+		log.add(command);
+		
 	}
 	
-	//Board update
-	public void boardLog(char[][] board){
-		for(int row=0;row < board.length;row++){
-			for(int col=0;col < board[0].length;col++){
-				out.print(board[row][col]);
+	/**
+	 * Write each message in queue log into file
+	 * Remove message written
+	 * Break out of  loop if there is no more queue
+	 */
+	public void writeLog(){
+		while(true){
+			try{
+				out.println(log.get(0));
+				System.out.println(log.get(0));
 			}
-			out.println();
-		}
+			catch (IndexOutOfBoundsException e) {
+				break;
+			}
+			log.remove(0);
+		}	
 	}
 	
+	/**
+	 * If server ended and no log needed anymore
+	 * file will be closed
+	 */
+	public void endLog(){
+		out.close();
+	}
 
 	
-	public void run(){}
+	public void run(){
+		
+	}
+	
+	
+		
 	
 }
