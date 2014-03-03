@@ -36,14 +36,20 @@ public class LogicManager implements Runnable {
 	
 	private List<Player> playerList;
 	private boolean gameInProgress;
+	
 	private GameBoard board;
 	
+	private NetworkManager networkManager;
+	private UserManager userManager;
+	
+	private int playerCount;
 	
 	
-	public LogicManager(List<Player> playerList2, boolean gameState){
-		this.playerList = playerList2;
-		this.board = new GameBoard(playerList);
-		gameInProgress = gameState;
+	public LogicManager(UserManager uManager, NetworkManager nManager){
+		this.board = new GameBoard(uManager.getPlayerList());
+		networkManager = nManager;
+		userManager = uManager;
+		playerCount = (uManager.getPlayerList()).size();
 	}
 	
 	/**
@@ -89,6 +95,7 @@ public class LogicManager implements Runnable {
 		if(entity instanceof Bomb || entity instanceof Wall) { return false; }
 		else { return true; }
 	}
+	
 	private boolean checkGameEnd(){
 		for(Player p: playerList){
 				if(p.isAlive())
@@ -99,56 +106,58 @@ public class LogicManager implements Runnable {
 	
 	//TODO: init gameBoard with playerList setGameInProgress = true
 
+	/**
+	 * @deprecated
+	 */
 	public void start(){
 		gameInProgress = true;
 		board = new GameBoard(playerList);
-
-		
+	
 	}
-	//TODO: return gameboard as string so we can send to all players
-	public String getBoard(){
-		return null;
-	}
+	
 	/**
 	 * 
 	 */
 	public void run(){
 		String command;
 		String playerID;
-		Entity entity;
+		
 		try{
-			while(true){
-				if(gameInProgress){
-					command = commandQueue.take();
-					playerID = playerQueue.take();
-					System.out.println("Execute Command/PlayerID Pair - "+command+":"+playerID);
-					for(Player p: playerList){
-						if(p.getName().equals(playerID)){
-						
-							if(command.equals("UP")){
-								if (!safeMove(p.getPosX(), p.getPosY() + 1)){p.loseLife();}
-								else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveUp();}
-							}
-							else if(command.equals("DOWN")){
-								if (!safeMove(p.getPosX(), p.getPosY() - 1)){p.loseLife();}
-								else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveDown();}
-							}
-							else if(command.equals("LEFT")){
-								if (!safeMove(p.getPosX() - 1, p.getPosY())){p.loseLife();}
-								else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveLeft();}
-							}
-							else if(command.equals("RIGHT")){
-								if (!safeMove(p.getPosX() + 1, p.getPosY())){p.loseLife();}
-								else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveRight();}
-							}
-						//else if(command.equals("BOMB"))
+			while(playerCount > 0){
+				
+				command = commandQueue.take();
+				playerID = playerQueue.take();
+				
+				System.out.println("Execute Command/PlayerID Pair - "+command+":"+playerID);
+				
+				
+				//TODO: Replace Player with User
+				for(Player p: userManager.getPlayerList()){
+					if(p.getName().equals(playerID)){
+						if(command.equals("UP")){
+							if (!safeMove(p.getPosX(), p.getPosY() + 1)){p.loseLife();}
+							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveUp();}
 						}
+						else if(command.equals("DOWN")){
+							if (!safeMove(p.getPosX(), p.getPosY() - 1)){p.loseLife();}
+							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveDown();}
+						}
+						else if(command.equals("LEFT")){
+							if (!safeMove(p.getPosX() - 1, p.getPosY())){p.loseLife();}
+							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveLeft();}
+						}
+						else if(command.equals("RIGHT")){
+							if (!safeMove(p.getPosX() + 1, p.getPosY())){p.loseLife();}
+							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveRight();}
+						}
+						else if(command.equals("END_GAME")){
+							playerCount--;
+							
+						}
+						//else if(command.equals("BOMB"))
 					}
 				}
-					if(checkGameEnd()){
-						gameInProgress = false;
-					}
-			}		
+			}	
 		}catch(Exception e){
 			e.printStackTrace();
 		}
