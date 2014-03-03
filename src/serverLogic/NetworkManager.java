@@ -2,12 +2,10 @@ package serverLogic;
 
 
 import java.util.concurrent.Semaphore;
-import entities.*;
+
 import Networking.Message;
 import Networking.Network;
-import java.util.*;
-import java.util.Collections;
-import java.util.LinkedList;
+
 import java.util.List;
 
 
@@ -56,7 +54,7 @@ public class NetworkManager implements Runnable{
 			else if (readCommand(message).equals("SPECTATE_GAME")){
 				specateCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
-			else if (readCommand(message).equals("END_GAME") && gameInProgress){
+			else if (readCommand(message).equals("END_GAME") && !gameInProgress){
 				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
 			else {
@@ -122,7 +120,18 @@ public class NetworkManager implements Runnable{
 	
 	private void endGameCommand(String playerIP, int playerPort){
 		// remove player current playerlist
+		for(User u: userManager.getAllUsers()){
+			if(u.ip.equals(playerIP)){
+				//remove Users
+			}
+		}
 	}
+	
+	/**
+	 * 
+	 * @param playerIP
+	 * @param playerPort
+	 */
 	private void endSpectateCommand(String playerIP, int playerPort){
 		// remove player from spectate list
 	}
