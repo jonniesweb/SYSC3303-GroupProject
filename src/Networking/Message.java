@@ -24,25 +24,4 @@ public class Message {
 		datagram = new DatagramPacket(m.getBytes(), m.getBytes().length, ip,
 				packetPort);
 	}
-	
-	
-	public String getMessage(){
-		//return the message that was sent
-		
-		return "temp";
-	}
-	
-	public String getIP(){
-		//Somehow return the IP as a string
-		
-		return "temp";
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public int getPort(){
-		return packetPort;
-	}
 }

@@ -24,6 +24,8 @@ import entities.Wall;
 
 import gameLogic.GameBoard;
 
+import Networking.Message;
+
 /**
  * 
  * @author zachstoner
@@ -31,11 +33,7 @@ import gameLogic.GameBoard;
  */
 public class LogicManager implements Runnable {
 	
-	private BlockingQueue<String> commandQueue = new LinkedBlockingQueue<String>();
-	private BlockingQueue<String> playerQueue = new LinkedBlockingQueue<String>();
-	
-	private List<Player> playerList;
-	private boolean gameInProgress;
+	private BlockingQueue<Message> commandQueue = new LinkedBlockingQueue<Message>();
 	
 	private GameBoard board;
 	
@@ -46,7 +44,7 @@ public class LogicManager implements Runnable {
 	
 	
 	public LogicManager(UserManager uManager, NetworkManager nManager){
-		this.board = new GameBoard(uManager.getPlayerList());
+		this.board = new GameBoard(uManager);
 		networkManager = nManager;
 		userManager = uManager;
 		playerCount = (uManager.getPlayerList()).size();
@@ -57,12 +55,9 @@ public class LogicManager implements Runnable {
 	 * @param command
 	 * @param playerID
 	 */
-	public void execute(String command, String playerID){
+	public void execute(Message m){
 		try{
-			commandQueue.put(command);
-			playerQueue.put(playerID);
-			
-			
+			commandQueue.put(m);			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -96,50 +91,39 @@ public class LogicManager implements Runnable {
 		else { return true; }
 	}
 	
-	private boolean checkGameEnd(){
-		for(Player p: playerList){
-				if(p.isAlive())
-					return false;
-		}
-		return true;
-	}
-	
-	//TODO: init gameBoard with playerList setGameInProgress = true
-
-	/**
-	 * @deprecated
-	 */
-	public void start(){
-		gameInProgress = true;
-		board = new GameBoard(playerList);
-	
+	public String getBoard(){
+		return board.toString();
 	}
 	
 	/**
 	 * 
 	 */
 	public void run(){
+		Message m;
 		String command;
-		String playerID;
+		String playerIP;
+		Player p;
 		
 		try{
 			while(playerCount > 0){
 				
-				command = commandQueue.take();
-				playerID = playerQueue.take();
+				m = commandQueue.take();
 				
-				System.out.println("Execute Command/PlayerID Pair - "+command+":"+playerID);
+				command = new String(m.datagram.getData());
+				playerIP = m.datagram.getAddress().toString();
+				
+				System.out.println("Execute Command/PlayerID Pair - "+command+":"+playerIP);
 				
 				
-				//TODO: Replace Player with User
-				for(Player p: userManager.getPlayerList()){
-					if(p.getName().equals(playerID)){
+				for(User u: userManager.getCurrentPlayerList()){
+					p = u.player;
+					if(u.ip.equals(playerIP)){
 						if(command.equals("UP")){
 							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
 								p.loseLife();
 								if(!p.isAlive()){
 									playerCount--;
-									//Move from Current to Future
+									userManager.moveCurrentToFuture(u);
 								}
 							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveUp();}
@@ -149,7 +133,7 @@ public class LogicManager implements Runnable {
 								p.loseLife();
 								if(!p.isAlive()){
 									playerCount--;
-									//Move from Current to Future
+									userManager.moveCurrentToFuture(u);
 								}
 							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveDown();}
@@ -159,7 +143,7 @@ public class LogicManager implements Runnable {
 								p.loseLife();
 								if(!p.isAlive()){
 									playerCount--;
-									//Move from Current to Future
+									userManager.moveCurrentToFuture(u);
 								}
 							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveLeft();}
@@ -169,19 +153,23 @@ public class LogicManager implements Runnable {
 								p.loseLife();
 								if(!p.isAlive()){
 									playerCount--;
-									//Move from Current to Future
+									userManager.moveCurrentToFuture(u);
 								}
 							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveRight();}
 						}
 						else if(command.equals("END_GAME")){
 							playerCount--;
-							//Remove from Current
+							userManager.moveCurrentToFuture(u);
 						}
 						//else if(command.equals("BOMB"))
 					}
 				}
-			}	
+				networkManager.sendBoardToAllClients();
+			}
+			
+			networkManager.sendEndGameToAllClients();
+			//networkManager.sendMessage(board.getBoard(), )
 		}catch(Exception e){
 			e.printStackTrace();
 		}

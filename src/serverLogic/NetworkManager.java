@@ -7,6 +7,9 @@ import java.util.concurrent.Semaphore;
 import Networking.Message;
 import Networking.Network;
 
+import java.util.List;
+
+
 
 //TODO: construct logic Manager with playerlist 
 //TODO: add mainLoop
@@ -42,23 +45,23 @@ public class NetworkManager implements Runnable{
 			
 			message = readInbox();
 			
-			if (message.getMessage().equals("START_GAME")){
+			if (readCommand(message).equals("START_GAME")){
 				gameInProgress = true;
 				logic = new LogicManager(userManager, this);
 			}
 			
-			if (message.getMessage().equals("JOIN_GAME")){
-				joinCommand(message.getIP(), message.getPort());
+			if (readCommand(message).equals("JOIN_GAME")){
+				joinCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
-			else if (message.getMessage().equals("SPECTATE_GAME")){
-				specateCommand(message.getIP(), message.getPort());
+			else if (readCommand(message).equals("SPECTATE_GAME")){
+				specateCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
-			else if (message.getMessage().equals("END_GAME") && gameInProgress){
-				endGameCommand(message.getIP(), message.getPort());
+			else if (readCommand(message).equals("END_GAME") && !gameInProgress){
+				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
 			else {
 				if(gameInProgress)
-					logic.execute(message.getMessage(), message.getIP());
+					logic.execute(message);
 			}	
 		}
 		
@@ -78,11 +81,23 @@ public class NetworkManager implements Runnable{
 		return net.getMessage();
 	}
 	
+
 	/**
 	 * @deprecated
 	 */
 	private void sendBoardToAllClients() {
 		String board = "NULL";// = logic.getBoard();
+		List<User> users = userManager.getAllUsers();
+		for(int i=0; i< users.size(); i++){
+			String ip = users.get(i).getIp();
+			int port = users.get(i).getPort();
+			Message m = new Message(board,ip,port);
+			net.sendMessage(m);
+		}
+	}
+	
+	public void sendEndGameToAllClients(){
+		String board = "END_GAME";
 		List<User> users = userManager.getAllUsers();
 		for (int i = 0; i < users.size(); i++) {
 			String ip = users.get(i).getIp();
@@ -90,14 +105,16 @@ public class NetworkManager implements Runnable{
 			Message m = new Message(board, ip, port);
 			net.sendMessage(m);
 		}
+		gameInProgress = false;
 	}
 
 	private String readCommand(Message m) {
 		return new String(m.datagram.getData());
 	}
 	
-	// TODO tell logicManager to setGameBoard when we get start command
-	private void startCommand(String playerIP, int playerPort) {
+
+	//TODO tell logicManager to setGameBoard when we get start command
+	/*private void startCommand(String playerIP, int playerPort){
 		// you must join game before starting
 		if (userManager.getAllUsers().size() == 0) {
 			System.out.println("User attempted to start game before join");
@@ -107,11 +124,25 @@ public class NetworkManager implements Runnable{
 
 	}
 
-	private void endGameCommand(String playerIP, int playerPort) {
-		// remove player current playerlist
-	}
 
-	private void endSpectateCommand(String playerIP, int playerPort) {
+	}*/
+	
+	private void endGameCommand(String playerIP, int playerPort){
+		// remove player current playerlist
+		for(User u: userManager.getAllUsers()){
+			if(u.getIp().equals(playerIP)){
+				//remove Users
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param playerIP
+	 * @param playerPort
+	 */
+	private void endSpectateCommand(String playerIP, int playerPort){
+
 		// remove player from spectate list
 	}
 

@@ -15,7 +15,12 @@ import entities.Explosion;
 import entities.Player;
 import entities.PowerUp;
 import entities.Wall;
+
+import serverLogic.UserManager;
+
 import java.util.*;
+
+
 //TODO: gameboard should be init with a list of players
 public class GameBoard implements Runnable {
 
@@ -30,36 +35,14 @@ public class GameBoard implements Runnable {
 
 	Entity[] entitiesArray;
 
-	//TODO: gameboard is init with player list
-	public GameBoard(List<Player> playerList) {
-		this(3, 3);
-		// Testing
-		board = new Entity[][] { { new Entity(), new Player(), new Wall() },
-				{ new Door(), new Bomb(), new Explosion() },
-				{ new PowerUp(), new Enemy(), new Entity() } };
+	public GameBoard(UserManager uManager){
+		randomizeFloor(uManager.getCurrentPlayerList().size());
+		placePlayers(uManager.getCurrentPlayerList().size());
 	}
-
-	public GameBoard(int sizeX, int sizeY) {
-		this.board = new Entity[sizeX][sizeY];
-		this.width = sizeX;
-		this.height = sizeY;
-
-		// initialize TILES array
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[i].length; j++) {
-				board[i][j] = new Entity();
-			}
-		}
-
-		entitiesArray = new Entity[8];
-		entitiesArray[0] = new Player();
-		entitiesArray[1] = new Wall();
-		entitiesArray[2] = new Door();
-		entitiesArray[3] = new Bomb();
-		entitiesArray[4] = new Explosion();
-		entitiesArray[5] = new PowerUp();
-		entitiesArray[6] = new Enemy();
-		entitiesArray[7] = new Entity();
+	
+	public GameBoard(UserManager uManager, String filename){
+		generateFloor(filename);
+		placePlayers(uManager.getCurrentPlayerList().size());
 	}
 
 	public Entity[][] getBoard() {
@@ -76,6 +59,11 @@ public class GameBoard implements Runnable {
 
 	public void run() {
 	}
+	
+	public void placePlayers(int playerCount){
+		//TODO: the actual logic
+	}
+	
 	/**
 	 * Generate floor from prescribed file
 	 * 
