@@ -61,7 +61,7 @@ public class NetworkManager implements Runnable{
 			}
 			else {
 				if(gameInProgress)
-					logic.execute(message.getMessage(), message.getIP());
+					logic.execute(message);
 			}	
 		}
 		
@@ -100,7 +100,7 @@ public class NetworkManager implements Runnable{
 	}
 	
 	//TODO tell logicManager to setGameBoard when we get start command
-	private void startCommand(String playerIP, int playerPort){
+	/*private void startCommand(String playerIP, int playerPort){
 		// you must join game before starting
 		if(userManager.getAllUsers().size() == 0){
 			System.out.println("User attempted to start game before join");
@@ -108,7 +108,7 @@ public class NetworkManager implements Runnable{
 		}
 		 logic.start();
 
-	}
+	}*/
 	
 	private void endGameCommand(String playerIP, int playerPort){
 		// remove player current playerlist
