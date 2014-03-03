@@ -3,6 +3,10 @@ package serverLogic;
 // gameInpgress to true
 
 //TODO: add method to tell when game is over
+
+//TODO: init gameBoard with playerList setGameInProgress = true
+
+//TODO: return gameboard as string so we can send to all players
 import java.lang.String;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -33,6 +37,8 @@ public class LogicManager implements Runnable {
 	private List<Player> playerList;
 	private boolean gameInProgress;
 	private GameBoard board;
+	
+	
 	
 	public LogicManager(List<Player> playerList2, boolean gameState){
 		this.playerList = playerList2;
@@ -84,6 +90,14 @@ public class LogicManager implements Runnable {
 		else { return true; }
 	}
 	
+	//TODO: init gameBoard with playerList setGameInProgress = true
+	public void Start(){
+		
+	}
+	//TODO: return gameboard as string so we can send to all players
+	public String getBoard(){
+		return null;
+	}
 	/**
 	 * 
 	 */

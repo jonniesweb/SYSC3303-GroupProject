@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 //TODO: construct logic Manager with playerlist 
+//TODO: add mainLoop
 public class NetworkManager {
 	private Semaphore inboxLock;
 	private Network net;
@@ -45,12 +46,25 @@ public class NetworkManager {
 		}
 		return net.getMessage();
 	}
-
+	
+	private void sendBoardToAllClients(){
+		String board = logic.getBoard();
+		List<User> users = userManager.getAllUsers();
+		for(int i=0; i< users.size(); i++){
+			String ip = users.get(i).ip;
+			int port = users.get(i).port;
+			Message m = new Message(board,ip,port);
+			net.sendMessage(m);
+		}
+	}
+	
 	private String readCommand(Message m){
 		return new String( m.datagram.getData());
 	}
 	
+	//TODO tell logicManager to setGameBoard when we get start command
 	private void startCommand(String playerIP, int playerPort){
+		
 		// ???? logicManager.start()
 	}
 	private void endGameCommand(String playerIP, int playerPort){
@@ -72,6 +86,7 @@ public class NetworkManager {
 			catch(Exception E){System.out.println("Added same player to current twice");}
 		}
 	}
+	
 	private void specateCommand(String playerIp, int playerPort){
 		try{
 		userManager.addSpectator(playerIp, playerPort);
