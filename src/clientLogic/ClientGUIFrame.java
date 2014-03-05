@@ -23,8 +23,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import serverLogic.UserManager;
 import testing.TestDriver;
 
+
+// TODO: fix testing of client because it crashes
 public class ClientGUIFrame extends JFrame {
 
 	private int width;
@@ -105,18 +108,19 @@ public class ClientGUIFrame extends JFrame {
 	 * @return
 	 */
 	private static GameBoard testData() {
-		GameBoard board = new GameBoard(10, 10);
-		Random r = new Random();
-
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 10; j++) {
-				if (r.nextInt(10) < 7) {
-					board.getBoard()[i][j] = new Wall();
-				} else {
-					board.getBoard()[i][j] = new Entity();
-				}
-			}
-		}
+//		GameBoard board = new GameBoard(10, 10);
+		GameBoard board = new GameBoard(new UserManager(2));
+//		Random r = new Random();
+//
+//		for (int i = 0; i < 10; i++) {
+//			for (int j = 0; j < 10; j++) {
+//				if (r.nextInt(10) < 7) {
+//					board.getBoard()[i][j] = new Wall();
+//				} else {
+//					board.getBoard()[i][j] = new Entity();
+//				}
+//			}
+//		}
 
 		return board;
 	}
