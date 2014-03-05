@@ -50,7 +50,7 @@ public class GameBoard {
 	 * @param filename
 	 */
 	public GameBoard(UserManager uManager, String filename){
-		generateFloor(filename);
+		generateFloor(filename);	
 		placePlayers();
 		userManager = uManager;
 	}

@@ -4,9 +4,6 @@ import testing.TestDriver;
 
 public class ClientMain {
 
-	private static final int SIZE_X = 3;
-	private static final int SIZE_Y = 3;
-
 	public static void main(String[] args) {
 		System.out.println("The Client is Running");
 
