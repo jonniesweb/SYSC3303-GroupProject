@@ -10,7 +10,7 @@ import entities.Player;
  * could create a conflict if two users were on the same IP address.
  * 
  */
-class User {
+public class User {
 	private String ip;
 	private int port;
 	private Player player;

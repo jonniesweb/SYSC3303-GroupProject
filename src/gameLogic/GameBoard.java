@@ -7,18 +7,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 
-import entities.Bomb;
-import entities.Door;
-import entities.Enemy;
 import entities.Entity;
-import entities.Explosion;
 import entities.Player;
-import entities.PowerUp;
 import entities.Wall;
+//import entities.Bomb;
+//import entities.Door;
+//import entities.Enemy;
+//import entities.Explosion;
+//import entities.PowerUp;
 
 import serverLogic.UserManager;
-
-import java.util.*;
+import serverLogic.User;
 
 
 //TODO: gameboard should be init with a list of players
@@ -32,33 +31,76 @@ public class GameBoard {
 	private Entity[][] board;
 	private int width;
 	private int height;
+	
+	UserManager userManager;
 
-	Entity[] entitiesArray;
-
+	/**
+	 * 
+	 * @param uManager
+	 */
 	public GameBoard(UserManager uManager){
 		randomizeFloor(uManager.getCurrentPlayerList().size());
-		placePlayers(uManager.getCurrentPlayerList().size());
+		placePlayers();
+		userManager = uManager;
 	}
 	
+	/**
+	 * 
+	 * @param uManager
+	 * @param filename
+	 */
 	public GameBoard(UserManager uManager, String filename){
 		generateFloor(filename);
-		placePlayers(uManager.getCurrentPlayerList().size());
+		placePlayers();
+		userManager = uManager;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Entity[][] getBoard() {
 		return board;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getWidth() {
 		return width;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getHeight() {
 		return height;
 	}
 	
-	public void placePlayers(int playerCount){
-		//TODO: the actual logic
+	/**
+	 * 
+	 */
+	public void placePlayers(){
+		
+		int i = 0;
+		int x;
+		int y;
+		
+		for(User u: userManager.getCurrentPlayerList()){
+			if( i < 2){
+				x = 0;
+				y = (i%2)*height;
+			} else {
+				x = width;
+				y = (i%2)*height;
+			}
+			i++;
+			board[x][y] = u.getPlayer();
+			u.getPlayer().setPos(x, y);
+		}
+		
 	}
 	
 	/**
@@ -72,7 +114,6 @@ public class GameBoard {
 		try {
 			fileReader = new FileReader(new File(filename));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -93,13 +134,11 @@ public class GameBoard {
 
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			br.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -152,12 +191,15 @@ public class GameBoard {
 	 * eg. log into file the board view in string
 	 */
 	public String toString() {
+		int playerCount = 0;
 		String s = "";
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (board[i][j] instanceof Wall)
 					s += "W";
-				else
+				else if (board[i][j] instanceof Player)
+					s += playerCount++;
+				else 
 					s += ".";
 			}
 			s += "\n";

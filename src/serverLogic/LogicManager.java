@@ -1,26 +1,17 @@
 package serverLogic;
-//TODO: add start method that resets gameBoard with all players in player List and sets
-// gameInpgress to true
 
-//TODO: add method to tell when game is over
-
-//TODO: init gameBoard with playerList setGameInProgress = true
-
-//TODO: return gameboard as string so we can send to all players
 import java.lang.String;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.List;
-import java.util.LinkedList;
 
 import entities.Entity;
 import entities.Bomb;
-import entities.Door;
 import entities.Enemy;
 import entities.Explosion;
 import entities.Player;
-import entities.PowerUp;
 import entities.Wall;
+//import entities.Door;
+//import entities.PowerUp;
 
 import testing.Logger;
 
@@ -46,7 +37,12 @@ public class LogicManager implements Runnable {
 	
 	private Logger log;
 	
-	
+	/**
+	 * 
+	 * @param uManager
+	 * @param l
+	 * @param nManager
+	 */
 	public LogicManager(UserManager uManager, Logger l, NetworkManager nManager){
 		this.board = new GameBoard(uManager);
 		this.networkManager = nManager;
@@ -96,6 +92,10 @@ public class LogicManager implements Runnable {
 		else { return true; }
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getBoard(){
 		return board.toString();
 	}
