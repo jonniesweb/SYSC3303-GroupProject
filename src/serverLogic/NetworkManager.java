@@ -9,12 +9,13 @@ import Networking.Network;
 
 import testing.Logger;
 
-import java.util.List;
-
 
 
 //TODO: construct logic Manager with playerlist 
 //TODO: add mainLoop
+/**
+ * 
+ */
 public class NetworkManager implements Runnable{
 	private boolean gameInProgress;
 	private Semaphore inboxLock;
@@ -24,6 +25,9 @@ public class NetworkManager implements Runnable{
 	private Logger log;
 	private boolean running;
 	
+	/**
+	 * 
+	 */
 	public NetworkManager() {
 		gameInProgress = false;
 		
@@ -31,7 +35,6 @@ public class NetworkManager implements Runnable{
 		net = new Network(Network.SEVER_PORT_NO, inboxLock);
 		
 		userManager = new UserManager();
-
 	}
 	
 	/**
@@ -85,9 +88,8 @@ public class NetworkManager implements Runnable{
 		return net.getMessage();
 	}
 	
-
 	/**
-	 * @deprecated
+	 * 
 	 */
 	public void sendBoardToAllClients() {
 		String board = "NULL";// = logic.getBoard();
@@ -100,6 +102,9 @@ public class NetworkManager implements Runnable{
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void sendEndGameToAllClients(){
 		String board = "END_GAME";
 		List<User> users = userManager.getAllUsers();
@@ -114,10 +119,20 @@ public class NetworkManager implements Runnable{
 		
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
 	private String readCommand(Message m) {
 		return new String(m.datagram.getData());
 	}
 	
+	/**
+	 * 
+	 * @param playerIP
+	 * @param playerPort
+	 */
 	private void endGameCommand(String playerIP, int playerPort){
 		// remove player current playerlist
 		for(User u: userManager.getAllUsers()){
@@ -126,17 +141,12 @@ public class NetworkManager implements Runnable{
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param playerIP
 	 * @param playerPort
 	 */
-	private void endSpectateCommand(String playerIP, int playerPort){
-
-		// remove player from spectate list
-	}
-
 	private void joinCommand(String playerIP, int playerPort) {
 		if (gameInProgress) {
 			try {
@@ -155,6 +165,11 @@ public class NetworkManager implements Runnable{
 		}
 	}
 	
+	/**
+	 * 
+	 * @param playerIp
+	 * @param playerPort
+	 */
 	private void specateCommand(String playerIp, int playerPort) {
 		try {
 

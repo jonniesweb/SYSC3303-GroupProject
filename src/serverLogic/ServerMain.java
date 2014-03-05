@@ -1,13 +1,16 @@
 package serverLogic;
-import entities.Player;
-import Networking.*;
-import gameLogic.*;
-import testing.Logger;
-import java.util.concurrent.Semaphore;
 
-
+/**
+ * 
+ * 
+ *
+ */
 public class ServerMain {
 
+	/**
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
@@ -24,6 +27,9 @@ public class ServerMain {
 			}
 		}
 		///????/ who inits player positions when they are added??????
+		//		Gameboard will init them when it places them into the board
+		
+		
 		// Network THREAD
 		//
 		// Loop
