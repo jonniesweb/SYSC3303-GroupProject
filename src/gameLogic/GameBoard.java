@@ -32,27 +32,25 @@ public class GameBoard {
 	private int width;
 	private int height;
 	
-	UserManager userManager;
+	//UserManager userManager;
 
 	/**
 	 * 
-	 * @param uManager
+	 * 
 	 */
-	public GameBoard(UserManager uManager){
-		randomizeFloor(uManager.getCurrentPlayerList().size());
-		placePlayers();
-		userManager = uManager;
+	public GameBoard(){
+		
 	}
 	
 	/**
 	 * 
-	 * @param uManager
+	 * 
 	 * @param filename
 	 */
-	public GameBoard(UserManager uManager, String filename){
+	public GameBoard(String filename){
 		generateFloor(filename);	
 		placePlayers();
-		userManager = uManager;
+		
 	}
 
 	/**
