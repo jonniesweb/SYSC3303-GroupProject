@@ -41,7 +41,7 @@ public class Network extends Thread {
 	
 	public Message getMessage(){
 		if(hasMessage())
-			return inbox.get(0);
+			return inbox.remove(0);
 		else{
 			System.out.println("Error empty inbox returning null");
 			return null;
@@ -87,7 +87,8 @@ public class Network extends Thread {
 			Runnable r1 = new Runnable(){
 				public void run(){
 					Message m1 = new Message(receivePacket);
-					System.out.println("Got packket");
+					String command = new String(receivePacket.getData());
+					System.out.println("Got packket"+ command);
 					inbox.add(m1);
 					inboxLock.release(1);
 				}

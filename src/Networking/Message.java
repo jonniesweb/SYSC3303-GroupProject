@@ -7,6 +7,7 @@ public class Message {
 	public DatagramPacket datagram;
 	public InetAddress ip;
 	public int packetPort;
+	public long time;
 
 	public Message(DatagramPacket p) {
 		datagram = p;
@@ -14,7 +15,8 @@ public class Message {
 		packetPort = p.getPort();
 	}
 	
-	public Message(String m, String hostName, int p) {
+	public Message(String m, String hostName, int p,long t) {
+		this.time = t;
 		this.packetPort = p;
 		try {
 			ip = InetAddress.getByName(hostName);

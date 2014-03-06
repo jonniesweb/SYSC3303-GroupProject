@@ -45,6 +45,7 @@ public class LogicManager implements Runnable {
 	 */
 	public LogicManager(UserManager uManager){
 		// initialize board
+		gameInProgress = false;
 		this.board = new GameBoard();
 		placePlayers(board, uManager);
 		this.userManager = uManager;
@@ -148,6 +149,7 @@ public class LogicManager implements Runnable {
 	 * 
 	 */
 	public void run(){
+		System.out.println("logic Manager started");
 		Message m;
 		String command;
 		String uuid;
@@ -157,6 +159,7 @@ public class LogicManager implements Runnable {
 			while(playerCount > 0){
 				
 				m = commandQueue.take();
+				System.out.println("got command in logic manager");
 				
 				command = new String(m.datagram.getData());
 				uuid = m.datagram.getAddress().toString() + m.datagram.getPort();

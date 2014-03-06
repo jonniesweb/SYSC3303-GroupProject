@@ -57,7 +57,7 @@ public class TestDriver implements Runnable {
 		 * send list of test messages to server
 		 */
 		for (String command : list) {
-			net.sendMessage(new Message(command,serverIp,serverPort));
+			net.sendMessage(new Message(command,serverIp,serverPort,System.nanoTime()));
 		}
 	}
 
