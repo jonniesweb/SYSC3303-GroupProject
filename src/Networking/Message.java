@@ -5,6 +5,7 @@ import java.net.InetAddress;
 
 public class Message {
 	public DatagramPacket datagram;
+	public String Message;
 	public InetAddress ip;
 	public int packetPort;
 	public long time;
