@@ -26,7 +26,7 @@ public class ServerMain {
 		
 		userManager = new UserManager(NUM_PLAYERS);
 		logger = new Logger();
-		logicManager = new LogicManager(userManager, logger);
+		logicManager = new LogicManager(userManager);
 		networkManager = new NetworkManager(logicManager);
 		logicManager.setNetworkManager(networkManager);
 	}
@@ -36,6 +36,7 @@ public class ServerMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		new ServerMain();
 		// TODO Auto-generated method stub
 		
 		
