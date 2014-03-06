@@ -17,7 +17,7 @@ import testing.Logger;
  * 
  */
 public class NetworkManager implements Runnable{
-	private boolean gameInProgress;
+	//private boolean gameInProgress;
 	private Semaphore inboxLock;
 	private Network net;
 	private LogicManager logic;
@@ -29,7 +29,7 @@ public class NetworkManager implements Runnable{
 	 * 
 	 */
 	public NetworkManager() {
-		gameInProgress = false;
+		logic.setGameInProgress(false);
 		
 		inboxLock = new Semaphore(0);
 		net = new Network(Network.SEVER_PORT_NO, inboxLock);
@@ -55,9 +55,9 @@ public class NetworkManager implements Runnable{
 			
 			// should join game before starting game
 			if (readCommand(message).equals("START_GAME")){
-				if(!gameInProgress){
-					if(!(userManager.getCurrentPlayerList().size()== 0)){
-						gameInProgress = true;
+				if(!logic.getGameInProgress()){
+					if(userManager.getCurrentPlayerList().size()> 0){
+						logic.setGameInProgress(true);
 						logic = new LogicManager(userManager, log, this);
 					}else{
 						System.out.println("attempted to join before start");
@@ -70,11 +70,11 @@ public class NetworkManager implements Runnable{
 			else if (readCommand(message).equals("SPECTATE_GAME")){
 				specateCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
-			else if (readCommand(message).equals("END_GAME") && !gameInProgress){
+			else if (readCommand(message).equals("END_GAME") && !logic.getGameInProgress()){
 				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
 			else {
-				if(gameInProgress)
+				if(logic.getGameInProgress())
 					logic.execute(message);
 			}	
 		}	
@@ -119,7 +119,7 @@ public class NetworkManager implements Runnable{
 			Message m = new Message(endGame, ip, port);
 			net.sendMessage(m);
 		}
-		gameInProgress = false;
+		logic.setGameInProgress(false);
 		log.writeLog();
 		
 	}
@@ -155,7 +155,7 @@ public class NetworkManager implements Runnable{
 	 * @param playerPort
 	 */
 	private void joinCommand(String playerIP, int playerPort) {
-		if (gameInProgress) {
+		if (logic.getGameInProgress()) {
 			try {
 
 				userManager.addPlayerToFuture(playerIP, playerPort);
