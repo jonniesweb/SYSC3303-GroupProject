@@ -43,14 +43,13 @@ public class LogicManager implements Runnable {
 	 * @param l
 	 * @param nManager
 	 */
-	public LogicManager(UserManager uManager, Logger l){
+	public LogicManager(UserManager uManager){
 		// initialize board
 		this.board = new GameBoard();
 		placePlayers(board, uManager);
 		this.userManager = uManager;
 		this.playerCount = uManager.getCurrentPlayerList().size();
-		this.log = l;
-		// start the run method
+
 	}
 	
 	/**
@@ -180,6 +179,7 @@ public class LogicManager implements Runnable {
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveUp();
 									board.set((Entity)p,p.getPosX(),p.getPosY());
+									Logger.acceptMessage(u.getUUID() + " move UP");
 								}
 						}
 						else if(command.equals("DOWN")){
@@ -188,12 +188,14 @@ public class LogicManager implements Runnable {
 								if(!p.isAlive()){
 									playerCount--;
 									userManager.moveCurrentToFuture(u);
+									
 								}
 							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveDown();
 									board.set((Entity)p,p.getPosX(),p.getPosY());
+									Logger.acceptMessage(u.getUUID() + " move DOWN");
 									
 								}
 						}
@@ -209,6 +211,7 @@ public class LogicManager implements Runnable {
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveLeft();
 									board.set((Entity)p,p.getPosX(),p.getPosY());
+									Logger.acceptMessage(u.getUUID() + " move LEFT");
 								}
 						}
 						else if(command.equals("RIGHT")){
@@ -223,6 +226,7 @@ public class LogicManager implements Runnable {
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveRight();
 									board.set((Entity)p,p.getPosX(),p.getPosY());
+									Logger.acceptMessage(u.getUUID() + " move RIGHT");
 								}
 						}
 						else if(command.equals("END_GAME")){
@@ -238,6 +242,8 @@ public class LogicManager implements Runnable {
 			}
 			
 			networkManager.sendEndGameToAllClients();
+			Logger.writeLog();
+			Logger.endLog();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

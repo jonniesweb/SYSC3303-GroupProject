@@ -26,7 +26,7 @@ public class ServerMain {
 		
 		userManager = new UserManager(NUM_PLAYERS);
 		logger = new Logger();
-		logicManager = new LogicManager(userManager, logger);
+		logicManager = new LogicManager(userManager);
 		networkManager = new NetworkManager(logicManager);
 		logicManager.setNetworkManager(networkManager);
 	}
@@ -37,7 +37,7 @@ public class ServerMain {
 	 */
 	public static void main(String[] args) {
 		new ServerMain();
-		
+
 		
 		///????/ who inits player positions when they are added??????
 		//		Gameboard will init them when it places them into the board
