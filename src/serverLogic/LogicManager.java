@@ -51,7 +51,6 @@ public class LogicManager implements Runnable {
 		this.playerCount = uManager.getCurrentPlayerList().size();
 		this.log = l;
 		// start the run method
-		new Thread(this).start();
 	}
 	
 	/**
@@ -142,6 +141,7 @@ public class LogicManager implements Runnable {
 	}
 	public void setNetworkManager(NetworkManager m){
 		this.networkManager = m;
+		new Thread(this).start();
 	}
 	
 	

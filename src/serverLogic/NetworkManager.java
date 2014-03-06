@@ -37,6 +37,8 @@ public class NetworkManager implements Runnable{
 		net = new Network(Network.SEVER_PORT_NO, inboxLock);
 		
 		userManager = new UserManager();
+		log = new Logger();
+		new Thread(this).start();
 	}
 	
 	/**
