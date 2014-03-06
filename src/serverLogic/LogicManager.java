@@ -175,7 +175,11 @@ public class LogicManager implements Runnable {
 									userManager.moveCurrentToFuture(u);
 								}
 							}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveUp();}
+							else if (validMove(p.getPosX(), p.getPosY() + 1)){
+									board.remove(p.getPosX(), p.getPosY());
+									p.moveUp();
+									board.set((Entity)p,p.getPosX(),p.getPosY());
+								}
 						}
 						else if(command.equals("DOWN")){
 							if (!safeMove(p.getPosX(), p.getPosY() - 1)){
@@ -185,7 +189,12 @@ public class LogicManager implements Runnable {
 									userManager.moveCurrentToFuture(u);
 								}
 							}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveDown();}
+							else if (validMove(p.getPosX(), p.getPosY() + 1)){
+									board.remove(p.getPosX(), p.getPosY());
+									p.moveDown();
+									board.set((Entity)p,p.getPosX(),p.getPosY());
+									
+								}
 						}
 						else if(command.equals("LEFT")){
 							if (!safeMove(p.getPosX() - 1, p.getPosY())){
@@ -195,7 +204,11 @@ public class LogicManager implements Runnable {
 									userManager.moveCurrentToFuture(u);
 								}
 							}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveLeft();}
+							else if (validMove(p.getPosX(), p.getPosY() + 1)){
+									board.remove(p.getPosX(), p.getPosY());
+									p.moveLeft();
+									board.set((Entity)p,p.getPosX(),p.getPosY());
+								}
 						}
 						else if(command.equals("RIGHT")){
 							if (!safeMove(p.getPosX() + 1, p.getPosY())){
@@ -205,7 +218,11 @@ public class LogicManager implements Runnable {
 									userManager.moveCurrentToFuture(u);
 								}
 							}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){p.moveRight();}
+							else if (validMove(p.getPosX(), p.getPosY() + 1)){
+									board.remove(p.getPosX(), p.getPosY());
+									p.moveRight();
+									board.set((Entity)p,p.getPosX(),p.getPosY());
+								}
 						}
 						else if(command.equals("END_GAME")){
 							playerCount--;
@@ -214,6 +231,7 @@ public class LogicManager implements Runnable {
 						//else if(command.equals("BOMB"))
 					}
 				}
+				//board.update();
 				networkManager.sendBoardToAllClients(board.toString());
 				log.acceptMessage(board.toString());
 			}

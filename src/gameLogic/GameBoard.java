@@ -165,6 +165,9 @@ public class GameBoard {
 		board[x][y] = entity;
 		return previousEntity;
 	}
+	public void remove(int x, int y){
+		board[x][y]= new Entity(x,y);
+	}
 	/**
 	 * For testing purposes
 	 * eg. log into file the board view in string
