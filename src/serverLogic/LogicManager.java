@@ -14,9 +14,7 @@ import entities.Wall;
 //import entities.PowerUp;
 
 import testing.Logger;
-
 import gameLogic.GameBoard;
-
 import Networking.Message;
 
 /**
@@ -73,7 +71,7 @@ public class LogicManager implements Runnable {
 	 * @return
 	 */
 	private boolean safeMove(int x, int y){
-		Entity entity = board.getEntityAt(x,y);
+		Entity entity = board.get(x,y);
 		if(entity instanceof Enemy || entity instanceof Explosion || entity instanceof Player){
 			if (entity instanceof Player){
 				((Player) entity).loseLife();
@@ -89,7 +87,7 @@ public class LogicManager implements Runnable {
 	 * @return
 	 */
 	private boolean validMove(int x, int y){
-		Entity entity = board.getEntityAt(x,y);
+		Entity entity = board.get(x,y);
 		if(entity instanceof Bomb || entity instanceof Wall) { return false; }
 		else { return true; }
 	}
@@ -100,6 +98,32 @@ public class LogicManager implements Runnable {
 	 */
 	public String getBoard(){
 		return board.toString();
+	}
+	
+	/**
+	 * Places the currently playing players from gameManager to the GameBoard
+	 */
+	public static void placePlayers(GameBoard board, UserManager users) {
+
+		// TODO: check bounds on placing player at x,y so it's not placing out of bounds
+		
+		int i = 0;
+		int x;
+		int y;
+
+		for (User u : users.getCurrentPlayerList()) {
+			if (i < 2) {
+				x = 0;
+				y = (i % 2) * board.getHeight();
+			} else {
+				x = board.getWidth();
+				y = (i % 2) * board.getHeight();
+			}
+			i++;
+			board.set(u.getPlayer(), x, y);
+			u.getPlayer().setPos(x, y);
+		}
+
 	}
 	
 	/**
