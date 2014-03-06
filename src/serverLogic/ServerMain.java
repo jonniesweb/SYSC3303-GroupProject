@@ -23,10 +23,11 @@ public class ServerMain {
 	public ServerMain() {
 		
 		// initialize all server components
-		networkManager = new NetworkManager();
+		
 		userManager = new UserManager(NUM_PLAYERS);
 		logger = new Logger();
 		logicManager = new LogicManager(userManager, logger, networkManager);
+		networkManager = new NetworkManager(logicManager);
 	}
 
 	/**
