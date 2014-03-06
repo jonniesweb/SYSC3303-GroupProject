@@ -80,8 +80,9 @@ public class GameBoard {
 	}
 	
 	/**
-	 * 
-	 */
+	 * @deprecated Use the equivalent method from LogicManager since this class
+	 *             shouldn't know about UserManager!
+	 */ 
 	public void placePlayers(){
 		
 		int i = 0;
