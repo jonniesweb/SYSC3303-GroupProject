@@ -108,7 +108,7 @@ public class LogicManager implements Runnable {
 	/**
 	 * Places the currently playing players from gameManager to the GameBoard
 	 */
-	public static void placePlayers(GameBoard board, UserManager users) {
+	private static void placePlayers(GameBoard board, UserManager users) {
 
 		// TODO: check bounds on placing player at x,y so it's not placing out of bounds
 		
