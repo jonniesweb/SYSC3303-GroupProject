@@ -58,6 +58,7 @@ public class NetworkManager implements Runnable{
 				if(!gameInProgress){
 					if(!(userManager.getCurrentPlayerList().size()== 0)){
 						gameInProgress = true;
+						// XXX: network manager should never create a LogicManager
 						logic = new LogicManager(userManager, log, this);
 					}else{
 						System.out.println("attempted to join before start");
