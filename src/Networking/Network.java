@@ -17,7 +17,7 @@ public class Network extends Thread {
 	private ExecutorService pool;
 	private List<Message> inbox;
 	public static final int SEVER_PORT_NO = 8888;
-	public static final int CLIENT_PORT_NO = 8887;
+	public static final int CLIENT_PORT_NO = 8880;
 	int port;
 	private Semaphore inboxLock;
 
@@ -87,6 +87,7 @@ public class Network extends Thread {
 			Runnable r1 = new Runnable(){
 				public void run(){
 					Message m1 = new Message(receivePacket);
+					System.out.println("Got packket");
 					inbox.add(m1);
 					inboxLock.release(1);
 				}

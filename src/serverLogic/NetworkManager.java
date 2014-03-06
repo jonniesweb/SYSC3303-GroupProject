@@ -38,6 +38,8 @@ public class NetworkManager implements Runnable{
 		net = new Network(Network.SEVER_PORT_NO, inboxLock);
 		
 		userManager = new UserManager();
+		log = new Logger();
+		new Thread(this).start();
 	}
 	
 	/**
@@ -54,14 +56,15 @@ public class NetworkManager implements Runnable{
 		while(running){
 			
 			message = readInbox();
-			log.acceptMessage(new String(message.datagram.getData()));
-			
+			//log.acceptMessage(new String(message.datagram.getData()));
+			Logger.acceptMessage("Read data from inbox - " + new String(message.datagram.getData()) + "- from " + message.ip);			
 			// should join game before starting game
 			if (readCommand(message).equals("START_GAME")){
 
 				if(!logic.getGameInProgress()){
 					if(userManager.getCurrentPlayerList().size()> 0){
 						logic.setGameInProgress(true);
+						
 						// XXX: network manager should never create a LogicManager
 						//logic = new LogicManager(userManager, log, this);
 					}else{
@@ -73,7 +76,7 @@ public class NetworkManager implements Runnable{
 				joinCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
 			else if (readCommand(message).equals("SPECTATE_GAME")){
-				specateCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
+				spectate(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
 			else if (readCommand(message).equals("END_GAME") && !logic.getGameInProgress()){
 				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
@@ -149,7 +152,10 @@ public class NetworkManager implements Runnable{
 			if(u.getIp().equals(playerIP)){
 				try{
 				userManager.moveCurrentToFuture(u.getUUID());
-				}catch(Exception e){e.printStackTrace();}
+				Logger.acceptMessage("Player from " + playerIP + "port : "+ playerPort + " END THE GAME");
+				}catch(Exception e){
+					e.printStackTrace();
+					}
 			}
 		}
 	}
@@ -164,6 +170,7 @@ public class NetworkManager implements Runnable{
 			try {
 
 				userManager.addPlayerToFuture(playerIP, playerPort);
+				Logger.acceptMessage("Player from " + playerIP + "port : "+ playerPort + " JOIN GAME");
 
 			} catch (Exception E) {
 				System.out.println("Added same player to future twice");
@@ -179,13 +186,14 @@ public class NetworkManager implements Runnable{
 	
 	/**
 	 * 
-	 * @param playerIp
+	 * @param playerIP
 	 * @param playerPort
 	 */
-	private void specateCommand(String playerIp, int playerPort) {
+	private void spectate(String playerIP, int playerPort) {
 		try {
 
-			userManager.addSpectator(playerIp, playerPort);
+			userManager.addSpectator(playerIP, playerPort);
+			Logger.acceptMessage("Player from " + playerIP + "port : "+ playerPort + " SPECTATE GAME");
 		} catch (Exception E) {
 			System.out.println("added same player to specator twice");
 		}

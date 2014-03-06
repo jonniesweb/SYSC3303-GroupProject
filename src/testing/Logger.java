@@ -17,8 +17,8 @@ import java.util.ArrayList;
  */
 public class Logger{
 	
-	PrintWriter out;
-	ArrayList<String> log;
+	static PrintWriter out;
+	static ArrayList<String> log;
 	
 	public Logger(){
 		log = new ArrayList<String>();
@@ -37,7 +37,7 @@ public class Logger{
 	 * 
 	 * @param command 
 	 */
-	public void acceptMessage(String command){
+	public static void acceptMessage(String command){
 		log.add(command);
 		
 	}
@@ -47,7 +47,7 @@ public class Logger{
 	 * Remove message written
 	 * Break out of  loop if there is no more queue
 	 */
-	public void writeLog(){
+	public static void writeLog(){
 		while(true){
 			try{
 				out.println(log.get(0));
@@ -64,7 +64,7 @@ public class Logger{
 	 * If server ended and no log needed anymore
 	 * file will be closed
 	 */
-	public void endLog(){
+	public static void endLog(){
 		out.close();
 	}
 		
