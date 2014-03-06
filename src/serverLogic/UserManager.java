@@ -8,7 +8,6 @@ import java.util.List;
 
 import entities.Player;
 
-// TODO: when adding player to current hashmap add them to playerList (used by logicManager)
 public class UserManager {
 
 	private HashMap<String, User> currentPlayerList, futurePlayerList,
@@ -34,15 +33,6 @@ public class UserManager {
 
 	public enum Type {
 		PLAYER, SPECTATOR
-	}
-
-	/**
-	 * @deprecated use getCurrentPlayerList(), getFuturePlayerList(),
-	 *             getSpectatorList() instead
-	 * @return
-	 */
-	public List<Player> getPlayerList() {
-		return playerList;
 	}
 
 	/**
