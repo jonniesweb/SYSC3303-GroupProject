@@ -1,19 +1,14 @@
 package serverLogic;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import entities.Player;
-
 public class UserManager {
 
 	private HashMap<String, User> currentPlayerList, futurePlayerList,
-			spectatorList;
-	// needed by logic Manager to iterate over all current players
-	private List<Player> playerList;
+			spectatorList, newUsers;
 
 	public static int MAX_PLAYERCOUNT = 2;
 
@@ -25,14 +20,25 @@ public class UserManager {
 	
 	public UserManager(int numberOfPlayers) {
 		// define maps that track all users connected to server
-		playerList = Collections.synchronizedList(new LinkedList<Player>());
 		currentPlayerList = new HashMap<String, User>(numberOfPlayers);
 		futurePlayerList = new HashMap<String, User>(numberOfPlayers);
 		spectatorList = new HashMap<String, User>(numberOfPlayers);
+		newUsers = new HashMap<String, User>(numberOfPlayers);
 	}
 
 	public enum Type {
 		PLAYER, SPECTATOR
+	}
+	
+	/**
+	 * Should be called by NetworkManager to add a newly connected user to the
+	 * game. LogicManager then should get a notification to take the user and
+	 * either put it in current or future.
+	 * @param ip
+	 * @param port
+	 */
+	public void addNewPlayer(String ip, int port) {
+		newUsers.put(ip + port, new User(ip+port, ip, port));
 	}
 
 	/**

@@ -13,6 +13,7 @@ import testing.Logger;
 
 //TODO: construct logic Manager with playerlist 
 //TODO: add mainLoop
+//TODO: when a new user joins, add user to Usermanager.addNewPlayer() then call LogicManager.notifyNewPlayer() or an equivalent method.
 /**
  * 
  */
@@ -22,7 +23,6 @@ public class NetworkManager implements Runnable{
 	private Network net;
 	private LogicManager logic;
 	private UserManager userManager;
-	private Logger log;
 	private boolean running;
 	
 	/**
@@ -37,7 +37,6 @@ public class NetworkManager implements Runnable{
 		net = new Network(Network.SEVER_PORT_NO, inboxLock);
 		
 		userManager = new UserManager();
-		log = new Logger();
 		new Thread(this).start();
 	}
 	
@@ -49,8 +48,6 @@ public class NetworkManager implements Runnable{
 		new Thread(net).start();
 		running = true;
 		Message message;
-		
-		log = new Logger();
 		
 		while(running){
 			
@@ -130,7 +127,6 @@ public class NetworkManager implements Runnable{
 			net.sendMessage(m);
 		}
 		logic.setGameInProgress(false);
-		log.writeLog();
 		
 	}
 
