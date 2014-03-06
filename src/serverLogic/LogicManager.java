@@ -47,7 +47,7 @@ public class LogicManager implements Runnable {
 		this.board = new GameBoard(uManager);
 		this.networkManager = nManager;
 		this.userManager = uManager;
-		this.playerCount = (uManager.getCurrentPlayerList()).size();
+		this.playerCount = uManager.getCurrentPlayerList().size();
 		this.log = l;
 	}
 	
@@ -170,7 +170,7 @@ public class LogicManager implements Runnable {
 						//else if(command.equals("BOMB"))
 					}
 				}
-				networkManager.sendBoardToAllClients();
+				networkManager.sendBoardToAllClients(board.toString());
 				log.acceptMessage(board.toString());
 			}
 			

@@ -54,10 +54,11 @@ public class NetworkManager implements Runnable{
 			log.acceptMessage(new String(message.datagram.getData()));
 			
 			if (readCommand(message).equals("START_GAME")){
-				gameInProgress = true;
-				logic = new LogicManager(userManager, log, this);
+				if(!gameInProgress){
+					gameInProgress = true;
+					logic = new LogicManager(userManager, log, this);
+				}
 			}
-			
 			if (readCommand(message).equals("JOIN_GAME")){
 				joinCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 			}
@@ -91,8 +92,7 @@ public class NetworkManager implements Runnable{
 	/**
 	 * 
 	 */
-	public void sendBoardToAllClients() {
-		String board = "NULL";// = logic.getBoard();
+	public void sendBoardToAllClients(String board) {
 		List<User> users = userManager.getAllUsers();
 		for(int i=0; i< users.size(); i++){
 			String ip = users.get(i).getIp();
@@ -106,12 +106,12 @@ public class NetworkManager implements Runnable{
 	 * 
 	 */
 	public void sendEndGameToAllClients(){
-		String board = "END_GAME";
+		String endGame = "END_GAME";
 		List<User> users = userManager.getAllUsers();
 		for (int i = 0; i < users.size(); i++) {
 			String ip = users.get(i).getIp();
 			int port = users.get(i).getPort();
-			Message m = new Message(board, ip, port);
+			Message m = new Message(endGame, ip, port);
 			net.sendMessage(m);
 		}
 		gameInProgress = false;
@@ -137,7 +137,9 @@ public class NetworkManager implements Runnable{
 		// remove player current playerlist
 		for(User u: userManager.getAllUsers()){
 			if(u.getIp().equals(playerIP)){
-				//remove Users
+				try{
+				userManager.moveCurrentToFuture(u.getUUID());
+				}catch(Exception e){e.printStackTrace();}
 			}
 		}
 	}
