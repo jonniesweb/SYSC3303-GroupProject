@@ -49,6 +49,8 @@ public class LogicManager implements Runnable {
 		this.userManager = uManager;
 		this.playerCount = uManager.getCurrentPlayerList().size();
 		this.log = l;
+		// start the run method
+		new Thread(this).start();
 	}
 	
 	/**
