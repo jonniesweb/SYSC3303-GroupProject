@@ -13,6 +13,7 @@ import testing.Logger;
 
 //TODO: construct logic Manager with playerlist 
 //TODO: add mainLoop
+//TODO: when a new user joins, add user to Usermanager.addNewPlayer() then call LogicManager.notifyNewPlayer() or an equivalent method.
 /**
  * 
  */
