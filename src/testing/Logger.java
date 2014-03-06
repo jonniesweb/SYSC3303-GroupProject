@@ -67,6 +67,9 @@ public class Logger{
 	public static void endLog(){
 		out.close();
 	}
+	public static  ArrayList<String> getLog(){
+		return log;
+	}
 		
 	
 }
