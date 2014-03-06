@@ -238,7 +238,8 @@ public class LogicManager implements Runnable {
 				}
 				//board.update();
 				networkManager.sendBoardToAllClients(board.toString());
-				log.acceptMessage(board.toString());
+				Logger.acceptMessage("Board sent to all client");
+				Logger.acceptMessage(board.toString());
 			}
 			
 			networkManager.sendEndGameToAllClients();
