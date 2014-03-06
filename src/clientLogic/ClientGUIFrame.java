@@ -10,6 +10,7 @@ import entities.PowerUp;
 import entities.Wall;
 import gameLogic.GameBoard;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -76,6 +77,13 @@ public class ClientGUIFrame extends JFrame {
 		this.height = gameBoard.getHeight();
 
 		buttonGameBoard = new JButton[width][height];
+		
+		// initialize gameboard JButtons with buttons that have 'X' on them
+		for (int i = 0; i < buttonGameBoard.length; i++) {
+			for (int j = 0; j < buttonGameBoard[i].length; j++) {
+				buttonGameBoard[i][j] = new JButton("X");
+			}
+		}
 
 		// init images for the gameboard JButtons
 		// commented out since images havent been graphically designed yet
@@ -209,9 +217,11 @@ public class ClientGUIFrame extends JFrame {
 				} else if (entity instanceof Wall) {
 					// button = new JButton(new ImageIcon(wallImg));
 					button = new JButton("Wall");
+					button.setBackground(new Color(1, 0, 0));
 				} else {
 					// button = new JButton(new ImageIcon(floorImg));
 					button = new JButton("Floor");
+					button.setBackground(new Color(0, 0, 1));
 				}
 
 				setButton(button, i, j);
