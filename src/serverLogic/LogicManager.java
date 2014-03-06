@@ -17,6 +17,8 @@ import testing.Logger;
 import gameLogic.GameBoard;
 import Networking.Message;
 
+// TODO: this class should manage the server GameBoard
+
 /**
  * 
  * @author zachstoner
@@ -42,7 +44,11 @@ public class LogicManager implements Runnable {
 	 * @param nManager
 	 */
 	public LogicManager(UserManager uManager, Logger l, NetworkManager nManager){
-		this.board = new GameBoard(uManager);
+		
+		// initialize board
+		this.board = new GameBoard();
+		placePlayers(board, uManager);
+		
 		this.networkManager = nManager;
 		this.userManager = uManager;
 		this.playerCount = uManager.getCurrentPlayerList().size();
