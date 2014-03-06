@@ -33,7 +33,7 @@ public class LogicManager implements Runnable {
 	private NetworkManager networkManager;
 	private UserManager userManager;
 	
-	private int playerCount;
+	private Integer playerCount;
 	
 	private boolean gameInProgress;
 	/**
@@ -142,6 +142,33 @@ public class LogicManager implements Runnable {
 		new Thread(this).start();
 	}
 	
+	/**
+	 * gets the currently playing player count
+	 * @return
+	 */
+	public int getPlayerCount() {
+		synchronized (playerCount) {
+			return playerCount;
+		}
+	}
+	
+	/**
+	 * increments the currently playing player count
+	 */
+	public void incrementPlayerCount() {
+		synchronized (playerCount) {
+			playerCount++;
+		}
+	}
+	
+	/**
+	 * decrements the currently playing player count
+	 */
+	public void decrementPlayerCount() {
+		synchronized (playerCount) {
+			playerCount--;
+		}
+	}
 	
 	/**
 	 * 

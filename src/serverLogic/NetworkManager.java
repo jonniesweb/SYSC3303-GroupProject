@@ -176,6 +176,7 @@ public class NetworkManager implements Runnable{
 			} catch (Exception E) {
 				System.out.println("Added same player to current twice");
 			}
+			logic.incrementPlayerCount();
 		}
 	}
 	
