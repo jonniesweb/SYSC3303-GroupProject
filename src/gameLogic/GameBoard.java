@@ -183,8 +183,14 @@ public class GameBoard {
 	 * @param y
 	 * @return
 	 */
-	public Entity getEntityAt(int x, int y) {
+	public Entity get(int x, int y) {
 		return board[x][y];
+	}
+	
+	public Entity set(Entity entity, int x, int y) {
+		Entity previousEntity = board[x][y];
+		board[x][y] = entity;
+		return previousEntity;
 	}
 	/**
 	 * For testing purposes
