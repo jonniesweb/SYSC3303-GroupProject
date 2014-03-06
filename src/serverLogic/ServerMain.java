@@ -26,8 +26,9 @@ public class ServerMain {
 		
 		userManager = new UserManager(NUM_PLAYERS);
 		logger = new Logger();
-		logicManager = new LogicManager(userManager, logger, networkManager);
+		logicManager = new LogicManager(userManager, logger);
 		networkManager = new NetworkManager(logicManager);
+		logicManager.setNetworkManager(networkManager);
 	}
 
 	/**

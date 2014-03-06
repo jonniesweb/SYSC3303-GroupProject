@@ -43,12 +43,10 @@ public class LogicManager implements Runnable {
 	 * @param l
 	 * @param nManager
 	 */
-	public LogicManager(UserManager uManager, Logger l, NetworkManager nManager){
+	public LogicManager(UserManager uManager, Logger l){
 		// initialize board
 		this.board = new GameBoard();
 		placePlayers(board, uManager);
-
-		this.networkManager = nManager;
 		this.userManager = uManager;
 		this.playerCount = uManager.getCurrentPlayerList().size();
 		this.log = l;
@@ -141,6 +139,9 @@ public class LogicManager implements Runnable {
 	
 	public void setGameInProgress(boolean b){
 		gameInProgress = b;
+	}
+	public void setNetworkManager(NetworkManager m){
+		this.networkManager = m;
 	}
 	
 	
