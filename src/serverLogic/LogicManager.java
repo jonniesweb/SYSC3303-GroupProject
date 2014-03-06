@@ -35,7 +35,6 @@ public class LogicManager implements Runnable {
 	
 	private int playerCount;
 	
-	private Logger log;
 	private boolean gameInProgress;
 	/**
 	 * 
