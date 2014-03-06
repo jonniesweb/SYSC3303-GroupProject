@@ -8,10 +8,7 @@ import java.util.List;
 
 import entities.Player;
 
-// TODO: hold each player/spectator's ip and port
-// TODO: add getters and methods that move players to other lists
 // TODO: when adding player to current hashmap add them to playerList (used by logicManager)
-//TODO return all users so i can send them gameboard
 public class UserManager {
 
 	private HashMap<String, User> currentPlayerList, futurePlayerList,
