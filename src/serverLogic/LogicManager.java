@@ -47,7 +47,7 @@ public class LogicManager implements Runnable {
 		// initialize board
 		this.board = new GameBoard();
 		placePlayers(board, uManager);
-		
+
 		this.networkManager = nManager;
 		this.userManager = uManager;
 		this.playerCount = uManager.getCurrentPlayerList().size();
