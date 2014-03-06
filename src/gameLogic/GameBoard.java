@@ -49,7 +49,6 @@ public class GameBoard {
 	 */
 	public GameBoard(String filename){
 		generateFloor(filename);	
-		placePlayers();
 		
 	}
 
@@ -76,32 +75,7 @@ public class GameBoard {
 	public int getHeight() {
 		return height;
 	}
-	
-	/**
-	 * @deprecated Use the equivalent method from LogicManager since this class
-	 *             shouldn't know about UserManager!
-	 */ 
-	public void placePlayers(){
-		
-		int i = 0;
-		int x;
-		int y;
-		
-		for(User u: userManager.getCurrentPlayerList()){
-			if( i < 2){
-				x = 0;
-				y = (i%2)*height;
-			} else {
-				x = width;
-				y = (i%2)*height;
-			}
-			i++;
-			board[x][y] = u.getPlayer();
-			u.getPlayer().setPos(x, y);
-		}
-		
-	}
-	
+
 	/**
 	 * Generate floor from prescribed file
 	 * 
