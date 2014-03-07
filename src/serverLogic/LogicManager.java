@@ -121,8 +121,11 @@ public class LogicManager implements Runnable {
 					board.set(players.get(i).getPlayer(),0,0);
 					System.out.println(players.get(i).getPlayer().getName());
 				}
-				if(i == 1)
+				if(i == 1){
+					players.get(i).setPlayer(new Player(6,6,"Player 2"));
 					board.set(players.get(i).getPlayer(),6,6);
+					System.out.println(players.get(i).getPlayer().getName());
+				}
 		}
 		System.out.println(board.toString());
 	}
@@ -205,6 +208,7 @@ public class LogicManager implements Runnable {
 					p = u.getPlayer();
 					if(u.getUUID().equals(uuid)){
 						System.out.println("matching id");
+						System.out.println(p.getName());
 						System.out.println("(" + p.getPosX() + "," + p.getPosY()+")");
 						if(command.equals("UP")){
 							if (!safeMove(p.getPosX(), p.getPosY() - 1)){
