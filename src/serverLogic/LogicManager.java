@@ -44,6 +44,10 @@ public class LogicManager implements Runnable {
 	 */
 	public LogicManager(UserManager uManager){
 		// initialize board
+<<<<<<< HEAD
+=======
+		gameInProgress = false;
+>>>>>>> 63c6228113930070fa6c8b62e806be75893a0fd4
 		this.board = new GameBoard(7,7);
 		placePlayers(board, uManager);
 		this.userManager = uManager;
@@ -136,6 +140,7 @@ public class LogicManager implements Runnable {
 	
 	public void setGameInProgress(boolean b){
 		gameInProgress = b;
+		System.out.println("Game in progress is: "+gameInProgress);
 	}
 	public void setNetworkManager(NetworkManager m){
 		this.networkManager = m;
@@ -174,15 +179,21 @@ public class LogicManager implements Runnable {
 	 * 
 	 */
 	public void run(){
+		System.out.println("logic Manager started");
 		Message m;
 		String command;
 		String uuid;
 		Player p;
-		
+		while(!gameInProgress){
+			Thread.yield();
+		}
+		System.out.println("gameInProgress now!");
+		System.out.println("game is now in progress");
 		try{
 			while(playerCount > 0){
-				
+				System.out.println("attempting to read command ...");
 				m = commandQueue.take();
+				System.out.println("got command in logic manager");
 				
 				command = new String(m.datagram.getData());
 				uuid = m.datagram.getAddress().toString() + m.datagram.getPort();
@@ -267,7 +278,6 @@ public class LogicManager implements Runnable {
 				Logger.acceptMessage("Board sent to all client");
 				Logger.acceptMessage(board.toString());
 			}
-			
 			networkManager.sendEndGameToAllClients();
 			Logger.writeLog();
 			Logger.endLog();
