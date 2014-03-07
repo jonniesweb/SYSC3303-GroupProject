@@ -20,6 +20,7 @@ public class User {
 		this.uuid = uuid;
 		this.ip = ip;
 		this.port = port;
+		this.setPlayer(new Player(-1,-1,ip));
 	}
 
 	public Player getPlayer() {

@@ -5,19 +5,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import entities.Player;
-
-// TODO: hold each player/spectator's ip and port
-// TODO: add getters and methods that move players to other lists
-// TODO: when adding player to current hashmap add them to playerList (used by logicManager)
-//TODO return all users so i can send them gameboard
 public class UserManager {
 
-	private HashMap<String, User> currentPlayerList, futurePlayerList,
-			spectatorList;
-	// needed by logic Manager to iterate over all current players
-	private List<Player> playerList;
+	private Map<String, User> currentPlayerList, futurePlayerList,
+			spectatorList, newUsers;
 
 	public static int MAX_PLAYERCOUNT = 2;
 
@@ -29,23 +22,25 @@ public class UserManager {
 	
 	public UserManager(int numberOfPlayers) {
 		// define maps that track all users connected to server
-		playerList = Collections.synchronizedList(new LinkedList<Player>());
-		currentPlayerList = new HashMap<String, User>(numberOfPlayers);
-		futurePlayerList = new HashMap<String, User>(numberOfPlayers);
-		spectatorList = new HashMap<String, User>(numberOfPlayers);
+		currentPlayerList = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
+		futurePlayerList = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
+		spectatorList = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
+		newUsers = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
 	}
 
 	public enum Type {
 		PLAYER, SPECTATOR
 	}
-
+	
 	/**
-	 * @deprecated use getCurrentPlayerList(), getFuturePlayerList(),
-	 *             getSpectatorList() instead
-	 * @return
+	 * Should be called by NetworkManager to add a newly connected user to the
+	 * game. LogicManager then should get a notification to take the user and
+	 * either put it in current or future.
+	 * @param ip
+	 * @param port
 	 */
-	public List<Player> getPlayerList() {
-		return playerList;
+	public void addNewPlayer(String ip, int port) {
+		newUsers.put(ip + port, new User(ip+port, ip, port));
 	}
 
 	/**
@@ -157,7 +152,7 @@ public class UserManager {
 	 */
 	public void moveCurrentToFuture(String uuid)
 			throws OverwroteUserInMapException, NoUserExistsWithUUIDException {
-		if (futurePlayerList.containsKey(uuid)) {
+		if (currentPlayerList.containsKey(uuid)) {
 			if (futurePlayerList.put(uuid, currentPlayerList.remove(uuid)) == null) {
 				return; // success!
 			} else {

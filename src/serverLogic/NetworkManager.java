@@ -13,28 +13,30 @@ import testing.Logger;
 
 //TODO: construct logic Manager with playerlist 
 //TODO: add mainLoop
+//TODO: when a new user joins, add user to Usermanager.addNewPlayer() then call LogicManager.notifyNewPlayer() or an equivalent method.
 /**
  * 
  */
 public class NetworkManager implements Runnable{
-	private boolean gameInProgress;
+	//private boolean gameInProgress;
 	private Semaphore inboxLock;
 	private Network net;
 	private LogicManager logic;
 	private UserManager userManager;
-	private Logger log;
 	private boolean running;
 	
 	/**
 	 * 
 	 */
-	public NetworkManager() {
-		gameInProgress = false;
+	public NetworkManager(LogicManager logic, UserManager m) {
+		this.logic = logic;
+		
 		
 		inboxLock = new Semaphore(0);
 		net = new Network(Network.SEVER_PORT_NO, inboxLock);
 		
-		userManager = new UserManager();
+		userManager = m;
+		new Thread(this).start();
 	}
 	
 	/**
@@ -46,29 +48,42 @@ public class NetworkManager implements Runnable{
 		running = true;
 		Message message;
 		
-		log = new Logger();
-		
 		while(running){
 			
 			message = readInbox();
-			log.acceptMessage(new String(message.datagram.getData()));
-			
+			//log.acceptMessage(new String(message.datagram.getData()));
+			Logger.acceptMessage("Read data from inbox - " + new String(message.datagram.getData()) + "- from " + message.ip);			
+			// should join game before starting game
 			if (readCommand(message).equals("START_GAME")){
-				gameInProgress = true;
-				logic = new LogicManager(userManager, log, this);
+				System.out.println("got start game command");
+				if(!logic.getGameInProgress()){
+					System.out.println("game is not in progress");
+					if(userManager.getCurrentPlayerList().size()> 0){
+						System.out.println("playerList is greater than 0");
+						logic.setGameInProgress(true);
+						
+						// XXX: network manager should never create a LogicManager
+						//logic = new LogicManager(userManager, log, this);
+					}else{
+						System.out.println("attempted to join before start");
+					}
+				}
+				continue;
 			}
-			
 			if (readCommand(message).equals("JOIN_GAME")){
 				joinCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
+				continue;
 			}
 			else if (readCommand(message).equals("SPECTATE_GAME")){
-				specateCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
+				spectate(message.datagram.getAddress().toString(), message.datagram.getPort());
+				continue;
 			}
-			else if (readCommand(message).equals("END_GAME") && !gameInProgress){
+			else if (readCommand(message).equals("END_GAME") && !logic.getGameInProgress()){
 				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
+				continue;
 			}
 			else {
-				if(gameInProgress)
+				if(logic.getGameInProgress())
 					logic.execute(message);
 			}	
 		}	
@@ -91,13 +106,15 @@ public class NetworkManager implements Runnable{
 	/**
 	 * 
 	 */
-	public void sendBoardToAllClients() {
-		String board = "NULL";// = logic.getBoard();
+	public void sendBoardToAllClients(String board) {
+		System.out.println();
+		System.out.println(board);
+		System.out.println();
 		List<User> users = userManager.getAllUsers();
 		for(int i=0; i< users.size(); i++){
 			String ip = users.get(i).getIp();
 			int port = users.get(i).getPort();
-			Message m = new Message(board,ip,port);
+			Message m = new Message(board,ip,port,System.nanoTime());
 			net.sendMessage(m);
 		}
 	}
@@ -106,16 +123,15 @@ public class NetworkManager implements Runnable{
 	 * 
 	 */
 	public void sendEndGameToAllClients(){
-		String board = "END_GAME";
+		String endGame = "END_GAME";
 		List<User> users = userManager.getAllUsers();
 		for (int i = 0; i < users.size(); i++) {
 			String ip = users.get(i).getIp();
 			int port = users.get(i).getPort();
-			Message m = new Message(board, ip, port);
+			Message m = new Message(endGame, ip, port,System.nanoTime());
 			net.sendMessage(m);
 		}
-		gameInProgress = false;
-		log.writeLog();
+		logic.setGameInProgress(false);
 		
 	}
 
@@ -125,7 +141,8 @@ public class NetworkManager implements Runnable{
 	 * @return
 	 */
 	private String readCommand(Message m) {
-		return new String(m.datagram.getData());
+		String s = new String(m.datagram.getData()).trim();
+		return s;
 	}
 	
 	/**
@@ -137,7 +154,12 @@ public class NetworkManager implements Runnable{
 		// remove player current playerlist
 		for(User u: userManager.getAllUsers()){
 			if(u.getIp().equals(playerIP)){
-				//remove Users
+				try{
+				userManager.moveCurrentToFuture(u.getUUID());
+				Logger.acceptMessage("Player from " + playerIP + "port : "+ playerPort + " END THE GAME");
+				}catch(Exception e){
+					e.printStackTrace();
+					}
 			}
 		}
 	}
@@ -148,10 +170,11 @@ public class NetworkManager implements Runnable{
 	 * @param playerPort
 	 */
 	private void joinCommand(String playerIP, int playerPort) {
-		if (gameInProgress) {
+		if (logic.getGameInProgress()) {
 			try {
 
 				userManager.addPlayerToFuture(playerIP, playerPort);
+				Logger.acceptMessage("Player from " + playerIP + "port : "+ playerPort + " JOIN GAME");
 
 			} catch (Exception E) {
 				System.out.println("Added same player to future twice");
@@ -162,18 +185,20 @@ public class NetworkManager implements Runnable{
 			} catch (Exception E) {
 				System.out.println("Added same player to current twice");
 			}
+			logic.incrementPlayerCount();
 		}
 	}
 	
 	/**
 	 * 
-	 * @param playerIp
+	 * @param playerIP
 	 * @param playerPort
 	 */
-	private void specateCommand(String playerIp, int playerPort) {
+	private void spectate(String playerIP, int playerPort) {
 		try {
 
-			userManager.addSpectator(playerIp, playerPort);
+			userManager.addSpectator(playerIP, playerPort);
+			Logger.acceptMessage("Player from " + playerIP + "port : "+ playerPort + " SPECTATE GAME");
 		} catch (Exception E) {
 			System.out.println("added same player to specator twice");
 		}

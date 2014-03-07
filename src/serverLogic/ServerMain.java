@@ -1,31 +1,44 @@
 package serverLogic;
 
+import testing.Logger;
+
+// TODO: add command line arguments to allow starting up from a predefined,
+// gameboard, or randomly generating one
+
 /**
  * 
  * 
  *
  */
 public class ServerMain {
+	
+	private static final int NUM_PLAYERS = 2;
+	
+	// members
+	LogicManager logicManager;
+	NetworkManager networkManager;
+	UserManager userManager;
+	Logger logger;
+	
+	public ServerMain() {
+		
+		// initialize all server components
+		
+		userManager = new UserManager(NUM_PLAYERS);
+		logger = new Logger();
+		logicManager = new LogicManager(userManager);
+		networkManager = new NetworkManager(logicManager,userManager);
+		logicManager.setNetworkManager(networkManager);
+	}
 
 	/**
 	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		new ServerMain();
+
 		
-		boolean running = true;
-		
-		Thread thread = new Thread(new NetworkManager());
-		
-		while(running){
-			try{
-				thread.start();
-				thread.join();
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		}
 		///????/ who inits player positions when they are added??????
 		//		Gameboard will init them when it places them into the board
 		
@@ -72,5 +85,7 @@ public class ServerMain {
 		// action(player, action)
 
 	}
+	
+
 
 }

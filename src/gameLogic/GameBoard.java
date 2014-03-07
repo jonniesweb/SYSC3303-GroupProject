@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 
+import entities.Door;
 import entities.Entity;
 import entities.Player;
 import entities.Wall;
@@ -32,27 +33,84 @@ public class GameBoard {
 	private int width;
 	private int height;
 	
-	UserManager userManager;
+	//UserManager userManager;
 
 	/**
 	 * 
-	 * @param uManager
+	 * 
 	 */
-	public GameBoard(UserManager uManager){
-		randomizeFloor(uManager.getCurrentPlayerList().size());
-		placePlayers();
-		userManager = uManager;
+	public GameBoard(int width,int height){
+		this.width = width;
+		this.height = height;
+		board = new Entity[height][width];
+		this.randomizeFloor(4);
+		this.generateFloor("FloorTest.txt");
+		this.initializeDoor();
 	}
 	
 	/**
 	 * 
-	 * @param uManager
+	 * 
 	 * @param filename
 	 */
-	public GameBoard(UserManager uManager, String filename){
+	public GameBoard(String filename){
 		generateFloor(filename);	
-		placePlayers();
-		userManager = uManager;
+		
+	}
+	
+	/**
+	 * Creates a GameBoard from a serialized byte array
+	 * @param serializedGameBoard
+	 */
+	public GameBoard(char[] serializedGameBoard) {
+		
+		this.width = 0;
+		this.height = 0;
+		int totalBytes = serializedGameBoard.length;
+		// get the width of the gameboard
+		for (int i = 0; i < serializedGameBoard.length; i++) {
+			if (serializedGameBoard[i] == '\n') {
+				width = i;
+				break;
+			}
+		}
+		
+		// determine height
+		try {
+			height = totalBytes / (width + 1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("gameboard: height:"+ height +" width: "+width);
+		board = new Entity[width][height];
+		
+		/*
+		 * Parse serializedGameBoard to create the board
+		 */
+		int x = 0;
+		int y = 0;
+		char entity;
+		
+		for (int i = 0; i < serializedGameBoard.length; i++) {
+			
+			entity = (char) serializedGameBoard[i];
+			
+			if (entity == 'W') {
+				set(new Wall(x, y), x, y);
+			} else if (entity == 'P') {
+				set(new Player(x, y, ""), x, y);
+			} else if (entity == 'D') {
+				set(new Door(x, y), x, y);
+			} else if (entity == '\n') {
+				y++;
+				x = -1;
+			} else {
+				set(new Entity(x, y), x, y);
+			}
+			
+			x++;
+		}
 	}
 
 	/**
@@ -78,31 +136,11 @@ public class GameBoard {
 	public int getHeight() {
 		return height;
 	}
-	
-	/**
-	 * 
-	 */
-	public void placePlayers(){
-		
-		int i = 0;
-		int x;
-		int y;
-		
-		for(User u: userManager.getCurrentPlayerList()){
-			if( i < 2){
-				x = 0;
-				y = (i%2)*height;
-			} else {
-				x = width;
-				y = (i%2)*height;
-			}
-			i++;
-			board[x][y] = u.getPlayer();
-			u.getPlayer().setPos(x, y);
-		}
-		
+	public boolean hasDoor(int x,int y){
+		if(x<0 || x>0 || y<0 || y>0) return false;
+		return board[x][y] instanceof Door;
 	}
-	
+
 	/**
 	 * Generate floor from prescribed file
 	 * 
@@ -124,11 +162,13 @@ public class GameBoard {
 		int i = 0;
 		try {
 			while ((line = br.readLine()) != null) {
-				for (int j = 0; j < 7; j++) {
+				for (int j = 0; j < line.length(); j++) {
 					if (line.charAt(j) == 'W')
-						board[i][j] = new Wall(i, j);
+						board[j][i] = new Wall(j, i);
 					else if (line.charAt(j) == '.')
-						board[i][j] = new Entity(i, j);
+						board[j][i] = new Entity(j, i);
+					else if (line.charAt(j) == 'D')
+						board[j][i] = new Door(j,i);
 				}
 				i++;
 
@@ -183,8 +223,48 @@ public class GameBoard {
 	 * @param y
 	 * @return
 	 */
-	public Entity getEntityAt(int x, int y) {
+	public Entity get(int x, int y) {
+		if(x < 0 || x >= width )
+			return new Wall();
+		if(y< 0 || y >= height)
+			return new Wall();
 		return board[x][y];
+	}
+	
+	public Entity set(Entity entity, int x, int y) {
+		if(x < 0 || x > width)
+			System.out.println("x out of bounds: "+ x);
+		if(y < 0 || y > height)
+			System.out.println("y out of bounds: "+ y);
+		Entity previousEntity = board[x][y];
+		board[x][y] = entity;
+		return previousEntity;
+	}
+	/**
+	 * Remove entity at specified position
+	 * @param x
+	 * @param y
+	 */
+	public void remove(int x, int y){
+		board[x][y]= new Entity(x,y);
+	}
+	/**
+	 * Initialize door into the board
+	 * If there is door already e.g door initialized inside prescribed file
+	 * 
+	 */
+	public void initializeDoor(){
+		for(int i = 0;i<height;i++){
+			for(int j = 0;j<height;j++){
+				if(board[i][j] instanceof Door)
+					return;
+			}
+		}
+		board[3][3] = new Door(3,3);	
+	}
+	
+	public Door getDoor(){
+		return (Door)board[4][4];
 	}
 	/**
 	 * For testing purposes
@@ -193,12 +273,14 @@ public class GameBoard {
 	public String toString() {
 		int playerCount = 0;
 		String s = "";
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				if (board[i][j] instanceof Wall)
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (board[x][y] instanceof Wall)
 					s += "W";
-				else if (board[i][j] instanceof Player)
-					s += playerCount++;
+				else if (board[x][y] instanceof Player)
+					s += "P";
+				else if(board[x][y] instanceof Door)
+					s += "D";
 				else 
 					s += ".";
 			}

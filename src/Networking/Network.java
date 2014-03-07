@@ -17,7 +17,7 @@ public class Network extends Thread {
 	private ExecutorService pool;
 	private List<Message> inbox;
 	public static final int SEVER_PORT_NO = 8888;
-	public static final int CLIENT_PORT_NO = 8887;
+	public static final int CLIENT_PORT_NO = 8871;
 	int port;
 	private Semaphore inboxLock;
 
@@ -41,7 +41,7 @@ public class Network extends Thread {
 	
 	public Message getMessage(){
 		if(hasMessage())
-			return inbox.get(0);
+			return inbox.remove(0);
 		else{
 			System.out.println("Error empty inbox returning null");
 			return null;
@@ -87,6 +87,8 @@ public class Network extends Thread {
 			Runnable r1 = new Runnable(){
 				public void run(){
 					Message m1 = new Message(receivePacket);
+					String command = new String(receivePacket.getData());
+					System.out.println("got command: "+ command);
 					inbox.add(m1);
 					inboxLock.release(1);
 				}
