@@ -19,28 +19,9 @@ public class ClientMain {
 	
 
 	public static void main(String[] args) {
-		System.out.println("The Client is Running");
-
-//		GameBoard board = new GameBoard(5, 5);
-//		System.out.println();
+	
 		
-		GameBoard game = new GameBoard(5, 5);
-		char[] charBoard = game.toString().toCharArray();
-		byte[] byteBoard = new byte[charBoard.length];
-		
-		for (int i = 0; i < charBoard.length; i++) {
-			byteBoard[i] = (byte) charBoard[i];
-		}
-		
-		for (int i = 0; i < byteBoard.length; i++) {
-			System.out.print((char) byteBoard[i]);
-		}
-		GameBoard newBoard = new GameBoard(new String(byteBoard).toCharArray());
-		
-		System.out.println(game);
-		System.out.println(newBoard);
-		
-//		new ClientMain();
+		new ClientMain();
 		// new Thread(new TestDriver("testNumber1.txt")).start();
 
 		// Loop while running
@@ -56,7 +37,6 @@ public class ClientMain {
 	
 
 	public ClientMain() {
-		ClientGUI view = new ClientGUI();
 		// setup network
 		network = new Network(Network.CLIENT_PORT_NO, inboxLock);
 		new Thread(network).start();
@@ -93,14 +73,14 @@ public class ClientMain {
 				while(running) {
 					message = readInbox();
 					byte[] data = message.datagram.getData();
-					String gameString = new String(data);
+					String gameString = new String(data).trim();
 					GameBoard b = new GameBoard(gameString.toCharArray());
 					view.update(b);
 					
 					
 				}
 			}
-		});
+		}).start();
 	}
 
 

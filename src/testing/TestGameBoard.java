@@ -106,7 +106,7 @@ public class TestGameBoard {
 	public void testGameBoardSerialized() throws Exception {
 		char[] charBoard = game.toString().toCharArray();
 		byte[] byteBoard = new byte[charBoard.length];
-		
+		System.out.println("printing byte boarding");
 		for (int i = 0; i < charBoard.length; i++) {
 			byteBoard[i] = (byte) charBoard[i];
 		}
@@ -115,8 +115,10 @@ public class TestGameBoard {
 			System.out.print((char) byteBoard[i]);
 		}
 		GameBoard newBoard = new GameBoard(new String(byteBoard).toCharArray());
-		
+		System.out.println("printing gameboard");
+		System.out.println();
 		System.out.println(game);
+		System.out.println("-----------");
 		System.out.println(newBoard);
 		
 		assertTrue(newBoard.toString().equals(game.toString()));
