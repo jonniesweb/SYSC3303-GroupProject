@@ -219,21 +219,17 @@ public class LogicManager implements Runnable {
 						}
 						else if(command.equals("DOWN")){
 							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
-								System.out.println("not safe move");
 								p.loseLife();
 								if(!p.isAlive()){
 									playerCount--;
 									userManager.moveCurrentToFuture(u);
-									
 								}
 							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){
-									System.out.println("down is a valid move");
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveDown();
-									board.set(p,p.getPosX(),p.getPosX()+1);
+									board.set(p,p.getPosX(),p.getPosY());
 									Logger.acceptMessage(u.getUUID() + " move DOWN");
-									
 								}
 						}
 						else if(command.equals("LEFT")){
