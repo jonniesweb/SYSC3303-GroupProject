@@ -176,6 +176,12 @@ public class LogicManager implements Runnable {
 		}
 	}
 	
+	public void removePlayerFromGameBoard(Player player) {
+		int x = player.getPosX();
+		int y = player.getPosY();
+		board.set(new Entity(x, y), x, y);
+	}
+	
 	/**
 	 * 
 	 */
@@ -213,6 +219,7 @@ public class LogicManager implements Runnable {
 						if(command.equals("UP")){
 							if (!safeMove(p.getPosX(), p.getPosY() - 1)){
 								p.loseLife();
+								removePlayerFromGameBoard(p);
 								if(!p.isAlive()){
 									playerCount--;
 									userManager.moveCurrentToFuture(u);
@@ -234,6 +241,7 @@ public class LogicManager implements Runnable {
 						else if(command.equals("DOWN")){
 							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
 								p.loseLife();
+								removePlayerFromGameBoard(p);
 								if(!p.isAlive()){
 									playerCount--;
 									userManager.moveCurrentToFuture(u);
@@ -253,6 +261,7 @@ public class LogicManager implements Runnable {
 						else if(command.equals("LEFT")){
 							if (!safeMove(p.getPosX()-1, p.getPosY())){
 								p.loseLife();
+								removePlayerFromGameBoard(p);
 								if(!p.isAlive()){
 									playerCount--;
 									userManager.moveCurrentToFuture(u);
@@ -272,6 +281,7 @@ public class LogicManager implements Runnable {
 						else if(command.equals("RIGHT")){
 							if (!safeMove(p.getPosX() + 1, p.getPosY())){
 								p.loseLife();
+								removePlayerFromGameBoard(p);
 								if(!p.isAlive()){
 									playerCount--;
 									userManager.moveCurrentToFuture(u);
