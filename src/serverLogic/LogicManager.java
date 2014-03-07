@@ -46,7 +46,6 @@ public class LogicManager implements Runnable {
 		// initialize board
 		gameInProgress = false;
 		this.board = new GameBoard(7,7);
-		placePlayers(board, uManager);
 		this.userManager = uManager;
 		this.playerCount = uManager.getCurrentPlayerList().size();
 
@@ -137,6 +136,7 @@ public class LogicManager implements Runnable {
 	
 	public void setGameInProgress(boolean b){
 		gameInProgress = b;
+		placePlayers(board, userManager);
 		System.out.println("Game in progress is: "+gameInProgress);
 	}
 	public void setNetworkManager(NetworkManager m){
@@ -212,7 +212,7 @@ public class LogicManager implements Runnable {
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveUp();
-									board.set((Entity)p,p.getPosX(),p.getPosY());
+									board.set(p,p.getPosX(),p.getPosY());
 									Logger.acceptMessage(u.getUUID() + " move UP");
 								}
 						}
@@ -228,7 +228,7 @@ public class LogicManager implements Runnable {
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveDown();
-									board.set((Entity)p,p.getPosX(),p.getPosY());
+									board.set(p,p.getPosX(),p.getPosY());
 									Logger.acceptMessage(u.getUUID() + " move DOWN");
 									
 								}
@@ -244,7 +244,7 @@ public class LogicManager implements Runnable {
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveLeft();
-									board.set((Entity)p,p.getPosX(),p.getPosY());
+									board.set(p,p.getPosX(),p.getPosY());
 									Logger.acceptMessage(u.getUUID() + " move LEFT");
 								}
 						}
@@ -259,7 +259,7 @@ public class LogicManager implements Runnable {
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveRight();
-									board.set((Entity)p,p.getPosX(),p.getPosY());
+									board.set(p,p.getPosX(),p.getPosY());
 									Logger.acceptMessage(u.getUUID() + " move RIGHT");
 								}
 						}
