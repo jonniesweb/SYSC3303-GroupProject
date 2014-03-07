@@ -21,7 +21,7 @@ import serverLogic.UserManager;
 public class ClientGUIFrameTest {
 	
 	UserManager userManager = new UserManager();
-	GameBoard gameBoard = new GameBoard();
+	GameBoard gameBoard = new GameBoard(7,7);
 
 	/**
 	 * @throws java.lang.Exception

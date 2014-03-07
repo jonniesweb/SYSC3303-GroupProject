@@ -123,11 +123,12 @@ public class ClientGUIFrame extends JFrame {
 	 * 
 	 * @return
 	 */
+
 	public static GameBoard testData() {
 		GameBoard board = new GameBoard(10, 10);
 		board.randomizeFloor(2);
 		return board;
-		
+
 //		Random r = new Random();
 //
 //		for (int i = 0; i < 10; i++) {

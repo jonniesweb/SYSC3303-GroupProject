@@ -56,9 +56,11 @@ public class NetworkManager implements Runnable{
 			Logger.acceptMessage("Read data from inbox - " + new String(message.datagram.getData()) + "- from " + message.ip);			
 			// should join game before starting game
 			if (readCommand(message).equals("START_GAME")){
-
+				System.out.println("got start game command");
 				if(!logic.getGameInProgress()){
+					System.out.println("game is not in progress");
 					if(userManager.getCurrentPlayerList().size()> 0){
+						System.out.println("playerList is greater than 0");
 						logic.setGameInProgress(true);
 						
 						// XXX: network manager should never create a LogicManager
@@ -67,15 +69,19 @@ public class NetworkManager implements Runnable{
 						System.out.println("attempted to join before start");
 					}
 				}
+				continue;
 			}
 			if (readCommand(message).equals("JOIN_GAME")){
 				joinCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
+				continue;
 			}
 			else if (readCommand(message).equals("SPECTATE_GAME")){
 				spectate(message.datagram.getAddress().toString(), message.datagram.getPort());
+				continue;
 			}
 			else if (readCommand(message).equals("END_GAME") && !logic.getGameInProgress()){
 				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
+				continue;
 			}
 			else {
 				if(logic.getGameInProgress())
@@ -106,7 +112,7 @@ public class NetworkManager implements Runnable{
 		for(int i=0; i< users.size(); i++){
 			String ip = users.get(i).getIp();
 			int port = users.get(i).getPort();
-			Message m = new Message(board,ip,port);
+			Message m = new Message(board,ip,port,System.nanoTime());
 			net.sendMessage(m);
 		}
 	}
@@ -120,7 +126,7 @@ public class NetworkManager implements Runnable{
 		for (int i = 0; i < users.size(); i++) {
 			String ip = users.get(i).getIp();
 			int port = users.get(i).getPort();
-			Message m = new Message(endGame, ip, port);
+			Message m = new Message(endGame, ip, port,System.nanoTime());
 			net.sendMessage(m);
 		}
 		logic.setGameInProgress(false);
@@ -133,7 +139,8 @@ public class NetworkManager implements Runnable{
 	 * @return
 	 */
 	private String readCommand(Message m) {
-		return new String(m.datagram.getData());
+		String s = new String(m.datagram.getData()).trim();
+		return s;
 	}
 	
 	/**
