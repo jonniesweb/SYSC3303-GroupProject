@@ -1,6 +1,7 @@
 package testing;
 
 import static org.junit.Assert.*;
+import entities.Door;
 import entities.Player;
 import entities.Wall;
 import gameLogic.GameBoard;
@@ -90,6 +91,11 @@ public class TestGameBoard {
 		assertFalse(game.get(6, 6) instanceof Wall);
 		assertTrue(game.get(0, 3) instanceof Wall);
 		
+	}
+	@Test
+	public void testDoor() throws Exception{
+		setUp();
+		assertTrue(game.getDoor() instanceof Door);	
 	}
 
 }

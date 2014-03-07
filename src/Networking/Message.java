@@ -16,16 +16,16 @@ public class Message {
 		packetPort = p.getPort();
 	}
 	
-	public Message(String m, String hostName, int p,long t) {
-		this.time = t;
-		this.packetPort = p;
+	public Message(String message, String hostName, int port, long time) {
+		this.time = time;
+		this.packetPort = port;
 		hostName = "127.0.0.1";
 		try {
 			ip = InetAddress.getByName(hostName);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		datagram = new DatagramPacket(m.getBytes(), m.getBytes().length, ip,
+		datagram = new DatagramPacket(message.getBytes(), message.getBytes().length, ip,
 				packetPort);
 	}
 }
