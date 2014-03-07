@@ -137,7 +137,7 @@ public class GameBoard {
 		return height;
 	}
 	public boolean hasDoor(int x,int y){
-		if(x<0 || x>0 || y<0 || y>0) return false;
+		if(x<0 || x>=width || y<0 || y>=height) return false;
 		return board[x][y] instanceof Door;
 	}
 
