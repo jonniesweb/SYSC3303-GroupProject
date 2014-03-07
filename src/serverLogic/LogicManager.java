@@ -203,7 +203,7 @@ public class LogicManager implements Runnable {
 					if(u.getUUID().equals(uuid)){
 						System.out.println("matching id");
 						if(command.equals("UP")){
-							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
+							if (!safeMove(p.getPosX(), p.getPosY() - 1)){
 								p.loseLife();
 								if(!p.isAlive()){
 									playerCount--;
@@ -231,7 +231,7 @@ public class LogicManager implements Runnable {
 									System.out.println("down is a valid move");
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveDown();
-									board.set(p,p.getPosX(),p.getPosY());
+									board.set(p,p.getPosX(),p.getPosY()+1);
 									Logger.acceptMessage(u.getUUID() + " move DOWN");
 									
 								}

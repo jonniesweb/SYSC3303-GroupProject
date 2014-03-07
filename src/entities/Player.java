@@ -42,11 +42,11 @@ public class Player extends Entity {
 	}
 	
 	public void moveUp(){
-		setPosY(++this.posY);
+		setPosY(--this.posY);
 	}
 	
 	public void moveDown(){
-		setPosY(--this.posY);
+		setPosY(++this.posY);
 	}
 	
 	public void moveLeft(){

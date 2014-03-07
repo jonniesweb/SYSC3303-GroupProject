@@ -162,6 +162,10 @@ public class GameBoard {
 	 * @return
 	 */
 	public Entity get(int x, int y) {
+		if(x < 0 || x >= width )
+			return new Wall();
+		if(y< 0 || y >= height)
+			return new Wall();
 		return board[x][y];
 	}
 	
