@@ -100,7 +100,7 @@ public class GameBoard {
 		int i = 0;
 		try {
 			while ((line = br.readLine()) != null) {
-				for (int j = 0; j < 7; j++) {
+				for (int j = 0; j < line.length(); j++) {
 					if (line.charAt(j) == 'W')
 						board[i][j] = new Wall(i, j);
 					else if (line.charAt(j) == '.')
@@ -183,7 +183,8 @@ public class GameBoard {
 				if (board[i][j] instanceof Wall)
 					s += "W";
 				else if (board[i][j] instanceof Player)
-					s += playerCount++;
+					//s += playerCount++;
+					s += "P";
 				else 
 					s += ".";
 			}
