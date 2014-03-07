@@ -260,7 +260,7 @@ public class GameBoard {
 					return;
 			}
 		}
-		board[4][4] = new Door(4,4);	
+		board[3][3] = new Door(3,3);
 	}
 	
 	/**

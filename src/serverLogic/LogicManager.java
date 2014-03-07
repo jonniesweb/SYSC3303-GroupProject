@@ -53,6 +53,10 @@ public class LogicManager implements Runnable {
 
 	}
 	
+	public void setGameBoard(GameBoard board) {
+		this.board = board;
+	}
+	
 	/**
 	 * 
 	 * @param command
