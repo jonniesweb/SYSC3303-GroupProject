@@ -44,10 +44,7 @@ public class LogicManager implements Runnable {
 	 */
 	public LogicManager(UserManager uManager){
 		// initialize board
-<<<<<<< HEAD
-=======
 		gameInProgress = false;
->>>>>>> 63c6228113930070fa6c8b62e806be75893a0fd4
 		this.board = new GameBoard(7,7);
 		placePlayers(board, uManager);
 		this.userManager = uManager;
