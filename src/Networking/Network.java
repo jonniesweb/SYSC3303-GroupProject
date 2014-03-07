@@ -17,7 +17,7 @@ public class Network extends Thread {
 	private ExecutorService pool;
 	private List<Message> inbox;
 	public static final int SEVER_PORT_NO = 8888;
-	public static final int CLIENT_PORT_NO = 8880;
+	public static final int CLIENT_PORT_NO = 8890;
 	int port;
 	private Semaphore inboxLock;
 

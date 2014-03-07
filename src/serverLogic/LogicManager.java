@@ -200,6 +200,7 @@ public class LogicManager implements Runnable {
 				for(User u: userManager.getCurrentPlayerList()){
 					p = u.getPlayer();
 					if(u.getUUID().equals(uuid)){
+						System.out.println("matching id");
 						if(command.equals("UP")){
 							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
 								p.loseLife();
@@ -225,6 +226,7 @@ public class LogicManager implements Runnable {
 								}
 							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){
+									System.out.println("done is a safe move");
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveDown();
 									board.set(p,p.getPosX(),p.getPosY());
