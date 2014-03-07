@@ -17,9 +17,9 @@ public class TestDriver implements Runnable {
 	int serverPort = Network.SEVER_PORT_NO;
 	Network net;
 
-	public TestDriver(String filename) {
+	public TestDriver(String filename,int port) {
 		this.file = filename;
-		net = new Network(8889, new Semaphore(0));
+		net = new Network(port, new Semaphore(0));
 		new Thread(net).start();
 		new Thread(this).start();
 	}
@@ -68,7 +68,8 @@ public class TestDriver implements Runnable {
 
 	}
 	public static void main(String[] args){
-		new TestDriver("testNumber1.txt");
+		new TestDriver("testNumber1.txt",8878);
+		new TestDriver("testNumber2.txt",8869);
 		
 	}
 
