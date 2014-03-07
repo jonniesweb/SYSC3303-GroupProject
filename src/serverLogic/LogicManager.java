@@ -199,8 +199,9 @@ public class LogicManager implements Runnable {
 				
 				//System.out.println("Execute Command/PlayerID Pair - "+command+":"+uuid);
 				
-				
-				for(User u: userManager.getCurrentPlayerList()){
+				Object[] users = userManager.getCurrentPlayerList().toArray();
+				for(int i =0;i < users.length;i++){
+					User u = (User)users[i];
 					p = u.getPlayer();
 					if(u.getUUID().equals(uuid)){
 						System.out.println("matching id");
