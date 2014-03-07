@@ -55,7 +55,9 @@ public class ClientGUIFrame extends JFrame {
 			public void run() {
 				try {
 					// XXX: constructor call for testing only
-					final ClientGUIFrame frame = new ClientGUIFrame(testData());
+					GameBoard gameBoard = new GameBoard(10, 10);
+					gameBoard.randomizeFloor(2);
+					final ClientGUIFrame frame = new ClientGUIFrame(gameBoard);
 					frame.setVisible(true);
 
 					frame.update(testData()); // XXX: test
@@ -78,12 +80,7 @@ public class ClientGUIFrame extends JFrame {
 
 		buttonGameBoard = new JButton[width][height];
 		
-		// initialize gameboard JButtons with buttons that have 'X' on them
-		for (int i = 0; i < buttonGameBoard.length; i++) {
-			for (int j = 0; j < buttonGameBoard[i].length; j++) {
-				buttonGameBoard[i][j] = new JButton("X");
-			}
-		}
+		
 
 		// init images for the gameboard JButtons
 		// commented out since images havent been graphically designed yet
@@ -103,7 +100,18 @@ public class ClientGUIFrame extends JFrame {
 		gbl_contentPane.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
 
-		// init buttongameboard
+		/*
+		 *  initialize gameboard with JButtons that have 'X' on them and put
+		 *  them into the contentPane
+		 */
+		for (int i = 0; i < buttonGameBoard.length; i++) {
+			for (int j = 0; j < buttonGameBoard[i].length; j++) {
+				buttonGameBoard[i][j] = new JButton("X");
+				setButton(buttonGameBoard[i][j], i, j);
+			}
+		}
+		
+		
 
 		// gameboard configuration
 		update(gameBoard);
@@ -115,9 +123,11 @@ public class ClientGUIFrame extends JFrame {
 	 * 
 	 * @return
 	 */
-	private static GameBoard testData() {
-//		GameBoard board = new GameBoard(10, 10);
-		GameBoard board = new GameBoard();
+	public static GameBoard testData() {
+		GameBoard board = new GameBoard(10, 10);
+		board.randomizeFloor(2);
+		return board;
+		
 //		Random r = new Random();
 //
 //		for (int i = 0; i < 10; i++) {
@@ -130,12 +140,12 @@ public class ClientGUIFrame extends JFrame {
 //			}
 //		}
 
-		return board;
 	}
 
 	/**
 	 * Helper method to quickly put the given JButton into the given x,y
-	 * position on the gameboard
+	 * position on the gameboard. Should only be used for setting up
+	 * the gameboard.
 	 * 
 	 * @param button
 	 * @param x
@@ -194,37 +204,37 @@ public class ClientGUIFrame extends JFrame {
 		for (int i = 0; i < entityArray.length; i++) {
 			for (int j = 0; j < entityArray[i].length; j++) {
 				Entity entity = entityArray[i][j];
-				JButton button;
+				JButton button = buttonGameBoard[i][j];
 
 				if (entity instanceof Player) {
 					// button = new JButton(new ImageIcon(playerImg));
-					button = new JButton("Player");
+					button.setText("Player");
 				} else if (entity instanceof Bomb) {
 					// button = new JButton(new ImageIcon(bombImg));
-					button = new JButton("Bomb");
+					button.setText("Bomb");
 				} else if (entity instanceof Door) {
 					// button = new JButton(new ImageIcon(doorImg));
-					button = new JButton("Door");
+					button.setText("Door");
 				} else if (entity instanceof Enemy) {
 					// button = new JButton(new ImageIcon(enemyImg));
-					button = new JButton("Enemy");
+					button.setText("Enemy");
 				} else if (entity instanceof Explosion) {
 					// button = new JButton(new ImageIcon(explosionImg));
-					button = new JButton("Explosion");
+					button.setText("Explosion");
 				} else if (entity instanceof PowerUp) {
 					// button = new JButton(new ImageIcon(powerupImg));
-					button = new JButton("Powerup");
+					button.setText("Powerup");
 				} else if (entity instanceof Wall) {
 					// button = new JButton(new ImageIcon(wallImg));
-					button = new JButton("Wall");
-					button.setBackground(new Color(1, 0, 0));
+					button.setText("W");
+					button.setBackground(new Color(255, 0, 0));
 				} else {
 					// button = new JButton(new ImageIcon(floorImg));
-					button = new JButton("Floor");
-					button.setBackground(new Color(0, 0, 1));
+					button.setText("F");
+					button.setBackground(new Color(0, 0, 255));
 				}
 
-				setButton(button, i, j);
+//				setButton(button, i, j); // XXX
 			}
 		}
 
