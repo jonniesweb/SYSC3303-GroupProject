@@ -70,7 +70,7 @@ public class UserManager {
 		}
 
 		if (currentPlayerList.put(uuid, new User(uuid, ip, port)) != null) {
-			throw new OverwroteUserInMapException();
+//			throw new OverwroteUserInMapException();
 		}
 	}
 
@@ -99,7 +99,7 @@ public class UserManager {
 	private void addPlayerToFuture(String uuid, String ip, int port)
 			throws OverwroteUserInMapException {
 		if (futurePlayerList.put(uuid, new User(uuid, ip, port)) != null) {
-			throw new OverwroteUserInMapException();
+//			throw new OverwroteUserInMapException();
 		}
 	}
 	
@@ -117,7 +117,7 @@ public class UserManager {
 	private void addSpectator(String uuid, String ip, int port)
 			throws OverwroteUserInMapException {
 		if (spectatorList.put(uuid, new User(uuid, ip, port)) != null) {
-			throw new OverwroteUserInMapException();
+//			throw new OverwroteUserInMapException();
 		}
 	}
 
@@ -135,10 +135,10 @@ public class UserManager {
 			if (currentPlayerList.put(uuid, futurePlayerList.remove(uuid)) == null) {
 				return; // success!
 			} else {
-				throw new OverwroteUserInMapException();
+//				throw new OverwroteUserInMapException();
 			}
 		} else {
-			throw new NoUserExistsWithUUIDException();
+//			throw new NoUserExistsWithUUIDException();
 		}
 	}
 
@@ -156,10 +156,10 @@ public class UserManager {
 			if (futurePlayerList.put(uuid, currentPlayerList.remove(uuid)) == null) {
 				return; // success!
 			} else {
-				throw new OverwroteUserInMapException();
+//				throw new OverwroteUserInMapException();
 			}
 		} else {
-			throw new NoUserExistsWithUUIDException();
+//			throw new NoUserExistsWithUUIDException();
 		}
 	}
 

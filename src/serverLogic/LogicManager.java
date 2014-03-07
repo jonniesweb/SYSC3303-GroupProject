@@ -241,6 +241,7 @@ public class LogicManager implements Runnable {
 							else if(board.hasDoor(p.getPosX(), p.getPosY() - 1)){
 								playerCount--;
 								userManager.moveCurrentToFuture(u);
+								playerCount=0;
 								break outerLoop;
 							}
 								
@@ -263,6 +264,7 @@ public class LogicManager implements Runnable {
 							else if(board.hasDoor(p.getPosX(), p.getPosY() + 1)){
 								playerCount--;
 								userManager.moveCurrentToFuture(u);
+								playerCount=0;
 								break outerLoop;
 							}
 						}
@@ -284,6 +286,7 @@ public class LogicManager implements Runnable {
 							else if(board.hasDoor(p.getPosX()-1, p.getPosY())){
 								playerCount--;
 								userManager.moveCurrentToFuture(u);
+								playerCount=0;
 								break outerLoop;
 							}
 						}
@@ -305,6 +308,7 @@ public class LogicManager implements Runnable {
 							else if(board.hasDoor(p.getPosX()+1, p.getPosY())){
 								playerCount--;
 								userManager.moveCurrentToFuture(u);
+								playerCount=0;
 								break outerLoop;
 							}
 						}
