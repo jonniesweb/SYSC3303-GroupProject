@@ -1,13 +1,15 @@
 package serverLogic;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class UserManager {
 
-	private HashMap<String, User> currentPlayerList, futurePlayerList,
+	private Map<String, User> currentPlayerList, futurePlayerList,
 			spectatorList, newUsers;
 
 	public static int MAX_PLAYERCOUNT = 2;
@@ -20,10 +22,10 @@ public class UserManager {
 	
 	public UserManager(int numberOfPlayers) {
 		// define maps that track all users connected to server
-		currentPlayerList = new HashMap<String, User>(numberOfPlayers);
-		futurePlayerList = new HashMap<String, User>(numberOfPlayers);
-		spectatorList = new HashMap<String, User>(numberOfPlayers);
-		newUsers = new HashMap<String, User>(numberOfPlayers);
+		currentPlayerList = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
+		futurePlayerList = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
+		spectatorList = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
+		newUsers = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
 	}
 
 	public enum Type {
