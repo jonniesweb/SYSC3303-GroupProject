@@ -3,7 +3,7 @@ package serverLogic;
 import java.lang.String;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
+import java.util.*;
 import entities.Entity;
 import entities.Bomb;
 import entities.Enemy;
@@ -107,23 +107,22 @@ public class LogicManager implements Runnable {
 
 		// TODO: check bounds on placing player at x,y so it's not placing out of bounds
 		
-		int i = 0;
 		int x;
 		int y;
-
-		for (User u : users.getCurrentPlayerList()) {
-			if (i < 2) {
-				x = 0;
-				y = (i % 2) * board.getHeight();
-			} else {
-				x = board.getWidth();
-				y = (i % 2) * board.getHeight();
-			}
-			i++;
-			board.set(u.getPlayer(), x, y);
-			u.getPlayer().setPos(x, y);
+		System.out.println("setting players");
+		List<User> players = new ArrayList<User>();
+		players.addAll(users.getCurrentPlayerList());
+		for(int i= 0; i<players.size();i++){
+			System.out.println(i);
+				if(i==0){
+					players.get(i).setPlayer(new Player(0,0,"Player 1"));
+					board.set(players.get(i).getPlayer(),0,0);
+					System.out.println(players.get(i).getPlayer().getName());
+				}
+				if(i == 1)
+					board.set(players.get(i).getPlayer(),6,6);
 		}
-
+		System.out.println(board.toString());
 	}
 	
 	/**

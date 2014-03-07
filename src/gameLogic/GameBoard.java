@@ -183,7 +183,6 @@ public class GameBoard {
 				if (board[i][j] instanceof Wall)
 					s += "W";
 				else if (board[i][j] instanceof Player)
-					//s += playerCount++;
 					s += "P";
 				else 
 					s += ".";

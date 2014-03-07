@@ -28,15 +28,14 @@ public class NetworkManager implements Runnable{
 	/**
 	 * 
 	 */
-	public NetworkManager(LogicManager logic) {
+	public NetworkManager(LogicManager logic, UserManager m) {
 		this.logic = logic;
 		
-		logic.setGameInProgress(false);
 		
 		inboxLock = new Semaphore(0);
 		net = new Network(Network.SEVER_PORT_NO, inboxLock);
 		
-		userManager = new UserManager();
+		userManager = m;
 		new Thread(this).start();
 	}
 	
