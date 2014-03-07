@@ -64,6 +64,12 @@ public class ClientGUIFrame extends JFrame {
 			}
 		});
 	}
+	
+	public ClientGUIFrame() {
+		setupContentPane();
+		
+		
+	}
 
 	/**
 	 * Create the frame.
@@ -78,23 +84,7 @@ public class ClientGUIFrame extends JFrame {
 		
 		
 
-		// init images for the gameboard JButtons
-		// commented out since images havent been graphically designed yet
-		// initImages();
-
-		// GUI configuration
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[] { 0, 0, 0 };
-		gbl_contentPane.rowHeights = new int[] { 0, 0 };
-		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0,
-				Double.MIN_VALUE };
-		gbl_contentPane.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-		contentPane.setLayout(gbl_contentPane);
+		setupContentPane();
 
 		/*
 		 *  initialize gameboard with JButtons that have 'X' on them and put
@@ -112,6 +102,26 @@ public class ClientGUIFrame extends JFrame {
 		// gameboard configuration
 		update(gameBoard);
 
+	}
+
+	private void setupContentPane() {
+		// init images for the gameboard JButtons
+		// commented out since images havent been graphically designed yet
+		// initImages();
+
+		// GUI configuration
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[] { 0, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 0, 0 };
+		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0,
+				Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+		contentPane.setLayout(gbl_contentPane);
 	}
 
 	/**
@@ -194,6 +204,10 @@ public class ClientGUIFrame extends JFrame {
 	 * @param gameBoard
 	 */
 	public void update(GameBoard gameBoard) {
+		
+		if(gameBoard.getHeight() != height || gameBoard.getWidth() != width) {
+			// TODO
+		}
 
 		System.out.println("called GUI update");
 		Entity[][] entityArray = gameBoard.getBoard();
