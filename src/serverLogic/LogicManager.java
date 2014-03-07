@@ -219,6 +219,7 @@ public class LogicManager implements Runnable {
 						if(command.equals("UP")){
 							if (!safeMove(p.getPosX(), p.getPosY() - 1)){
 								p.loseLife();
+								System.out.println(p.getName() + " removed from board");
 								removePlayerFromGameBoard(p);
 								if(!p.isAlive()){
 									playerCount--;

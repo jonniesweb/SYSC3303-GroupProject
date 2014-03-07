@@ -6,4 +6,7 @@ LEFT
 UP
 UP
 UP
+UP
+UP
+UP
 END_GAME
