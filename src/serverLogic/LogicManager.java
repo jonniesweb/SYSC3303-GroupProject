@@ -216,6 +216,7 @@ public class LogicManager implements Runnable {
 								if(!p.isAlive()){
 									playerCount--;
 									userManager.moveCurrentToFuture(u);
+									
 								}
 							}
 							else if (validMove(p.getPosX(), p.getPosY() - 1)){
