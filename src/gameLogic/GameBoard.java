@@ -38,8 +38,10 @@ public class GameBoard {
 	 * 
 	 * 
 	 */
-	public GameBoard(){
-		
+	public GameBoard(int width,int height){
+		this.width = width;
+		this.height = height;
+		board = new Entity[height][width];
 	}
 	
 	/**
