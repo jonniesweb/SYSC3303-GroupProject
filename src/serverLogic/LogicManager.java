@@ -191,7 +191,8 @@ public class LogicManager implements Runnable {
 				m = commandQueue.take();
 				System.out.println("got command in logic manager");
 				
-				command = new String(m.datagram.getData());
+				command = new String(m.datagram.getData()).trim();
+				System.out.println("logic command is: "+command);
 				uuid = m.datagram.getAddress().toString() + m.datagram.getPort();
 				
 				//System.out.println("Execute Command/PlayerID Pair - "+command+":"+uuid);
@@ -209,7 +210,7 @@ public class LogicManager implements Runnable {
 									userManager.moveCurrentToFuture(u);
 								}
 							}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){
+							else if (validMove(p.getPosX(), p.getPosY() - 1)){
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveUp();
 									board.set(p,p.getPosX(),p.getPosY());
@@ -217,7 +218,8 @@ public class LogicManager implements Runnable {
 								}
 						}
 						else if(command.equals("DOWN")){
-							if (!safeMove(p.getPosX(), p.getPosY() - 1)){
+							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
+								System.out.println("not safe move");
 								p.loseLife();
 								if(!p.isAlive()){
 									playerCount--;
@@ -226,7 +228,7 @@ public class LogicManager implements Runnable {
 								}
 							}
 							else if (validMove(p.getPosX(), p.getPosY() + 1)){
-									System.out.println("done is a safe move");
+									System.out.println("down is a valid move");
 									board.remove(p.getPosX(), p.getPosY());
 									p.moveDown();
 									board.set(p,p.getPosX(),p.getPosY());
