@@ -78,7 +78,7 @@ public class GameBoard {
 		
 		// determine height
 		try {
-			height = serializedGameBoard.length / width + 1;
+			height = totalBytes / (width + 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -105,7 +105,7 @@ public class GameBoard {
 				set(new Door(x, y), x, y);
 			} else if (entity == '\n') {
 				y++;
-				x = 0;
+				x = -1;
 			} else {
 				set(new Entity(x, y), x, y);
 			}
