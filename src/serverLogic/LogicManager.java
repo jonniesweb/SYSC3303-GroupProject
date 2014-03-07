@@ -320,11 +320,13 @@ public class LogicManager implements Runnable {
 				Logger.acceptMessage("Board sent to all client");
 				Logger.acceptMessage(board.toString());
 			}
+			System.out.println("game is over");
 			networkManager.sendEndGameToAllClients();
 			Logger.writeLog();
 			Logger.endLog();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		System.out.println("game is over");
 	}
 }

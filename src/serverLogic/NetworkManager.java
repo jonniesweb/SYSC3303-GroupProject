@@ -78,7 +78,8 @@ public class NetworkManager implements Runnable{
 				spectate(message.datagram.getAddress().toString(), message.datagram.getPort());
 				continue;
 			}
-			else if (readCommand(message).equals("END_GAME") && !logic.getGameInProgress()){
+			else if (readCommand(message).equals("END_GAME") && logic.getGameInProgress()){
+				System.out.println("got end game.. game in progress is: "+ logic.getGameInProgress());
 				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
 				continue;
 			}
@@ -123,6 +124,7 @@ public class NetworkManager implements Runnable{
 	 * 
 	 */
 	public void sendEndGameToAllClients(){
+		System.out.println("game is over");
 		String endGame = "END_GAME";
 		List<User> users = userManager.getAllUsers();
 		for (int i = 0; i < users.size(); i++) {
