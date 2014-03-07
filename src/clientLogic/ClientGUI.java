@@ -12,7 +12,7 @@ public class ClientGUI {
 
 	ClientGUIFrame guiFrame;
 
-	public ClientGUI(GameBoard gameBoard) {
+	public ClientGUI() {
 
 		guiFrame = new ClientGUIFrame(gameBoard);
 		guiFrame.setVisible(true);
@@ -41,12 +41,12 @@ public class ClientGUI {
 		}
 	};
 	
-	public static void main(String[] args) {
-		GameBoard board = new GameBoard(10, 10);
-		board.randomizeFloor(2);
-		ClientGUI gui = new ClientGUI(board);
-		new Thread(gui.testUpdater).start();
-		
-		
-	}
+//	public static void main(String[] args) {
+//		GameBoard board = new GameBoard(10, 10);
+//		board.randomizeFloor(2);
+//		ClientGUI gui = new ClientGUI(board);
+//		new Thread(gui.testUpdater).start();
+//		
+//		
+//	}
 }
