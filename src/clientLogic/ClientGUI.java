@@ -14,7 +14,7 @@ public class ClientGUI {
 
 	public ClientGUI() {
 
-		guiFrame = new ClientGUIFrame(gameBoard);
+		guiFrame = new ClientGUIFrame();
 		guiFrame.setVisible(true);
 
 	}

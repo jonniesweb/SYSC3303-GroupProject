@@ -88,14 +88,10 @@ public class ClientMain {
 
 			@Override
 			public void run() {
-				
 				running = true;
 				Message message;
-				
 				while(running) {
-					
 					message = readInbox();
-					
 					byte[] data = message.datagram.getData();
 					String gameString = new String(data);
 					GameBoard b = new GameBoard(gameString.toCharArray());

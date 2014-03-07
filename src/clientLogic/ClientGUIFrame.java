@@ -27,8 +27,8 @@ import javax.swing.border.EmptyBorder;
 // TODO: fix testing of client because it crashes
 public class ClientGUIFrame extends JFrame {
 
-	private int width;
-	private int height;
+	private int width = 0;
+	private int height = 0;
 	private JButton[][] buttonGameBoard;
 
 	// define images
@@ -206,7 +206,15 @@ public class ClientGUIFrame extends JFrame {
 	public void update(GameBoard gameBoard) {
 		
 		if(gameBoard.getHeight() != height || gameBoard.getWidth() != width) {
-			// TODO
+			width = gameBoard.getWidth();
+			height= gameBoard.getHeight();
+			buttonGameBoard = new JButton[width][height];
+			for (int i = 0; i < buttonGameBoard.length; i++) {
+				for (int j = 0; j < buttonGameBoard[i].length; j++) {
+					buttonGameBoard[i][j] = new JButton("X");
+					setButton(buttonGameBoard[i][j], i, j);
+				}
+			}
 		}
 
 		System.out.println("called GUI update");
