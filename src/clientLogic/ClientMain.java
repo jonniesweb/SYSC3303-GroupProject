@@ -15,6 +15,7 @@ public class ClientMain {
 	private Network network;
 	private Semaphore inboxLock = new Semaphore(0);
 	private boolean running = false;
+	private ClientGUI view;
 	
 
 	public static void main(String[] args) {
@@ -59,6 +60,7 @@ public class ClientMain {
 		// setup network
 		network = new Network(Network.CLIENT_PORT_NO, inboxLock);
 		new Thread(network).start();
+		view = new ClientGUI();
 		
 		// connect to server
 		String connectCommand = "SPECTATE_GAME";
@@ -95,7 +97,9 @@ public class ClientMain {
 					message = readInbox();
 					
 					byte[] data = message.datagram.getData();
-					
+					String gameString = new String(data);
+					GameBoard b = new GameBoard(gameString.toCharArray());
+					view.update(b);
 					
 					
 				}
@@ -106,8 +110,13 @@ public class ClientMain {
 
 
 	private Message readInbox() {
-		
-		return null;
+		try {
+			inboxLock.acquire();
+		} catch (InterruptedException e) {
+			System.out.println("Thread Interrupted returning empty message");
+			return null;
+		}
+		return network.getMessage();
 	}
 }
 
