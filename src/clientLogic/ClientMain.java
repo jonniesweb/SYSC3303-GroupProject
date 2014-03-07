@@ -74,6 +74,12 @@ public class ClientMain {
 					message = readInbox();
 					byte[] data = message.datagram.getData();
 					String gameString = new String(data).trim();
+					
+					if (gameString.equals("END_GAME")) {
+						continue;
+					}
+					
+					gameString += '\n';
 					GameBoard b = new GameBoard(gameString.toCharArray());
 					view.update(b);
 					
