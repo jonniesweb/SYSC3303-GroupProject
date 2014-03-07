@@ -207,13 +207,13 @@ public class GameBoard {
 	public String toString() {
 		int playerCount = 0;
 		String s = "";
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				if (board[i][j] instanceof Wall)
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (board[x][y] instanceof Wall)
 					s += "W";
-				else if (board[i][j] instanceof Player)
+				else if (board[x][y] instanceof Player)
 					s += "P";
-				else if(board[i][j] instanceof Door)
+				else if(board[x][y] instanceof Door)
 					s += "D";
 				else 
 					s += ".";

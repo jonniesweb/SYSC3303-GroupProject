@@ -150,7 +150,7 @@ public class UserManager {
 	 */
 	public void moveCurrentToFuture(String uuid)
 			throws OverwroteUserInMapException, NoUserExistsWithUUIDException {
-		if (futurePlayerList.containsKey(uuid)) {
+		if (currentPlayerList.containsKey(uuid)) {
 			if (futurePlayerList.put(uuid, currentPlayerList.remove(uuid)) == null) {
 				return; // success!
 			} else {
