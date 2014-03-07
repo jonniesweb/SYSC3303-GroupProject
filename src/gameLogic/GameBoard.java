@@ -260,7 +260,7 @@ public class GameBoard {
 					return;
 			}
 		}
-		board[0][6] = new Door(0,6);	
+		board[3][3] = new Door(3,3);	
 	}
 	
 	public Door getDoor(){

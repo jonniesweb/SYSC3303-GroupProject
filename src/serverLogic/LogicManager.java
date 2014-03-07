@@ -199,6 +199,9 @@ public class LogicManager implements Runnable {
 		System.out.println("gameInProgress now!");
 		System.out.println("game is now in progress");
 		try{
+			
+			outerLoop:
+			
 			while(playerCount > 0){
 				System.out.println("attempting to read command ...");
 				m = commandQueue.take();
@@ -238,6 +241,7 @@ public class LogicManager implements Runnable {
 							else if(board.hasDoor(p.getPosX(), p.getPosY() - 1)){
 								playerCount--;
 								userManager.moveCurrentToFuture(u);
+								break outerLoop;
 							}
 								
 						}
@@ -259,6 +263,7 @@ public class LogicManager implements Runnable {
 							else if(board.hasDoor(p.getPosX(), p.getPosY() + 1)){
 								playerCount--;
 								userManager.moveCurrentToFuture(u);
+								break outerLoop;
 							}
 						}
 						else if(command.equals("LEFT")){
@@ -279,6 +284,7 @@ public class LogicManager implements Runnable {
 							else if(board.hasDoor(p.getPosX()-1, p.getPosY())){
 								playerCount--;
 								userManager.moveCurrentToFuture(u);
+								break outerLoop;
 							}
 						}
 						else if(command.equals("RIGHT")){
@@ -299,6 +305,7 @@ public class LogicManager implements Runnable {
 							else if(board.hasDoor(p.getPosX()+1, p.getPosY())){
 								playerCount--;
 								userManager.moveCurrentToFuture(u);
+								break outerLoop;
 							}
 						}
 						else if(command.equals("END_GAME")){
