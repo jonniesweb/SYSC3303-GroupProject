@@ -56,8 +56,11 @@ public class NetworkManager implements Runnable{
 			Logger.acceptMessage("Read data from inbox - " + new String(message.datagram.getData()) + "- from " + message.ip);			
 			// should join game before starting game
 			if (readCommand(message).equals("START_GAME")){
+				System.out.println("got start game command");
 				if(!logic.getGameInProgress()){
+					System.out.println("game is not in progress");
 					if(userManager.getCurrentPlayerList().size()> 0){
+						System.out.println("playerList is greater than 0");
 						logic.setGameInProgress(true);
 						
 						// XXX: network manager should never create a LogicManager
@@ -136,8 +139,7 @@ public class NetworkManager implements Runnable{
 	 * @return
 	 */
 	private String readCommand(Message m) {
-		String s = new String(m.datagram.getData());
-		System.out.println("command is: "+s);
+		String s = new String(m.datagram.getData()).trim();
 		return s;
 	}
 	

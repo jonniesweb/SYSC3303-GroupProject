@@ -117,7 +117,7 @@ public class ClientGUIFrame extends JFrame {
 	 */
 	private static GameBoard testData() {
 //		GameBoard board = new GameBoard(10, 10);
-		GameBoard board = new GameBoard();
+		GameBoard board = new GameBoard(7,7);
 //		Random r = new Random();
 //
 //		for (int i = 0; i < 10; i++) {
