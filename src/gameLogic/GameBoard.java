@@ -44,7 +44,7 @@ public class GameBoard {
 		this.height = height;
 		board = new Entity[height][width];
 		this.randomizeFloor(4);
-		//this.generateFloor("FloorTest.txt");
+		this.generateFloor("FloorTest.txt");
 		this.initializeDoor();
 	}
 	
@@ -137,6 +137,10 @@ public class GameBoard {
 	public int getHeight() {
 		return height;
 	}
+	public boolean hasDoor(int x,int y){
+		if(x<0 || x>0 || y<0 || y>0) return false;
+		return board[x][y] instanceof Door;
+	}
 
 	/**
 	 * Generate floor from prescribed file
@@ -161,9 +165,11 @@ public class GameBoard {
 			while ((line = br.readLine()) != null) {
 				for (int j = 0; j < line.length(); j++) {
 					if (line.charAt(j) == 'W')
-						board[i][j] = new Wall(i, j);
+						board[j][i] = new Wall(j, i);
 					else if (line.charAt(j) == '.')
-						board[i][j] = new Entity(i, j);
+						board[j][i] = new Entity(j, i);
+					else if (line.charAt(j) == 'D')
+						board[j][i] = new Door(j,i);
 				}
 				i++;
 
@@ -251,7 +257,7 @@ public class GameBoard {
 					return;
 			}
 		}
-		board[4][4] = new Door(4,4);	
+		board[3][3] = new Door(3,3);	
 	}
 	
 	public Door getDoor(){

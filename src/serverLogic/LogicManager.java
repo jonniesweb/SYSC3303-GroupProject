@@ -4,6 +4,8 @@ import java.lang.String;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.*;
+
+import entities.Door;
 import entities.Entity;
 import entities.Bomb;
 import entities.Enemy;
@@ -88,7 +90,7 @@ public class LogicManager implements Runnable {
 	 */
 	private boolean validMove(int x, int y){
 		Entity entity = board.get(x,y);
-		if(entity instanceof Bomb || entity instanceof Wall) { return false; }
+		if(entity instanceof Bomb || entity instanceof Wall || entity instanceof Door) { return false; }
 		else { return true; }
 	}
 	
@@ -202,6 +204,7 @@ public class LogicManager implements Runnable {
 					p = u.getPlayer();
 					if(u.getUUID().equals(uuid)){
 						System.out.println("matching id");
+						System.out.println("(" + p.getPosX() + "," + p.getPosY()+")");
 						if(command.equals("UP")){
 							if (!safeMove(p.getPosX(), p.getPosY() - 1)){
 								p.loseLife();
@@ -215,7 +218,12 @@ public class LogicManager implements Runnable {
 									p.moveUp();
 									board.set(p,p.getPosX(),p.getPosY());
 									Logger.acceptMessage(u.getUUID() + " move UP");
-								}
+							}
+							else if(board.hasDoor(p.getPosX(), p.getPosY() - 1)){
+								playerCount--;
+								userManager.moveCurrentToFuture(u);
+							}
+								
 						}
 						else if(command.equals("DOWN")){
 							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
@@ -230,7 +238,11 @@ public class LogicManager implements Runnable {
 									p.moveDown();
 									board.set(p,p.getPosX(),p.getPosY());
 									Logger.acceptMessage(u.getUUID() + " move DOWN");
-								}
+							}
+							else if(board.hasDoor(p.getPosX(), p.getPosY() + 1)){
+								playerCount--;
+								userManager.moveCurrentToFuture(u);
+							}
 						}
 						else if(command.equals("LEFT")){
 							if (!safeMove(p.getPosX()-1, p.getPosY())){
@@ -245,7 +257,11 @@ public class LogicManager implements Runnable {
 									p.moveLeft();
 									board.set(p,p.getPosX(),p.getPosY());
 									Logger.acceptMessage(u.getUUID() + " move LEFT");
-								}
+							}
+							else if(board.hasDoor(p.getPosX()-1, p.getPosY())){
+								playerCount--;
+								userManager.moveCurrentToFuture(u);
+							}
 						}
 						else if(command.equals("RIGHT")){
 							if (!safeMove(p.getPosX() + 1, p.getPosY())){
@@ -260,7 +276,11 @@ public class LogicManager implements Runnable {
 									p.moveRight();
 									board.set(p,p.getPosX(),p.getPosY());
 									Logger.acceptMessage(u.getUUID() + " move RIGHT");
-								}
+							}
+							else if(board.hasDoor(p.getPosX()+1, p.getPosY())){
+								playerCount--;
+								userManager.moveCurrentToFuture(u);
+							}
 						}
 						else if(command.equals("END_GAME")){
 							playerCount--;
