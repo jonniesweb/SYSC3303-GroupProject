@@ -227,6 +227,10 @@ public class GameBoard {
 	}
 	
 	public Entity set(Entity entity, int x, int y) {
+		if(x < 0 || x > width)
+			System.out.println("x out of bounds: "+ x);
+		if(y < 0 || y > height)
+			System.out.println("y out of bounds: "+ y);
 		Entity previousEntity = board[x][y];
 		board[x][y] = entity;
 		return previousEntity;

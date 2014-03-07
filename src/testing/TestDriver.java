@@ -19,7 +19,7 @@ public class TestDriver implements Runnable {
 
 	public TestDriver(String filename) {
 		this.file = filename;
-		net = new Network(Network.CLIENT_PORT_NO, new Semaphore(0));
+		net = new Network(8889, new Semaphore(0));
 		new Thread(net).start();
 		new Thread(this).start();
 	}

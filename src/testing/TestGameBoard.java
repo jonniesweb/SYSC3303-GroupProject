@@ -115,7 +115,8 @@ public class TestGameBoard {
 			System.out.print((char) byteBoard[i]);
 		}
 		GameBoard newBoard = new GameBoard(new String(byteBoard).toCharArray());
-		
+		System.out.println("printing gameboard");
+		System.out.println();
 		System.out.println(game);
 		System.out.println("-----------");
 		System.out.println(newBoard);
