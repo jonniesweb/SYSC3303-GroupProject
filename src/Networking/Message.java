@@ -19,6 +19,7 @@ public class Message {
 	public Message(String m, String hostName, int p,long t) {
 		this.time = t;
 		this.packetPort = p;
+		hostName = "127.0.0.1";
 		try {
 			ip = InetAddress.getByName(hostName);
 		} catch (Exception e) {

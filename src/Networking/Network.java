@@ -88,6 +88,7 @@ public class Network extends Thread {
 				public void run(){
 					Message m1 = new Message(receivePacket);
 					String command = new String(receivePacket.getData());
+					System.out.println("got command: "+ command);
 					inbox.add(m1);
 					inboxLock.release(1);
 				}

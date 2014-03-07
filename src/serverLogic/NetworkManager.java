@@ -108,6 +108,9 @@ public class NetworkManager implements Runnable{
 	 * 
 	 */
 	public void sendBoardToAllClients(String board) {
+		System.out.println();
+		System.out.println(board);
+		System.out.println();
 		List<User> users = userManager.getAllUsers();
 		for(int i=0; i< users.size(); i++){
 			String ip = users.get(i).getIp();
