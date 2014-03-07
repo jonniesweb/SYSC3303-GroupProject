@@ -1,6 +1,10 @@
 package testing;
 
 import static org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.nio.ByteBuffer;
+
 import entities.Door;
 import entities.Player;
 import entities.Wall;
@@ -64,22 +68,22 @@ public class TestGameBoard {
 		game.randomizeFloor(2);
 		//Set one player on top left corner
 		//check if top left corner is instance of player
-		game.set(new Player(0,0,"Fucker"), 0, 0);
+		game.set(new Player(0,0,"P1"), 0, 0);
 		assertTrue(game.get(0, 0) instanceof Player);
-		assertEquals(((Player)game.get(0, 0)).getName(),"Fucker");
+		assertEquals(((Player)game.get(0, 0)).getName(),"P1");
 		
 		//Set one player on top left corner
 		//check if top left corner is instance of player
-		game.set(new Player(6,6,"Fucker2"), 6, 6);
+		game.set(new Player(6,6,"P2"), 6, 6);
 		assertTrue(game.get(6, 6) instanceof Player);
-		assertEquals(((Player)game.get(6, 6)).getName(),"Fucker2");
+		assertEquals(((Player)game.get(6, 6)).getName(),"P2");
 
 	}
 	@Test
 	public void testRemoveEntity() throws Exception{
 		setUp();
 		game.randomizeFloor(2);
-		game.set(new Player(0,0,"Fucker"), 0, 0);
+		game.set(new Player(0,0,"P1"), 0, 0);
 		game.remove(0, 0);
 		assertFalse(game.get(0, 0) instanceof Player);
 	}
@@ -96,6 +100,26 @@ public class TestGameBoard {
 	public void testDoor() throws Exception{
 		setUp();
 		assertTrue(game.getDoor() instanceof Door);	
+	}
+	
+	@Test
+	public void testGameBoardSerialized() throws Exception {
+		char[] charBoard = game.toString().toCharArray();
+		byte[] byteBoard = new byte[charBoard.length];
+		
+		for (int i = 0; i < charBoard.length; i++) {
+			byteBoard[i] = (byte) charBoard[i];
+		}
+		
+		for (int i = 0; i < byteBoard.length; i++) {
+			System.out.print((char) byteBoard[i]);
+		}
+		GameBoard newBoard = new GameBoard(new String(byteBoard).toCharArray());
+		
+		System.out.println(game);
+		System.out.println(newBoard);
+		
+		assertTrue(newBoard.toString().equals(game.toString()));
 	}
 
 }

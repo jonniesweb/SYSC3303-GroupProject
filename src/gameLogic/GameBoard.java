@@ -56,6 +56,62 @@ public class GameBoard {
 		generateFloor(filename);	
 		
 	}
+	
+	/**
+	 * Creates a GameBoard from a serialized byte array
+	 * @param serializedGameBoard
+	 */
+	public GameBoard(char[] serializedGameBoard) {
+		
+		this.width = 0;
+		this.height = 0;
+		int totalBytes = serializedGameBoard.length;
+		
+		// get the width of the gameboard
+		for (int i = 0; i < serializedGameBoard.length; i++) {
+			if (serializedGameBoard[i] == '\n') {
+				width = i;
+				break;
+			}
+		}
+		
+		// determine height
+		try {
+			height = serializedGameBoard.length / width + 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		// create GameBoard with found out width and height
+		board = new Entity[height][width];
+		
+		/*
+		 * Parse serializedGameBoard to create the board
+		 */
+		int x = 0;
+		int y = 0;
+		char entity;
+		
+		for (int i = 0; i < serializedGameBoard.length; i++) {
+			
+			entity = (char) serializedGameBoard[i];
+			
+			if (entity == 'W') {
+				set(new Wall(x, y), x, y);
+			} else if (entity == 'P') {
+				set(new Player(x, y, ""), x, y);
+			} else if (entity == 'D') {
+				set(new Door(x, y), x, y);
+			} else if (entity == '\n') {
+				y++;
+				x = 0;
+			} else {
+				set(new Entity(x, y), x, y);
+			}
+			
+			x++;
+		}
+	}
 
 	/**
 	 * 
