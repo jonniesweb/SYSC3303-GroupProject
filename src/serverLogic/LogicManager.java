@@ -180,6 +180,8 @@ public class LogicManager implements Runnable {
 		int x = player.getPosX();
 		int y = player.getPosY();
 		board.set(new Entity(x, y), x, y);
+		
+		System.out.println(player.getName() + " died");
 	}
 	
 	/**
