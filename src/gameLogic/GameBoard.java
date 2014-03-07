@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 
+import entities.Door;
 import entities.Entity;
 import entities.Player;
 import entities.Wall;
@@ -43,6 +44,7 @@ public class GameBoard {
 		this.height = height;
 		board = new Entity[height][width];
 		this.randomizeFloor(4);
+		this.initializeDoor();
 	}
 	
 	/**
@@ -168,8 +170,31 @@ public class GameBoard {
 		board[x][y] = entity;
 		return previousEntity;
 	}
+	/**
+	 * Remove entity at specified position
+	 * @param x
+	 * @param y
+	 */
 	public void remove(int x, int y){
 		board[x][y]= new Entity(x,y);
+	}
+	/**
+	 * Initialize door into the board
+	 * If there is door already e.g door initialized inside prescribed file
+	 * 
+	 */
+	public void initializeDoor(){
+		for(int i = 0;i<height;i++){
+			for(int j = 0;j<height;j++){
+				if(board[i][j] instanceof Door)
+					return;
+			}
+		}
+		board[4][4] = new Door(4,4);	
+	}
+	
+	public Door getDoor(){
+		return (Door)board[4][4];
 	}
 	/**
 	 * For testing purposes
@@ -185,6 +210,8 @@ public class GameBoard {
 				else if (board[i][j] instanceof Player)
 					//s += playerCount++;
 					s += "P";
+				else if(board[i][j] instanceof Door)
+					s += "D";
 				else 
 					s += ".";
 			}
