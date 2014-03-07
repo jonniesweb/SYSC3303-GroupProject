@@ -67,7 +67,6 @@ public class GameBoard {
 		this.width = 0;
 		this.height = 0;
 		int totalBytes = serializedGameBoard.length;
-		
 		// get the width of the gameboard
 		for (int i = 0; i < serializedGameBoard.length; i++) {
 			if (serializedGameBoard[i] == '\n') {
@@ -83,8 +82,8 @@ public class GameBoard {
 			e.printStackTrace();
 		}
 		
-		// create GameBoard with found out width and height
-		board = new Entity[height][width];
+		System.out.println("gameboard: height:"+ height +" width: "+width);
+		board = new Entity[width][height];
 		
 		/*
 		 * Parse serializedGameBoard to create the board
