@@ -1,5 +1,7 @@
 package serverLogic;
 
+import entities.Entity;
+import gameLogic.GameBoard;
 import testing.Logger;
 
 // TODO: add command line arguments to allow starting up from a predefined,
@@ -29,6 +31,19 @@ public class ServerMain {
 		logicManager = new LogicManager(userManager);
 		networkManager = new NetworkManager(logicManager,userManager);
 		logicManager.setNetworkManager(networkManager);
+	}
+	
+	public ServerMain(boolean door) {
+		this();
+		
+		GameBoard board = new GameBoard(7, 7);
+		if (door) {
+			
+			logicManager.setGameBoard(board);
+		} else {
+			board.set(new Entity(3, 3), 3, 3);
+			logicManager.setGameBoard(board);
+		}
 	}
 
 	/**

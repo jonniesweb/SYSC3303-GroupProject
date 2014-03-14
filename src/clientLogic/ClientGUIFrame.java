@@ -246,11 +246,11 @@ public class ClientGUIFrame extends JFrame {
 				} else if (entity instanceof Wall) {
 					// button = new JButton(new ImageIcon(wallImg));
 					button.setText("W");
-					button.setBackground(new Color(255, 0, 0));
+//					button.setBackground(new Color(255, 0, 0));
 				} else {
 					// button = new JButton(new ImageIcon(floorImg));
 					button.setText("F");
-					button.setBackground(new Color(0, 0, 255));
+//					button.setBackground(new Color(0, 0, 255));
 				}
 
 //				setButton(button, i, j); // XXX
