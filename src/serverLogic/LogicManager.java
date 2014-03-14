@@ -320,6 +320,7 @@ public class LogicManager implements Runnable {
 							playerCount--;
 							userManager.moveCurrentToFuture(u);
 						}
+						
 						//else if(command.equals("BOMB"))
 					}
 				}
