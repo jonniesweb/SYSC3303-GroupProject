@@ -8,6 +8,7 @@ Game commands
 * START_GAME
 * END_GAME
 * JOIN_GAME
+* SPECTATE_GAME
 * RESET_LIFE
 * UP
 * DOWN
