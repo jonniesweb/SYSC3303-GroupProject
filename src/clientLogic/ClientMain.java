@@ -1,104 +1,50 @@
 package clientLogic;
 
-import gameLogic.GameBoard;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.concurrent.Semaphore;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import Networking.Message;
 import Networking.Network;
-import testing.TestDriver;
 
-public class ClientMain {
-	
-	private Network network;
-	private Semaphore inboxLock = new Semaphore(0);
-	private boolean running = false;
-	private ClientGUI view;
-	
+public class ClientMain extends SpectatorMain {
 
 	public static void main(String[] args) {
-	
-		
 		new ClientMain();
-		// new Thread(new TestDriver("testNumber1.txt")).start();
-
-		// Loop while running
-		// Establish Connection
-		// Loop
-		// Update Gameboard
-		// Check player life status
-		// Send command
-		// Kill Connection
 
 	}
 	
 	
-
 	public ClientMain() {
-		// setup network
-		network = new Network(Network.CLIENT_PORT_NO, inboxLock);
-		new Thread(network).start();
-		view = new ClientGUI();
-		
-		// connect to server
-		String connectCommand = "SPECTATE_GAME";
-		int port = Network.SEVER_PORT_NO;
-		long time = System.nanoTime();
-		String ip = "127.0.0.1";
-		try {
-			ip = InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		
-		startListening();
-		
-		network.sendMessage(new Message(connectCommand, ip, port, time));
-		
-		
-	}
-	
-	/**
-	 * listen for incoming data
-	 */
-	private void startListening() {
-		new Thread(new Runnable() {
+		this.view.guiFrame.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
 
 			@Override
-			public void run() {
-				running = true;
-				Message message;
-				while(running) {
-					message = readInbox();
-					byte[] data = message.datagram.getData();
-					String gameString = new String(data).trim();
+			public void keyReleased(KeyEvent e) {
+				// check if 'W' key
+				if (e.getKeyCode() == KeyEvent.VK_W) {
+					network.sendMessage(new Message("UP", "127.0.0.1", Network.SEVER_PORT_NO, System.nanoTime()));
 					
-					if (gameString.equals("END_GAME")) {
-						continue;
-					}
+					// check if 'A' key
+				} else if (e.getKeyCode() == KeyEvent.VK_A) {
+					network.sendMessage(new Message("LEFT", "127.0.0.1", Network.SEVER_PORT_NO, System.nanoTime()));
 					
-					gameString += '\n';
-					GameBoard b = new GameBoard(gameString.toCharArray());
-					view.update(b);
+					// check if 'S' key
+				} else if (e.getKeyCode() == KeyEvent.VK_S) {
+					network.sendMessage(new Message("DOWN", "127.0.0.1", Network.SEVER_PORT_NO, System.nanoTime()));
 					
-					
+					// check if 'D' key
+				} else if (e.getKeyCode() == KeyEvent.VK_D) {
+					network.sendMessage(new Message("RIGHT", "127.0.0.1", Network.SEVER_PORT_NO, System.nanoTime()));
 				}
 			}
-		}).start();
+		});
 	}
 
-
-
-	private Message readInbox() {
-		try {
-			inboxLock.acquire();
-		} catch (InterruptedException e) {
-			System.out.println("Thread Interrupted returning empty message");
-			return null;
-		}
-		return network.getMessage();
-	}
 }
-

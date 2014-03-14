@@ -28,4 +28,13 @@ public class Message {
 		datagram = new DatagramPacket(message.getBytes(), message.getBytes().length, ip,
 				packetPort);
 	}
+	
+	/**
+	 * Returns a String of the data of the message. Calls the trim() method on
+	 * the string to remove extraneous whitespace.
+	 * @return
+	 */
+	public String getData() {
+		return new String(datagram.getData()).trim();
+	}
 }
