@@ -1,104 +1,89 @@
 package clientLogic;
 
-import gameLogic.GameBoard;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.concurrent.Semaphore;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Random;
 
 import Networking.Message;
 import Networking.Network;
-import testing.TestDriver;
 
-public class ClientMain {
-	
-	private Network network;
-	private Semaphore inboxLock = new Semaphore(0);
-	private boolean running = false;
-	private ClientGUI view;
-	
+public class ClientMain extends SpectatorMain {
 
 	public static void main(String[] args) {
-	
-		
-		new ClientMain();
-		// new Thread(new TestDriver("testNumber1.txt")).start();
+		Random r = new Random();
+		int port = 8000 + r.nextInt(100);
+		new ClientMain(port);
 
-		// Loop while running
-		// Establish Connection
-		// Loop
-		// Update Gameboard
-		// Check player life status
-		// Send command
-		// Kill Connection
-
-	}
-	
-	
-
-	public ClientMain() {
-		// setup network
-		network = new Network(Network.CLIENT_PORT_NO, inboxLock);
-		new Thread(network).start();
-		view = new ClientGUI();
-		
-		// connect to server
-		String connectCommand = "SPECTATE_GAME";
-		int port = Network.SEVER_PORT_NO;
-		long time = System.nanoTime();
-		String ip = "127.0.0.1";
-		try {
-			ip = InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		
-		startListening();
-		
-		network.sendMessage(new Message(connectCommand, ip, port, time));
-		
-		
 	}
 	
 	/**
-	 * listen for incoming data
+	 * Starts up a Client with the specified port #
+	 * @param port
 	 */
-	private void startListening() {
-		new Thread(new Runnable() {
+	public ClientMain(int port) {
+		super(port, "127.0.0.1", Network.SERVER_PORT_NO);
+		this.view.guiFrame.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
 
 			@Override
-			public void run() {
-				running = true;
-				Message message;
-				while(running) {
-					message = readInbox();
-					byte[] data = message.datagram.getData();
-					String gameString = new String(data).trim();
+			public void keyReleased(KeyEvent e) {
+				
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_W:
+					sendMessage("UP");
+					break;
 					
-					if (gameString.equals("END_GAME")) {
-						continue;
-					}
+				case KeyEvent.VK_A:
+					sendMessage("LEFT");
+					break;
 					
-					gameString += '\n';
-					GameBoard b = new GameBoard(gameString.toCharArray());
-					view.update(b);
+				case KeyEvent.VK_S:
+					sendMessage("DOWN");
+					break;
 					
+				case KeyEvent.VK_D:
+					sendMessage("RIGHT");
+					break;
 					
+				case KeyEvent.VK_SPACE:
+					sendMessage("BOMB");
+					break;
+					
+				case KeyEvent.VK_J:
+					sendMessage("JOIN_GAME");
+					break;
+					
+				case KeyEvent.VK_K:
+					sendMessage("END_GAME");
+					break;
+					
+				case KeyEvent.VK_ENTER:
+					sendMessage("START_GAME");
+					break;
+					
+				case KeyEvent.VK_SLASH:
+					sendMessage("RESET_LIFE");
+				default:
+					break;
 				}
 			}
-		}).start();
+		});
+	}
+	
+	/**
+	 * Send a string to the server
+	 * @param data
+	 */
+	void sendMessage(String data) {
+		network.sendMessage(new Message(data, "127.0.0.1", Network.SERVER_PORT_NO, System.nanoTime()));
+		System.out.println("send command: " + data);
 	}
 
-
-
-	private Message readInbox() {
-		try {
-			inboxLock.acquire();
-		} catch (InterruptedException e) {
-			System.out.println("Thread Interrupted returning empty message");
-			return null;
-		}
-		return network.getMessage();
-	}
 }
-

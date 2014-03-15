@@ -16,7 +16,7 @@ public class Network extends Thread {
 	private DatagramSocket socket;
 	private ExecutorService pool;
 	private List<Message> inbox;
-	public static final int SEVER_PORT_NO = 8888;
+	public static final int SERVER_PORT_NO = 8888;
 	public static final int CLIENT_PORT_NO = 8871;
 	int port;
 	private Semaphore inboxLock;
