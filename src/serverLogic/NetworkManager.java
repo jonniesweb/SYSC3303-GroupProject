@@ -33,7 +33,7 @@ public class NetworkManager implements Runnable{
 		
 		
 		inboxLock = new Semaphore(0);
-		net = new Network(Network.SEVER_PORT_NO, inboxLock);
+		net = new Network(Network.SERVER_PORT_NO, inboxLock);
 		
 		userManager = m;
 		new Thread(this).start();

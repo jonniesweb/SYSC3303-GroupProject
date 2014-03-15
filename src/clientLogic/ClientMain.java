@@ -2,6 +2,7 @@ package clientLogic;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Random;
 
 import Networking.Message;
 import Networking.Network;
@@ -9,12 +10,18 @@ import Networking.Network;
 public class ClientMain extends SpectatorMain {
 
 	public static void main(String[] args) {
-		new ClientMain();
+		Random r = new Random();
+		int port = 8000 + r.nextInt(100);
+		new ClientMain(port);
 
 	}
 	
-	
-	public ClientMain() {
+	/**
+	 * Starts up a Client with the specified port #
+	 * @param port
+	 */
+	public ClientMain(int port) {
+		super(port, "127.0.0.1", Network.SERVER_PORT_NO);
 		this.view.guiFrame.addKeyListener(new KeyListener() {
 			
 			@Override
@@ -27,24 +34,56 @@ public class ClientMain extends SpectatorMain {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// check if 'W' key
-				if (e.getKeyCode() == KeyEvent.VK_W) {
-					network.sendMessage(new Message("UP", "127.0.0.1", Network.SEVER_PORT_NO, System.nanoTime()));
+				
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_W:
+					sendMessage("UP");
+					break;
 					
-					// check if 'A' key
-				} else if (e.getKeyCode() == KeyEvent.VK_A) {
-					network.sendMessage(new Message("LEFT", "127.0.0.1", Network.SEVER_PORT_NO, System.nanoTime()));
+				case KeyEvent.VK_A:
+					sendMessage("LEFT");
+					break;
 					
-					// check if 'S' key
-				} else if (e.getKeyCode() == KeyEvent.VK_S) {
-					network.sendMessage(new Message("DOWN", "127.0.0.1", Network.SEVER_PORT_NO, System.nanoTime()));
+				case KeyEvent.VK_S:
+					sendMessage("DOWN");
+					break;
 					
-					// check if 'D' key
-				} else if (e.getKeyCode() == KeyEvent.VK_D) {
-					network.sendMessage(new Message("RIGHT", "127.0.0.1", Network.SEVER_PORT_NO, System.nanoTime()));
+				case KeyEvent.VK_D:
+					sendMessage("RIGHT");
+					break;
+					
+				case KeyEvent.VK_SPACE:
+					sendMessage("BOMB");
+					break;
+					
+				case KeyEvent.VK_J:
+					sendMessage("JOIN_GAME");
+					break;
+					
+				case KeyEvent.VK_K:
+					sendMessage("END_GAME");
+					break;
+					
+				case KeyEvent.VK_ENTER:
+					sendMessage("START_GAME");
+					break;
+					
+				case KeyEvent.VK_SLASH:
+					sendMessage("RESET_LIFE");
+				default:
+					break;
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Send a string to the server
+	 * @param data
+	 */
+	void sendMessage(String data) {
+		network.sendMessage(new Message(data, "127.0.0.1", Network.SERVER_PORT_NO, System.nanoTime()));
+		System.out.println("send command: " + data);
 	}
 
 }

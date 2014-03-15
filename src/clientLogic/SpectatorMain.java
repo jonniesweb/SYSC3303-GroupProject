@@ -37,27 +37,33 @@ public class SpectatorMain {
 	
 
 	public SpectatorMain() {
+		this(Network.CLIENT_PORT_NO, "127.0.0.1", Network.SERVER_PORT_NO);
+	
+		
+	}
+
+
+
+	public SpectatorMain(int clientPort, String serverHostname, int serverPort) {
 		// setup network
-		network = new Network(Network.CLIENT_PORT_NO, inboxLock);
+		network = new Network(clientPort, inboxLock);
 		new Thread(network).start();
 		view = new ClientGUI();
 		
 		// connect to server
 		String connectCommand = "SPECTATE_GAME";
-		int port = Network.SEVER_PORT_NO;
+		int port = serverPort;
 		long time = System.nanoTime();
-		String ip = "127.0.0.1";
+		String ip = serverHostname;
 		try {
-			ip = InetAddress.getLocalHost().getHostAddress();
+			ip = InetAddress.getLocalHost().getHostAddress(); // XXX: remove since it's a hack
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 		
 		startListening();
 		
-		network.sendMessage(new Message(connectCommand, ip, port, time));
-		
-		
+//		network.sendMessage(new Message(connectCommand, ip, port, time));
 	}
 	
 	/**
