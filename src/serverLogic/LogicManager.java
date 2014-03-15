@@ -188,6 +188,13 @@ public class LogicManager implements Runnable {
 		System.out.println("LogicManager: " + player.getName() + " died");
 	}
 	
+	/**
+	 * Handles Movement of the Player
+	 * @param user
+	 * @param newPosX
+	 * @param newPosY
+	 * @return playerStatus
+	 */
 	private int handleMovement(User user, int newPosX, int newPosY){
 
 		Player player = user.getPlayer();
@@ -212,6 +219,12 @@ public class LogicManager implements Runnable {
 		return 0;
 	}
 
+	/**
+	 * Executes the Users Commands
+	 * @param u
+	 * @param command
+	 * @return playerStatus
+	 */
 	private int handleCommand(User u, String command){
 
 		int posX = u.getPlayer().getPosX();
@@ -220,16 +233,16 @@ public class LogicManager implements Runnable {
 
 		switch(command){
 			case "UP":
-				playerStatus = handleMovement(u, posX, posY + 1);
+				playerStatus = handleMovement(u, posX, posY - 1);
 				break;
 			case "DOWN":
 				playerStatus = handleMovement(u, posX, posY + 1);
 				break;
 			case "LEFT":
-				playerStatus = handleMovement(u, posX, posY + 1);
+				playerStatus = handleMovement(u, posX - 1, posY);
 				break;
 			case "RIGHT":
-				playerStatus = handleMovement(u, posX, posY + 1);
+				playerStatus = handleMovement(u, posX + 1, posY);
 				break;
 			case "END_GAME":
 				playerCount--;
@@ -269,6 +282,10 @@ public class LogicManager implements Runnable {
 		return playerStatus;
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void run(){
 		System.out.println("LogicManager: Now Active");
 
@@ -309,15 +326,15 @@ public class LogicManager implements Runnable {
 						System.out.println("LogicManager: Manipulating player '" + u.getPlayer().getName() + "' currently at location " + u.getPlayer().getPos());
 
 						// Proper way to do handle command
-						//handleCommand(u, command);
+						handleCommand(u, command);
 						
 						//The following is to preserve the debugging
 						// functionality which ends the game
 						// after a single player finds the door
-						if (handleCommand(u, command) == 2){
+						/*if (handleCommand(u, command) == 2){
 							playerCount = 0;
 							break outerLoop;
-						}
+						}*/
 					}
 				}
 				
