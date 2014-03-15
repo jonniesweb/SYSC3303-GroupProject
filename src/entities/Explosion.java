@@ -13,10 +13,4 @@ public class Explosion extends Entity {
 	public Explosion(int x, int y){
 		super(x,y);
 	}
-	
-	//Methods
-	public void draw(){
-		//Draw itself
-		System.out.println("Drawing the Explosion at " + pos());
-	}
 }
