@@ -13,7 +13,7 @@ public class TestDriver implements Runnable {
 	ArrayList<String> list = new ArrayList<String>();
 	int count = 0;
 	String serverIp = "127.0.0.1";
-	int serverPort = Network.SEVER_PORT_NO;
+	int serverPort = Network.SERVER_PORT_NO;
 	Network net;
 
 	public TestDriver(String filename, int port) {
