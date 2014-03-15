@@ -188,6 +188,13 @@ public class LogicManager implements Runnable {
 		System.out.println("LogicManager: " + player.getName() + " died");
 	}
 	
+	/**
+	 * 
+	 * @param user
+	 * @param newPosX
+	 * @param newPosY
+	 * @return
+	 */
 	private int handleMovement(User user, int newPosX, int newPosY){
 
 		Player player = user.getPlayer();
@@ -212,6 +219,12 @@ public class LogicManager implements Runnable {
 		return 0;
 	}
 
+	/**
+	 * 
+	 * @param u
+	 * @param command
+	 * @return
+	 */
 	private int handleCommand(User u, String command){
 
 		int posX = u.getPlayer().getPosX();
@@ -220,16 +233,16 @@ public class LogicManager implements Runnable {
 
 		switch(command){
 			case "UP":
-				playerStatus = handleMovement(u, posX, posY + 1);
+				playerStatus = handleMovement(u, posX, posY - 1);
 				break;
 			case "DOWN":
 				playerStatus = handleMovement(u, posX, posY + 1);
 				break;
 			case "LEFT":
-				playerStatus = handleMovement(u, posX, posY + 1);
+				playerStatus = handleMovement(u, posX - 1, posY);
 				break;
 			case "RIGHT":
-				playerStatus = handleMovement(u, posX, posY + 1);
+				playerStatus = handleMovement(u, posX + 1, posY);
 				break;
 			case "END_GAME":
 				playerCount--;
