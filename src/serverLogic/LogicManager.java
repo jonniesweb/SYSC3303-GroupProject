@@ -115,7 +115,7 @@ public class LogicManager implements Runnable {
 		
 		int x;
 		int y;
-		System.out.println("setting players");
+		System.out.println("LogicManager: Setting Player Positions");
 		List<User> players = new ArrayList<User>();
 		players.addAll(users.getCurrentPlayerList());
 		for(int i= 0; i<players.size();i++){
@@ -131,7 +131,7 @@ public class LogicManager implements Runnable {
 					System.out.println(players.get(i).getPlayer().getName());
 				}
 		}
-		System.out.println(board.toString());
+		System.out.println("LogicManager: Current GameBoard\n" + board.toString());
 	}
 	
 	/**
@@ -145,7 +145,7 @@ public class LogicManager implements Runnable {
 	public void setGameInProgress(boolean b){
 		gameInProgress = b;
 		placePlayers(board, userManager);
-		System.out.println("Game in progress is: "+gameInProgress);
+		System.out.println("LogicManager: gameInProgress has been set to '"+gameInProgress + "'");
 	}
 	public void setNetworkManager(NetworkManager m){
 		this.networkManager = m;
@@ -185,7 +185,7 @@ public class LogicManager implements Runnable {
 		int y = player.getPosY();
 		board.set(new Entity(x, y), x, y);
 		
-		System.out.println(player.getName() + " died");
+		System.out.println("LogicManager: " + player.getName() + " died");
 	}
 	
 	private int handleMovement(User user, int newPosX, int newPosY){
