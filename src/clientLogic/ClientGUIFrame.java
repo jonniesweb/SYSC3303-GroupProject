@@ -11,10 +11,14 @@ import entities.Wall;
 import gameLogic.GameBoard;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -42,28 +46,7 @@ public class ClientGUIFrame extends JFrame {
 	private Image wallImg;
 
 	private JPanel contentPane;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					// XXX: constructor call for testing only
-					GameBoard gameBoard = new GameBoard(10, 10);
-					gameBoard.randomizeFloor(2);
-					final ClientGUIFrame frame = new ClientGUIFrame(gameBoard);
-					frame.setVisible(true);
-
-					frame.update(testData()); // XXX: test
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private GridLayout layoutManager = new GridLayout();
 	
 	public ClientGUIFrame() {
 		setupContentPane();
@@ -72,7 +55,7 @@ public class ClientGUIFrame extends JFrame {
 	}
 
 	/**
-	 * Create the frame.
+	 * Create the frame with the specified gameboard.
 	 * 
 	 * @param gameBoard
 	 */
@@ -81,7 +64,6 @@ public class ClientGUIFrame extends JFrame {
 		this.height = gameBoard.getHeight();
 
 		buttonGameBoard = new JButton[width][height];
-		
 		
 
 		setupContentPane();
@@ -93,10 +75,9 @@ public class ClientGUIFrame extends JFrame {
 		for (int i = 0; i < buttonGameBoard.length; i++) {
 			for (int j = 0; j < buttonGameBoard[i].length; j++) {
 				buttonGameBoard[i][j] = new JButton("X");
-				setButton(buttonGameBoard[i][j], i, j);
+				setButton(buttonGameBoard[i][j]);
 			}
 		}
-		
 		
 
 		// gameboard configuration
@@ -111,17 +92,12 @@ public class ClientGUIFrame extends JFrame {
 
 		// GUI configuration
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 450);
+		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[] { 0, 0, 0 };
-		gbl_contentPane.rowHeights = new int[] { 0, 0 };
-		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0,
-				Double.MIN_VALUE };
-		gbl_contentPane.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-		contentPane.setLayout(gbl_contentPane);
+		contentPane.setLayout(layoutManager);
 	}
 
 	/**
@@ -135,18 +111,6 @@ public class ClientGUIFrame extends JFrame {
 		board.randomizeFloor(2);
 		return board;
 
-//		Random r = new Random();
-//
-//		for (int i = 0; i < 10; i++) {
-//			for (int j = 0; j < 10; j++) {
-//				if (r.nextInt(10) < 7) {
-//					board.getBoard()[i][j] = new Wall();
-//				} else {
-//					board.getBoard()[i][j] = new Entity();
-//				}
-//			}
-//		}
-
 	}
 
 	/**
@@ -155,14 +119,10 @@ public class ClientGUIFrame extends JFrame {
 	 * the gameboard.
 	 * 
 	 * @param button
-	 * @param x
-	 * @param y
 	 */
-	private void setButton(JButton button, int x, int y) {
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.gridx = x;
-		gbc_btnNewButton.gridy = y;
-		contentPane.add(button, gbc_btnNewButton);
+	private void setButton(JButton button) {
+		contentPane.add(button);
+		button.setFocusable(false);
 	}
 
 	/**
@@ -206,13 +166,24 @@ public class ClientGUIFrame extends JFrame {
 	public void update(GameBoard gameBoard) {
 		
 		if(gameBoard.getHeight() != height || gameBoard.getWidth() != width) {
+			
+			// remove all components from the frame since theres an update
+			contentPane.removeAll();
+			
+			// set width and height
 			width = gameBoard.getWidth();
 			height= gameBoard.getHeight();
+			
+			// Tell the gridlayout to set this new width and height
+			layoutManager.setColumns(width);
+			layoutManager.setRows(height);
+			
+			// fill the buttonGameboard with new buttons since the size has changed
 			buttonGameBoard = new JButton[width][height];
 			for (int i = 0; i < buttonGameBoard.length; i++) {
 				for (int j = 0; j < buttonGameBoard[i].length; j++) {
-					buttonGameBoard[i][j] = new JButton("X");
-					setButton(buttonGameBoard[i][j], i, j);
+					buttonGameBoard[j][i] = new JButton("X");
+					setButton(buttonGameBoard[j][i]);
 				}
 			}
 		}
@@ -227,29 +198,29 @@ public class ClientGUIFrame extends JFrame {
 
 				if (entity instanceof Player) {
 					// button = new JButton(new ImageIcon(playerImg));
-					button.setText("Player");
+					button.setText("@");
 				} else if (entity instanceof Bomb) {
 					// button = new JButton(new ImageIcon(bombImg));
-					button.setText("Bomb");
+					button.setText("B");
 				} else if (entity instanceof Door) {
 					// button = new JButton(new ImageIcon(doorImg));
-					button.setText("Door");
+					button.setText("D");
 				} else if (entity instanceof Enemy) {
 					// button = new JButton(new ImageIcon(enemyImg));
-					button.setText("Enemy");
+					button.setText("E");
 				} else if (entity instanceof Explosion) {
 					// button = new JButton(new ImageIcon(explosionImg));
-					button.setText("Explosion");
+					button.setText("X");
 				} else if (entity instanceof PowerUp) {
 					// button = new JButton(new ImageIcon(powerupImg));
-					button.setText("Powerup");
+					button.setText("P");
 				} else if (entity instanceof Wall) {
 					// button = new JButton(new ImageIcon(wallImg));
 					button.setText("W");
 //					button.setBackground(new Color(255, 0, 0));
 				} else {
 					// button = new JButton(new ImageIcon(floorImg));
-					button.setText("F");
+					button.setText(" ");
 //					button.setBackground(new Color(0, 0, 255));
 				}
 
@@ -257,6 +228,10 @@ public class ClientGUIFrame extends JFrame {
 			}
 		}
 
+		// set minimum size for frame
+		int minTileSize = 50; // set to this because it doesn't show the text properly if too small
+		setMinimumSize(new Dimension(minTileSize * width, minTileSize * height));
+		pack();
 	}
 
 }
