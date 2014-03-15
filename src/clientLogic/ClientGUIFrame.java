@@ -47,6 +47,28 @@ public class ClientGUIFrame extends JFrame {
 
 	private JPanel contentPane;
 	private GridLayout layoutManager = new GridLayout();
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					// XXX: constructor call for testing only
+					GameBoard gameBoard = new GameBoard(10, 10);
+					gameBoard.randomizeFloor(2);
+					final ClientGUIFrame frame = new ClientGUIFrame(gameBoard);
+					frame.setVisible(true);
+
+					frame.update(testData()); // XXX: test
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 	
 	public ClientGUIFrame() {
 		setupContentPane();
@@ -55,7 +77,7 @@ public class ClientGUIFrame extends JFrame {
 	}
 
 	/**
-	 * Create the frame with the specified gameboard.
+	 * Create the frame.
 	 * 
 	 * @param gameBoard
 	 */
@@ -64,6 +86,7 @@ public class ClientGUIFrame extends JFrame {
 		this.height = gameBoard.getHeight();
 
 		buttonGameBoard = new JButton[width][height];
+		
 		
 
 		setupContentPane();
@@ -75,7 +98,7 @@ public class ClientGUIFrame extends JFrame {
 		for (int i = 0; i < buttonGameBoard.length; i++) {
 			for (int j = 0; j < buttonGameBoard[i].length; j++) {
 				buttonGameBoard[i][j] = new JButton("X");
-				setButton(buttonGameBoard[i][j]);
+				setButton(buttonGameBoard[i][j], i, j);
 			}
 		}
 		
@@ -111,6 +134,18 @@ public class ClientGUIFrame extends JFrame {
 		board.randomizeFloor(2);
 		return board;
 
+//		Random r = new Random();
+//
+//		for (int i = 0; i < 10; i++) {
+//			for (int j = 0; j < 10; j++) {
+//				if (r.nextInt(10) < 7) {
+//					board.getBoard()[i][j] = new Wall();
+//				} else {
+//					board.getBoard()[i][j] = new Entity();
+//				}
+//			}
+//		}
+
 	}
 
 	/**
@@ -119,8 +154,10 @@ public class ClientGUIFrame extends JFrame {
 	 * the gameboard.
 	 * 
 	 * @param button
+	 * @param x
+	 * @param y
 	 */
-	private void setButton(JButton button) {
+	private void setButton(JButton button, int x, int y) {
 		contentPane.add(button);
 		button.setFocusable(false);
 	}
@@ -183,7 +220,7 @@ public class ClientGUIFrame extends JFrame {
 			for (int i = 0; i < buttonGameBoard.length; i++) {
 				for (int j = 0; j < buttonGameBoard[i].length; j++) {
 					buttonGameBoard[j][i] = new JButton("X");
-					setButton(buttonGameBoard[j][i]);
+					setButton(buttonGameBoard[j][i], j, i);
 				}
 			}
 		}
