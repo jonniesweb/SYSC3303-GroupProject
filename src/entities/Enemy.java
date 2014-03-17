@@ -13,9 +13,4 @@ public class Enemy extends Entity {
 	public Enemy(int x, int y){
 		super(x,y);
 	}
-	
-	//Methods
-	public void draw(){
-		System.out.println("Drawing an Enemy at " + pos());
-	}
 }

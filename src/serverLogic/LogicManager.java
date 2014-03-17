@@ -115,7 +115,7 @@ public class LogicManager implements Runnable {
 		
 		int x;
 		int y;
-		System.out.println("setting players");
+		System.out.println("LogicManager: Setting Player Positions");
 		List<User> players = new ArrayList<User>();
 		players.addAll(users.getCurrentPlayerList());
 		for(int i= 0; i<players.size();i++){
@@ -131,7 +131,7 @@ public class LogicManager implements Runnable {
 					System.out.println(players.get(i).getPlayer().getName());
 				}
 		}
-		System.out.println(board.toString());
+		System.out.println("LogicManager: Current GameBoard\n" + board.toString());
 	}
 	
 	/**
@@ -145,7 +145,7 @@ public class LogicManager implements Runnable {
 	public void setGameInProgress(boolean b){
 		gameInProgress = b;
 		placePlayers(board, userManager);
-		System.out.println("Game in progress is: "+gameInProgress);
+		System.out.println("LogicManager: gameInProgress has been set to '"+gameInProgress + "'");
 	}
 	public void setNetworkManager(NetworkManager m){
 		this.networkManager = m;
@@ -185,157 +185,167 @@ public class LogicManager implements Runnable {
 		int y = player.getPosY();
 		board.set(new Entity(x, y), x, y);
 		
-		System.out.println(player.getName() + " died");
+		System.out.println("LogicManager: " + player.getName() + " died");
 	}
 	
 	/**
 	 * 
+	 * @param user
+	 * @param newPosX
+	 * @param newPosY
+	 * @return
 	 */
+	private int handleMovement(User user, int newPosX, int newPosY){
+
+		Player player = user.getPlayer();
+
+		if(!safeMove(newPosX, newPosY)){
+			player.loseLife();
+			removePlayerFromGameBoard(player);
+			System.out.println("LogicManager: Player '" + player.getName() + "' removed from board");
+			return (-1);
+		} else if (validMove(newPosX, newPosY)){
+			board.remove(player.getPosX(), player.getPosY());
+			player.setPos(newPosX, newPosY);
+			board.set(player, newPosX, newPosY);
+			System.out.println("LogicManager: Player '" + player.getName() + "' Moved Safely");
+			return 1;
+		} else if (board.hasDoor(newPosX, newPosY)){
+			playerCount--;
+			System.out.println("LogicManager: Player '" + player.getName() + "' Found the Door");
+			return 2;
+		}
+		
+		return 0;
+	}
+
+	/**
+	 * 
+	 * @param u
+	 * @param command
+	 * @return
+	 */
+	private int handleCommand(User u, String command){
+
+		int posX = u.getPlayer().getPosX();
+		int posY = u.getPlayer().getPosY();
+		int playerStatus = 0;
+
+		switch(command){
+			case "UP":
+				playerStatus = handleMovement(u, posX, posY - 1);
+				break;
+			case "DOWN":
+				playerStatus = handleMovement(u, posX, posY + 1);
+				break;
+			case "LEFT":
+				playerStatus = handleMovement(u, posX - 1, posY);
+				break;
+			case "RIGHT":
+				playerStatus = handleMovement(u, posX + 1, posY);
+				break;
+			case "END_GAME":
+				playerCount--;
+				playerStatus = 3;
+				break;
+			default:
+				System.out.println("LogicManager: '" + command + "' Unknown");
+		}
+		
+		try{
+			switch(playerStatus){
+				case (-1)://Died
+					if(!u.getPlayer().isAlive()){
+						playerCount--;
+						userManager.moveCurrentToFuture(u);
+					}
+					break;
+				case 1://Moved Safely
+					Logger.acceptMessage(u.getUUID() + " moved " + command);
+					break;
+				case 2://Found Door
+					userManager.moveCurrentToFuture(u);
+					break;
+				case 3://End_Game Command Received
+					//Same as Found Door
+					//Added so that more functionality can be added to either
+					// without affecting the other
+					userManager.moveCurrentToFuture(u);
+					break;
+				default:
+					System.out.println("LogicManager: Player Didn't Move");
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		System.out.println("LogicManager: Command '" + command + "' handled");
+		return playerStatus;
+	}
+
 	public void run(){
-		System.out.println("logic Manager started");
+		System.out.println("LogicManager: Now Active");
+
 		Message m;
 		String command;
 		String uuid;
-		Player p;
+
+		System.out.println("LogicManager: Waiting on the Game to begin");
+
 		while(!gameInProgress){
+			//Don't do anything until the game has started
 			Thread.yield();
 		}
-		System.out.println("gameInProgress now!");
-		System.out.println("game is now in progress");
+
+		System.out.println("LogicManager: The Games have begun!");
+
 		try{
-			
+
 			outerLoop:
 			
 			while(playerCount > 0){
-				System.out.println("attempting to read command ...");
+			
+				System.out.println("LogicManager: Attempting to read a command.");
+				//Block until a command message exists
 				m = commandQueue.take();
-				System.out.println("got command in logic manager");
+				System.out.println("LogicManager: Command has been recieved.");
 				
 				command = new String(m.datagram.getData()).trim();
-				System.out.println("logic command is: "+command);
 				uuid = m.datagram.getAddress().toString() + m.datagram.getPort();
-				
-				//System.out.println("Execute Command/PlayerID Pair - "+command+":"+uuid);
+				System.out.println("LogicManager: Recieved '" + command + "' from " + uuid);
 				
 				Object[] users = userManager.getCurrentPlayerList().toArray();
-				for(int i =0;i < users.length;i++){
+				for(int i = 0; i < users.length; i++){
 					User u = (User)users[i];
-					p = u.getPlayer();
+					
+					//Is this the User?
 					if(u.getUUID().equals(uuid)){
-						System.out.println("matching id");
-						System.out.println(p.getName());
-						System.out.println("(" + p.getPosX() + "," + p.getPosY()+")");
-						if(command.equals("UP")){
-							if (!safeMove(p.getPosX(), p.getPosY() - 1)){
-								p.loseLife();
-								System.out.println(p.getName() + " removed from board");
-								removePlayerFromGameBoard(p);
-								if(!p.isAlive()){
-									playerCount--;
-									userManager.moveCurrentToFuture(u);
-									
-								}
-							}
-							else if (validMove(p.getPosX(), p.getPosY() - 1)){
-									board.remove(p.getPosX(), p.getPosY());
-									p.moveUp();
-									board.set(p,p.getPosX(),p.getPosY());
-									Logger.acceptMessage(u.getUUID() + " move UP");
-							}
-							else if(board.hasDoor(p.getPosX(), p.getPosY() - 1)){
-								playerCount--;
-								userManager.moveCurrentToFuture(u);
-								playerCount=0;
-								break outerLoop;
-							}
-								
-						}
-						else if(command.equals("DOWN")){
-							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
-								p.loseLife();
-								removePlayerFromGameBoard(p);
-								if(!p.isAlive()){
-									playerCount--;
-									userManager.moveCurrentToFuture(u);
-								}
-							}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){
-									board.remove(p.getPosX(), p.getPosY());
-									p.moveDown();
-									board.set(p,p.getPosX(),p.getPosY());
-									Logger.acceptMessage(u.getUUID() + " move DOWN");
-							}
-							else if(board.hasDoor(p.getPosX(), p.getPosY() + 1)){
-								playerCount--;
-								userManager.moveCurrentToFuture(u);
-								playerCount=0;
-								break outerLoop;
-							}
-						}
-						else if(command.equals("LEFT")){
-							if (!safeMove(p.getPosX()-1, p.getPosY())){
-								p.loseLife();
-								removePlayerFromGameBoard(p);
-								if(!p.isAlive()){
-									playerCount--;
-									userManager.moveCurrentToFuture(u);
-								}
-							}
-							else if (validMove(p.getPosX()-1, p.getPosY())){
-									board.remove(p.getPosX(), p.getPosY());
-									p.moveLeft();
-									board.set(p,p.getPosX(),p.getPosY());
-									Logger.acceptMessage(u.getUUID() + " move LEFT");
-							}
-							else if(board.hasDoor(p.getPosX()-1, p.getPosY())){
-								playerCount--;
-								userManager.moveCurrentToFuture(u);
-								playerCount=0;
-								break outerLoop;
-							}
-						}
-						else if(command.equals("RIGHT")){
-							if (!safeMove(p.getPosX() + 1, p.getPosY())){
-								p.loseLife();
-								removePlayerFromGameBoard(p);
-								if(!p.isAlive()){
-									playerCount--;
-									userManager.moveCurrentToFuture(u);
-								}
-							}
-							else if (validMove(p.getPosX()+1, p.getPosY())){
-									board.remove(p.getPosX(), p.getPosY());
-									p.moveRight();
-									board.set(p,p.getPosX(),p.getPosY());
-									Logger.acceptMessage(u.getUUID() + " move RIGHT");
-							}
-							else if(board.hasDoor(p.getPosX()+1, p.getPosY())){
-								playerCount--;
-								userManager.moveCurrentToFuture(u);
-								playerCount=0;
-								break outerLoop;
-							}
-						}
-						else if(command.equals("END_GAME")){
-							playerCount--;
-							userManager.moveCurrentToFuture(u);
-						}
+						System.out.println("LogicManager: Manipulating player '" + u.getPlayer().getName() + "' currently at location " + u.getPlayer().getPos());
+
+						// Proper way to do handle command
+						//handleCommand(u, command);
 						
-						//else if(command.equals("BOMB"))
+						//The following is to preserve the debugging
+						// functionality which ends the game
+						// after a single player finds the door
+						if (handleCommand(u, command) == 2){
+							playerCount = 0;
+							break outerLoop;
+						}
 					}
 				}
-				//board.update();
+				
 				networkManager.sendBoardToAllClients(board.toString());
-				Logger.acceptMessage("Board sent to all client");
-				Logger.acceptMessage(board.toString());
+				Logger.acceptMessage("Board sent to all clients\n" + board.toString());
 			}
-			System.out.println("game is over");
+			
+			System.out.println("Logic Manager: Game has finished");
 			networkManager.sendEndGameToAllClients();
 			Logger.writeLog();
 			Logger.endLog();
-		}catch(Exception e){
+		} catch (Exception e){
 			e.printStackTrace();
 		}
-		System.out.println("game is over");
+
+		System.out.println("Logic Manager: Thread Finished Running");
 	}
 }
