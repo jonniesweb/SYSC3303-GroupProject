@@ -315,13 +315,9 @@ public class LogicManager implements Runnable {
 
 	public void run(){
 
-<<<<<<< HEAD
 		//initialing variable
 		LOG.info("LOGIC MANAGER STARTED...");
-		Message m;
-=======
 		UserMessage m;
->>>>>>> MessageRefactor
 		String command;
 		String uuid;
 		Player p;

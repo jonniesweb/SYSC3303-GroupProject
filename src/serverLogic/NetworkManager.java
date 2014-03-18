@@ -52,17 +52,10 @@ public class NetworkManager implements Runnable{
 			
 			userMessage = readInbox();
 			//log.acceptMessage(new String(message.datagram.getData()));
-<<<<<<< HEAD
-			//Logger.acceptMessage("Read data from inbox - " + new String(message.datagram.getData()) + "- from " + message.ip);			
-			// should join game before starting game
-			if (readCommand(message).equals("START_GAME")){
-				//System.out.println("got start game command");
-=======
-			Logger.acceptMessage("Read data from inbox - " + new String(userMessage.datagram.getData()) + "- from " + userMessage.ip);			
+			// Logger.acceptMessage("Read data from inbox - " + new String(userMessage.datagram.getData()) + "- from " + userMessage.ip);			
 			// should join game before starting game
 			if (readCommand(userMessage).equals("START_GAME")){
 				System.out.println("got start game command");
->>>>>>> MessageRefactor
 				if(!logic.getGameInProgress()){
 					//System.out.println("game is not in progress");
 					if(userManager.getCurrentPlayerList().size()> 0){
@@ -85,15 +78,9 @@ public class NetworkManager implements Runnable{
 				spectate(userMessage.datagram.getAddress().toString(), userMessage.datagram.getPort());
 				continue;
 			}
-<<<<<<< HEAD
-			else if (readCommand(message).equals("END_GAME") && logic.getGameInProgress()){
-				//System.out.println("got end game.. game in progress is: "+ logic.getGameInProgress());
-				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
-=======
 			else if (readCommand(userMessage).equals("END_GAME") && logic.getGameInProgress()){
 				System.out.println("got end game.. game in progress is: "+ logic.getGameInProgress());
 				endGameCommand(userMessage.datagram.getAddress().toString(), userMessage.datagram.getPort());
->>>>>>> MessageRefactor
 				continue;
 			}
 			else {
