@@ -1,6 +1,7 @@
 package serverLogic;
 
 import java.lang.String;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.*;
@@ -37,6 +38,10 @@ public class LogicManager implements Runnable {
 	
 	private Integer playerCount;
 	
+	private int testMode = 0;
+	
+	public Semaphore testSem = null;
+	
 	private boolean gameInProgress;
 	/**
 	 * 
@@ -51,6 +56,12 @@ public class LogicManager implements Runnable {
 		this.userManager = uManager;
 		this.playerCount = uManager.getCurrentPlayerList().size();
 
+	}
+	
+	public LogicManager(UserManager uManager, Semaphore s, int tMode){
+		this(uManager);
+		testSem = s;
+		testMode = tMode;
 	}
 	
 	public void setGameBoard(GameBoard board) {
@@ -258,6 +269,8 @@ public class LogicManager implements Runnable {
 					if(!u.getPlayer().isAlive()){
 						playerCount--;
 						userManager.moveCurrentToFuture(u);
+						if(testMode==1)
+							testSem.release();
 					}
 					break;
 				case 1://Moved Safely
@@ -265,12 +278,16 @@ public class LogicManager implements Runnable {
 					break;
 				case 2://Found Door
 					userManager.moveCurrentToFuture(u);
+					if(testMode==2)
+						testSem.release();
 					break;
 				case 3://End_Game Command Received
 					//Same as Found Door
 					//Added so that more functionality can be added to either
 					// without affecting the other
 					userManager.moveCurrentToFuture(u);
+					if(testMode==3)
+						testSem.release();
 					break;
 				default:
 					System.out.println("LogicManager: Player Didn't Move");
