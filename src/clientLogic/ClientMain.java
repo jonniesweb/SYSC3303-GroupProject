@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
 
-import Networking.Message;
+import Networking.UserMessage;
 import Networking.Network;
 
 public class ClientMain extends SpectatorMain {
@@ -82,7 +82,7 @@ public class ClientMain extends SpectatorMain {
 	 * @param data
 	 */
 	void sendMessage(String data) {
-		network.sendMessage(new Message(data, "127.0.0.1", Network.SERVER_PORT_NO, System.nanoTime()));
+		network.sendMessage(new UserMessage(data, "127.0.0.1", Network.SERVER_PORT_NO, System.nanoTime()));
 		System.out.println("send command: " + data);
 	}
 

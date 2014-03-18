@@ -17,7 +17,7 @@ import entities.Wall;
 
 import testing.Logger;
 import gameLogic.GameBoard;
-import Networking.Message;
+import Networking.UserMessage;
 
 // TODO: this class should manage the server GameBoard
 
@@ -28,7 +28,7 @@ import Networking.Message;
  */
 public class LogicManager implements Runnable {
 	
-	private BlockingQueue<Message> commandQueue = new LinkedBlockingQueue<Message>();
+	private BlockingQueue<UserMessage> commandQueue = new LinkedBlockingQueue<UserMessage>();
 	
 	private GameBoard board;
 	
@@ -62,7 +62,7 @@ public class LogicManager implements Runnable {
 	 * @param command
 	 * @param playerID
 	 */
-	public void execute(Message m){
+	public void execute(UserMessage m){
 		try{
 			commandQueue.put(m);			
 		}catch(Exception e){
@@ -285,7 +285,7 @@ public class LogicManager implements Runnable {
 	public void run(){
 		System.out.println("LogicManager: Now Active");
 
-		Message m;
+		UserMessage m;
 		String command;
 		String uuid;
 

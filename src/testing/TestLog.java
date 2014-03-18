@@ -31,8 +31,8 @@ public class TestLog {
 	public void testAcceptMessage() throws Exception {
 		setUp();
 		//First log
-		Logger.acceptMessage("Message written");
-		assertEquals(Logger.getLog().get(0),("Message written"));
+		Logger.acceptMessage("UserMessage written");
+		assertEquals(Logger.getLog().get(0),("UserMessage written"));
 		//Second log
 		//Check if it is queue properly
 		Logger.acceptMessage("Again message written");
@@ -40,14 +40,14 @@ public class TestLog {
 		Logger.writeLog();
 		Logger.endLog();
 		in = new BufferedReader(new FileReader("Log.txt"));
-		//assertEquals(in.readLine(),"Message writtend");
+		//assertEquals(in.readLine(),"UserMessage writtend");
 	}
 	
 	@Test
 	public void testWriteLog() throws Exception {
 		setUp();
-		//First Message write to file
-		Logger.acceptMessage("Message written");
+		//First UserMessage write to file
+		Logger.acceptMessage("UserMessage written");
 		Logger.writeLog();
 		Logger.acceptMessage("Again message written");
 		Logger.writeLog();
@@ -55,7 +55,7 @@ public class TestLog {
 		in = new BufferedReader(new FileReader("Log.txt"));
 		
 		//check if all message accepted properly
-		assertEquals(in.readLine(),"Message written");
+		assertEquals(in.readLine(),"UserMessage written");
 		assertEquals(in.readLine(),"Again message written");
 			
 	}

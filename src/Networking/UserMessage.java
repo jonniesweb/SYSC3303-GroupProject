@@ -3,20 +3,20 @@ package Networking;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
-public class Message {
+public class UserMessage {
 	public DatagramPacket datagram;
 	public String Message;
 	public InetAddress ip;
 	public int packetPort;
 	public long time;
 
-	public Message(DatagramPacket p) {
+	public UserMessage(DatagramPacket p) {
 		datagram = p;
 		ip = p.getAddress();
 		packetPort = p.getPort();
 	}
 	
-	public Message(String message, String hostName, int port, long time) {
+	public UserMessage(String message, String hostName, int port, long time) {
 		this.time = time;
 		this.packetPort = port;
 		hostName = "127.0.0.1";
