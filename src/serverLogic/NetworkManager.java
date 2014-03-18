@@ -4,7 +4,7 @@ package serverLogic;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import Networking.Message;
+import Networking.UserMessage;
 import Networking.Network;
 
 import org.apache.log4j.Logger;
@@ -46,16 +46,16 @@ public class NetworkManager implements Runnable{
 
 		new Thread(net).start();
 		running = true;
-		Message message;
+		UserMessage userMessage;
 		
 		while(running){
 			
-			message = readInbox();
+			userMessage = readInbox();
 			//log.acceptMessage(new String(message.datagram.getData()));
-			//Logger.acceptMessage("Read data from inbox - " + new String(message.datagram.getData()) + "- from " + message.ip);			
+			// Logger.acceptMessage("Read data from inbox - " + new String(userMessage.datagram.getData()) + "- from " + userMessage.ip);			
 			// should join game before starting game
-			if (readCommand(message).equals("START_GAME")){
-				//System.out.println("got start game command");
+			if (readCommand(userMessage).equals("START_GAME")){
+				System.out.println("got start game command");
 				if(!logic.getGameInProgress()){
 					//System.out.println("game is not in progress");
 					if(userManager.getCurrentPlayerList().size()> 0){
@@ -70,22 +70,22 @@ public class NetworkManager implements Runnable{
 				}
 				continue;
 			}
-			if (readCommand(message).equals("JOIN_GAME")){
-				joinCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
+			if (readCommand(userMessage).equals("JOIN_GAME")){
+				joinCommand(userMessage.datagram.getAddress().toString(), userMessage.datagram.getPort());
 				continue;
 			}
-			else if (readCommand(message).equals("SPECTATE_GAME")){
-				spectate(message.datagram.getAddress().toString(), message.datagram.getPort());
+			else if (readCommand(userMessage).equals("SPECTATE_GAME")){
+				spectate(userMessage.datagram.getAddress().toString(), userMessage.datagram.getPort());
 				continue;
 			}
-			else if (readCommand(message).equals("END_GAME") && logic.getGameInProgress()){
-				//System.out.println("got end game.. game in progress is: "+ logic.getGameInProgress());
-				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
+			else if (readCommand(userMessage).equals("END_GAME") && logic.getGameInProgress()){
+				System.out.println("got end game.. game in progress is: "+ logic.getGameInProgress());
+				endGameCommand(userMessage.datagram.getAddress().toString(), userMessage.datagram.getPort());
 				continue;
 			}
 			else {
 				if(logic.getGameInProgress())
-					logic.execute(message);
+					logic.execute(userMessage);
 			}	
 		}	
 	}
@@ -94,7 +94,7 @@ public class NetworkManager implements Runnable{
 	 * 
 	 * @return
 	 */
-	private Message readInbox() {
+	private UserMessage readInbox() {
 		try {
 			inboxLock.acquire();
 		} catch (InterruptedException e) {
@@ -112,7 +112,7 @@ public class NetworkManager implements Runnable{
 		for(int i=0; i< users.size(); i++){
 			String ip = users.get(i).getIp();
 			int port = users.get(i).getPort();
-			Message m = new Message(board,ip,port,System.nanoTime());
+			UserMessage m = new UserMessage(board,ip,port,System.nanoTime());
 			net.sendMessage(m);
 		}
 	}
@@ -127,7 +127,7 @@ public class NetworkManager implements Runnable{
 		for (int i = 0; i < users.size(); i++) {
 			String ip = users.get(i).getIp();
 			int port = users.get(i).getPort();
-			Message m = new Message(endGame, ip, port,System.nanoTime());
+			UserMessage m = new UserMessage(endGame, ip, port,System.nanoTime());
 			net.sendMessage(m);
 		}
 		logic.setGameInProgress(false);
@@ -139,7 +139,7 @@ public class NetworkManager implements Runnable{
 	 * @param m
 	 * @return
 	 */
-	private String readCommand(Message m) {
+	private String readCommand(UserMessage m) {
 		String s = new String(m.datagram.getData()).trim();
 		return s;
 	}

@@ -4,6 +4,8 @@ import entities.Entity;
 import gameLogic.GameBoard;
 import testing.Logger;
 
+import java.util.concurrent.Semaphore;
+
 // TODO: add command line arguments to allow starting up from a predefined,
 // gameboard, or randomly generating one
 
@@ -22,6 +24,8 @@ public class ServerMain {
 	UserManager userManager;
 	Logger logger;
 	
+	Semaphore testSem;
+	
 	public ServerMain() {
 		
 		// initialize all server components
@@ -31,6 +35,16 @@ public class ServerMain {
 		logicManager = new LogicManager(userManager);
 		networkManager = new NetworkManager(logicManager,userManager);
 		logicManager.setNetworkManager(networkManager);
+	}
+	
+	public ServerMain(Semaphore s, int tMode){
+		this.testSem = s;
+		userManager = new UserManager(NUM_PLAYERS);
+		logger = new Logger();
+		logicManager = new LogicManager(userManager, testSem, tMode);
+		networkManager = new NetworkManager(logicManager,userManager);
+		logicManager.setNetworkManager(networkManager);
+		
 	}
 	
 	public ServerMain(boolean door) {

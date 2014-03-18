@@ -2,6 +2,7 @@ package serverLogic;
 
 import java.io.IOException;
 import java.lang.String;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.*;
@@ -18,7 +19,7 @@ import entities.Wall;
 
 //import testing.Logger;
 import gameLogic.GameBoard;
-import Networking.Message;
+import Networking.UserMessage;
 
 import org.apache.log4j.*;
 
@@ -31,7 +32,7 @@ import org.apache.log4j.*;
  */
 public class LogicManager implements Runnable {
 	
-	private BlockingQueue<Message> commandQueue = new LinkedBlockingQueue<Message>();
+	private BlockingQueue<UserMessage> commandQueue = new LinkedBlockingQueue<UserMessage>();
 	
 	private GameBoard board;
 	
@@ -39,6 +40,10 @@ public class LogicManager implements Runnable {
 	private UserManager userManager;
 	
 	private Integer playerCount;
+	
+	private int testMode = 0;
+	
+	public Semaphore testSem = null;
 	
 	private boolean gameInProgress;
 	
@@ -61,6 +66,12 @@ public class LogicManager implements Runnable {
 
 	}
 	
+	public LogicManager(UserManager uManager, Semaphore s, int tMode){
+		this(uManager);
+		testSem = s;
+		testMode = tMode;
+	}
+	
 	public void setGameBoard(GameBoard board) {
 		this.board = board;
 	}
@@ -70,7 +81,7 @@ public class LogicManager implements Runnable {
 	 * @param command
 	 * @param playerID
 	 */
-	public void execute(Message m){
+	public void execute(UserMessage m){
 		try{
 			commandQueue.put(m);			
 		}catch(Exception e){
@@ -284,6 +295,8 @@ public class LogicManager implements Runnable {
 					if(!u.getPlayer().isAlive()){
 						playerCount--;
 						userManager.moveCurrentToFuture(u);
+						if(testMode==1)
+							testSem.release();
 					}
 					break;
 				case 1://Moved Safely
@@ -291,12 +304,16 @@ public class LogicManager implements Runnable {
 					break;
 				case 2://Found Door
 					userManager.moveCurrentToFuture(u);
+					if(testMode==2)
+						testSem.release();
 					break;
 				case 3://End_Game Command Received
 					//Same as Found Door
 					//Added so that more functionality can be added to either
 					// without affecting the other
 					userManager.moveCurrentToFuture(u);
+					if(testMode==3)
+						testSem.release();
 					break;
 				default:
 					//System.out.println("LogicManager: Player Didn't Move");
@@ -314,7 +331,7 @@ public class LogicManager implements Runnable {
 
 		//initialing variable
 		LOG.info("LOGIC MANAGER STARTED...");
-		Message m;
+		UserMessage m;
 		String command;
 		String uuid;
 		Player p;
