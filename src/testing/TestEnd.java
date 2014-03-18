@@ -11,9 +11,13 @@ import serverLogic.ServerMain;
  * 
  * @author draymire
  *
+ * For testing of ending the game
+ *
  */
 public class TestEnd {
 
+	
+	//Initialize player ports and a testing Semaphore
 	ServerMain server = null;
 	int playerOnePort = 8878;
 	int playerTwoPort = 8869;
@@ -21,21 +25,25 @@ public class TestEnd {
 	
 	@Test
 	/**
-	 * 
+	 * Test a singleplayer game
 	 */
 	public void singlePlayerGameSession(){
 
+		//Start the server
 		server = new ServerMain(testSem, 3);
 		
+		//Initialize the file to use in the TestDriver
 		String filename = "/TestingFiles/End/SinglePlayerGameSessionEnd";
 		
+		//Run the TestDriver
 		new TestDriver(filename, playerOnePort);
 		
 		
 		try{//TODO: Set timeout to a logic length
+			//Waits for the 
 			testSem.wait(timeout);
 			
-			//Assert that the player managed to get to the door 
+			//Assert that the player ended the game
 			//within the specified time.
 			assertEquals(1,testSem.availablePermits());
 			
