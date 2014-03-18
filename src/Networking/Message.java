@@ -1,5 +1,9 @@
 package Networking;
 
+/**
+ * A message that can be handled by the LogicManager
+ * 
+ */
 public class Message {
 
 	public String message;
@@ -10,6 +14,7 @@ public class Message {
 
 	/**
 	 * Returns a string representation of the message.
+	 * 
 	 * @return
 	 */
 	public String getData() {

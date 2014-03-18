@@ -3,12 +3,20 @@ package Networking;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
+/**
+ * A representation of a message received from a user, or to send to a User
+ *
+ */
 public class UserMessage extends Message {
 	public DatagramPacket datagram;
 	public InetAddress ip;
 	public int port;
 	public long time;
 
+	/**
+	 * Create a UserMessage from a Datagram received from the User
+	 * @param p
+	 */
 	public UserMessage(DatagramPacket p) {
 		super(new String(p.getData()).trim());
 		datagram = p;
@@ -16,6 +24,13 @@ public class UserMessage extends Message {
 		port = p.getPort();
 	}
 	
+	/**
+	 * Create a UserMessage to send to someone
+	 * @param message
+	 * @param hostName
+	 * @param port
+	 * @param time
+	 */
 	public UserMessage(String message, String hostName, int port, long time) {
 		super(message);
 		this.time = time;
