@@ -100,7 +100,7 @@ public class LogicManager implements Runnable {
 	 * @param y
 	 * @return
 	 */
-	private boolean validMove(int x, int y){
+	public boolean validMove(int x, int y){
 		Entity entity = board.get(x,y);
 		if(entity instanceof Bomb || entity instanceof Wall || entity instanceof Door) { return false; }
 		else { return true; }
@@ -140,6 +140,14 @@ public class LogicManager implements Runnable {
 				}
 		}
 		LOG.info("LogicManager: Current GameBoard\n" + board.toString());
+	}
+	public void placeEnemy(ArrayList<Enemy> eList){
+		for(Enemy e : eList){
+			board.set(e, e.getPosX(), e.getPosY());
+		}
+	}
+	public void setEnemy(Enemy e){
+		board.set(e, e.getPosX(), e.getPosY());
 	}
 	
 	/**
@@ -193,6 +201,12 @@ public class LogicManager implements Runnable {
 		int y = player.getPosY();
 		board.set(new Entity(x, y), x, y);
 		LOG.info(player.getName() + " DIED");
+	}
+	public void removeEnemyFromGameBoard(Enemy enemy){
+		board.remove(enemy.getPosX(), enemy.getPosY());
+	}
+	public void enemyValidMove(){
+		
 	}
 	
 	/**
