@@ -260,11 +260,11 @@ public class GameBoard {
 					return;
 			}
 		}
-		board[3][3] = new Door(3,3);	
+		board[0][6] = new Door(0,6);	
 	}
 	
 	public Door getDoor(){
-		return (Door)board[4][4];
+		return (Door)board[0][6];
 	}
 	/**
 	 * For testing purposes
