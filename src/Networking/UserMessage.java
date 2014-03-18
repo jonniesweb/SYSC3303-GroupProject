@@ -5,28 +5,29 @@ import java.net.InetAddress;
 
 public class UserMessage {
 	public DatagramPacket datagram;
-	public String Message;
+	public String message;
 	public InetAddress ip;
-	public int packetPort;
+	public int port;
 	public long time;
 
 	public UserMessage(DatagramPacket p) {
 		datagram = p;
 		ip = p.getAddress();
-		packetPort = p.getPort();
+		port = p.getPort();
+		message = new String(datagram.getData()).trim();
 	}
 	
 	public UserMessage(String message, String hostName, int port, long time) {
 		this.time = time;
-		this.packetPort = port;
+		this.port = port;
+		this.message = message;
 		hostName = "127.0.0.1";
 		try {
 			ip = InetAddress.getByName(hostName);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		datagram = new DatagramPacket(message.getBytes(), message.getBytes().length, ip,
-				packetPort);
+		datagram = new DatagramPacket(message.getBytes(), message.getBytes().length, ip, port);
 	}
 	
 	/**
@@ -35,6 +36,6 @@ public class UserMessage {
 	 * @return
 	 */
 	public String getData() {
-		return new String(datagram.getData()).trim();
+		return message;
 	}
 }
