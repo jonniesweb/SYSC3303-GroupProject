@@ -4,11 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
 
-<<<<<<< HEAD
-=======
 import org.apache.log4j.Logger;
-
->>>>>>> logmerge
 import Networking.Message;
 import Networking.Network;
 
