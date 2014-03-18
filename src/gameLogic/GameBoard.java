@@ -10,6 +10,7 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 
 import entities.Door;
+import entities.Enemy;
 import entities.Entity;
 import entities.Player;
 import entities.Wall;
@@ -146,6 +147,10 @@ public class GameBoard {
 	public boolean hasDoor(int x,int y){
 		if(x<0 || x>=width || y<0 || y>=height) return false;
 		return board[x][y] instanceof Door;
+	}
+	public boolean hasEnemy(int x,int y){
+		if(x<0 || x>=width || y<0 || y>=height) return false;
+		return board[x][y] instanceof Enemy;
 	}
 
 	/**
