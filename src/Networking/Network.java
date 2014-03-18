@@ -19,7 +19,7 @@ import serverLogic.LogicManager;
 public class Network extends Thread {
 	private DatagramSocket socket;
 	private ExecutorService pool;
-	private List<Message> inbox;
+	private List<UserMessage> inbox;
 	public static final int SERVER_PORT_NO = 8888;
 	public static final int CLIENT_PORT_NO = 8871;
 	int port;
@@ -30,7 +30,7 @@ public class Network extends Thread {
 	public Network(int p, Semaphore lock) {
 		port = p;
 		pool = Executors.newCachedThreadPool();
-		inbox = Collections.synchronizedList(new LinkedList<Message>());
+		inbox = Collections.synchronizedList(new LinkedList<UserMessage>());
 		inboxLock = lock;
 		// just incase lock was initialized with number other than 0
 		inboxLock.drainPermits();
@@ -45,7 +45,7 @@ public class Network extends Thread {
 		return (inbox.size() > 0);
 	}
 	
-	public Message getMessage(){
+	public UserMessage getMessage(){
 		if(hasMessage())
 			return inbox.remove(0);
 		else{
@@ -57,7 +57,7 @@ public class Network extends Thread {
 	 * sendMessage 
 	 * @param m
 	 */
-	public void sendMessage(final Message m) {
+	public void sendMessage(final UserMessage m) {
 		Runnable r1 = new Runnable(){
 			public void run(){
 				try{
@@ -93,7 +93,7 @@ public class Network extends Thread {
 					inBuffer.length);
 			Runnable r1 = new Runnable(){
 				public void run(){
-					Message m1 = new Message(receivePacket);
+					UserMessage m1 = new UserMessage(receivePacket);
 					String command = new String(receivePacket.getData());
 					LOG.info("GOT COMMAND: "+ command);
 					inbox.add(m1);
