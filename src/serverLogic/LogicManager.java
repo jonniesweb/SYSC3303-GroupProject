@@ -42,8 +42,7 @@ public class LogicManager implements Runnable {
 	
 	private boolean gameInProgress;
 	
-	private static final Logger LOG = Logger.getLogger(
-            LogicManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(LogicManager.class.getName());
 	/**
 	 * 
 	 * @param uManager
@@ -60,6 +59,10 @@ public class LogicManager implements Runnable {
 	    //        LogicManager.class.getName());
 	    //log = Logger.getLogger("Global");
 
+	}
+	
+	public void setGameBoard(GameBoard board) {
+		this.board = board;
 	}
 	
 	/**
@@ -189,14 +192,110 @@ public class LogicManager implements Runnable {
 		int x = player.getPosX();
 		int y = player.getPosY();
 		board.set(new Entity(x, y), x, y);
-		
 		LOG.info(player.getName() + " DIED");
 	}
 	
 	/**
 	 * 
+	 * @param user
+	 * @param newPosX
+	 * @param newPosY
+	 * @return
 	 */
+	private int handleMovement(User user, int newPosX, int newPosY){
+
+		Player player = user.getPlayer();
+
+		if(!safeMove(newPosX, newPosY)){
+			player.loseLife();
+			removePlayerFromGameBoard(player);
+			//System.out.println("LogicManager: Player '" + player.getName() + "' removed from board");
+			LOG.info(player.getName() + " removed from board");
+			return (-1);
+		} else if (validMove(newPosX, newPosY)){
+			board.remove(player.getPosX(), player.getPosY());
+			player.setPos(newPosX, newPosY);
+			board.set(player, newPosX, newPosY);
+			//System.out.println("LogicManager: Player '" + player.getName() + "' Moved Safely");
+			LOG.info(player.getName() + "' Moved Safely");
+			return 1;
+		} else if (board.hasDoor(newPosX, newPosY)){
+			playerCount--;
+			//System.out.println("LogicManager: Player '" + player.getName() + "' Found the Door");
+			LOG.info(player.getName() + "' found the Door");
+			return 2;
+		}
+		
+		return 0;
+	}
+
+	/**
+	 * 
+	 * @param u
+	 * @param command
+	 * @return
+	 */
+	private int handleCommand(User u, String command){
+
+		int posX = u.getPlayer().getPosX();
+		int posY = u.getPlayer().getPosY();
+		int playerStatus = 0;
+
+		switch(command){
+			case "UP":
+				playerStatus = handleMovement(u, posX, posY - 1);
+				break;
+			case "DOWN":
+				playerStatus = handleMovement(u, posX, posY + 1);
+				break;
+			case "LEFT":
+				playerStatus = handleMovement(u, posX - 1, posY);
+				break;
+			case "RIGHT":
+				playerStatus = handleMovement(u, posX + 1, posY);
+				break;
+			case "END_GAME":
+				playerCount--;
+				playerStatus = 3;
+				break;
+			default:
+				System.out.println("LogicManager: '" + command + "' Unknown");
+		}
+		
+		try{
+			switch(playerStatus){
+				case (-1)://Died
+					if(!u.getPlayer().isAlive()){
+						playerCount--;
+						userManager.moveCurrentToFuture(u);
+					}
+					break;
+				case 1://Moved Safely
+					//Logger.acceptMessage(u.getUUID() + " moved " + command);
+					break;
+				case 2://Found Door
+					userManager.moveCurrentToFuture(u);
+					break;
+				case 3://End_Game Command Received
+					//Same as Found Door
+					//Added so that more functionality can be added to either
+					// without affecting the other
+					userManager.moveCurrentToFuture(u);
+					break;
+				default:
+					//System.out.println("LogicManager: Player Didn't Move");
+					LOG.info("Player Didn't Move");
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		//System.out.println("LogicManager: Command '" + command + "' handled");
+		LOG.info("Command '" + command + "' handled");
+		return playerStatus;
+	}
+
 	public void run(){
+
 		//initialing variable
 		LOG.info("LOGIC MANAGER STARTED...");
 		Message m;
@@ -207,11 +306,13 @@ public class LogicManager implements Runnable {
 		//check if there is game still in progress
 		LOG.info("WAITING FOR GAME TO START");
 		while(!gameInProgress){
+			//Don't do anything until the game has started
 			Thread.yield();
 		}
+
 		LOG.info("GAME IS NOW IN PROGRESS");
 		try{
-			
+
 			outerLoop:
 			
 			while(playerCount > 0){
@@ -224,158 +325,42 @@ public class LogicManager implements Runnable {
 				uuid = m.datagram.getAddress().toString() + m.datagram.getPort();
 				
 				Object[] users = userManager.getCurrentPlayerList().toArray();
-				for(int i =0;i < users.length;i++){
+				for(int i = 0; i < users.length; i++){
 					User u = (User)users[i];
-					p = u.getPlayer();
+					
+					//Is this the User?
 					if(u.getUUID().equals(uuid)){
-						LOG.info("MATCHING ID - " + p.getName());
-						LOG.info("COMMAND " + command + " for " + p.getName());
-						LOG.info(p.getName() + " CURRENT POSITION : (" + p.getPosX() + "," + p.getPosY()+")");
-//==================================================================================						
-//									UP
-//==================================================================================						
-						if(command.equals("UP")){
-							if (!safeMove(p.getPosX(), p.getPosY() - 1)){
-								//lose life when player makes an unsafe move
-								p.loseLife();
-								LOG.info(p.getName() + "LOSE A LIFE");
-								//remove player
-								removePlayerFromGameBoard(p);
-								LOG.info(p.getName() + "REMOVED FROM BOARD");
-								if(!p.isAlive()){
-									playerCount--;
-									userManager.moveCurrentToFuture(u);
-									
-								}
-							}
-							else if (validMove(p.getPosX(), p.getPosY() - 1)){
-									board.remove(p.getPosX(), p.getPosY());
-									p.moveUp();
-									board.set(p,p.getPosX(),p.getPosY());
-									LOG.info(p.getName() + " NEW POSITION : (" + p.getPosX() + "," + p.getPosY()+")");
-							}
-							else if(board.hasDoor(p.getPosX(), p.getPosY() - 1)){
-								LOG.info(p.getName() + " REACHED THE DOOR");
-								playerCount--;
-								userManager.moveCurrentToFuture(u);
-								break outerLoop;
-							}
-							LOG.info("BOARD VIEW\n" + board.toString());
-								
+
+						System.out.println("LogicManager: Manipulating player '" + u.getPlayer().getName() + "' currently at location " + u.getPlayer().getPos());
+
+						// Proper way to do handle command
+						//handleCommand(u, command);
+						
+						//The following is to preserve the debugging
+						// functionality which ends the game
+						// after a single player finds the door
+						if (handleCommand(u, command) == 2){
+							playerCount = 0;
+							break outerLoop;
+
 						}
-//==================================================================================						
-//									DOWN
-//==================================================================================
-						else if(command.equals("DOWN")){
-							if (!safeMove(p.getPosX(), p.getPosY() + 1)){
-								//lose life when player makes an unsafe move
-								p.loseLife();
-								LOG.info(p.getName() + "LOSE A LIFE");
-								//remove player
-								removePlayerFromGameBoard(p);
-								LOG.info(p.getName() + "REMOVED FROM BOARD");
-								if(!p.isAlive()){
-									playerCount--;
-									userManager.moveCurrentToFuture(u);
-								}
-							}
-							else if (validMove(p.getPosX(), p.getPosY() + 1)){
-									board.remove(p.getPosX(), p.getPosY());
-									p.moveDown();
-									board.set(p,p.getPosX(),p.getPosY());
-									LOG.info(p.getName() + " NEW POSITION : (" + p.getPosX() + "," + p.getPosY()+")");
-							}
-							else if(board.hasDoor(p.getPosX(), p.getPosY() + 1)){
-								LOG.info(p.getName() + " REACHED THE DOOR");
-								playerCount--;
-								userManager.moveCurrentToFuture(u);
-								break outerLoop;
-							}
-							LOG.info("BOARD VIEW\n" + board.toString());
-						}
-//==================================================================================						
-//									LEFT
-//==================================================================================
-						else if(command.equals("LEFT")){
-							if (!safeMove(p.getPosX()-1, p.getPosY())){
-								//lose life when player makes an unsafe move
-								p.loseLife();
-								LOG.info(p.getName() + "LOSE A LIFE");
-								//remove player
-								removePlayerFromGameBoard(p);
-								LOG.info(p.getName() + "REMOVED FROM BOARD");
-								if(!p.isAlive()){
-									playerCount--;
-									userManager.moveCurrentToFuture(u);
-								}
-							}
-							else if (validMove(p.getPosX()-1, p.getPosY())){
-									board.remove(p.getPosX(), p.getPosY());
-									p.moveLeft();
-									board.set(p,p.getPosX(),p.getPosY());
-									LOG.info(p.getName() + " NEW POSITION : (" + p.getPosX() + "," + p.getPosY()+")");
-							}
-							else if(board.hasDoor(p.getPosX()-1, p.getPosY())){
-								LOG.info(p.getName() + " REACHED THE DOOR");
-								playerCount--;
-								userManager.moveCurrentToFuture(u);
-								break outerLoop;
-							}
-							LOG.info("BOARD VIEW\n" + board.toString());
-						}
-//==================================================================================						
-//									RIGHT
-//==================================================================================
-						else if(command.equals("RIGHT")){
-							if (!safeMove(p.getPosX() + 1, p.getPosY())){
-								//lose life when player makes an unsafe move
-								p.loseLife();
-								LOG.info(p.getName() + "LOSE A LIFE");
-								//remove player
-								removePlayerFromGameBoard(p);
-								LOG.info(p.getName() + "REMOVED FROM BOARD");
-								if(!p.isAlive()){
-									playerCount--;
-									userManager.moveCurrentToFuture(u);
-								}
-							}
-							else if (validMove(p.getPosX()+1, p.getPosY())){
-									board.remove(p.getPosX(), p.getPosY());
-									p.moveRight();
-									board.set(p,p.getPosX(),p.getPosY());
-									LOG.info(p.getName() + " NEW POSITION : (" + p.getPosX() + "," + p.getPosY()+")");
-							}
-							else if(board.hasDoor(p.getPosX()+1, p.getPosY())){
-								LOG.info(p.getName() + " REACHED THE DOOR");
-								playerCount--;
-								userManager.moveCurrentToFuture(u);
-								break outerLoop;
-							}
-							LOG.info("BOARD VIEW\n" + board.toString());
-						}
-//=====================================================================================
-//									END GAME
-//=====================================================================================
-						else if(command.equals("END_GAME")){
-							LOG.info("GAME ENDED");
-							playerCount--;
-							userManager.moveCurrentToFuture(u);
-						}
-						//else if(command.equals("BOMB"))
 					}
 				}
-				//board.update();
+				
 				networkManager.sendBoardToAllClients(board.toString());
-				//Logger.acceptMessage("Board sent to all client");
-				//Logger.acceptMessage(board.toString());
+
+				//Logger.acceptMessage("Board sent to all clients\n" + board.toString());
 			}
-			LOG.info("GAME IS OVER");
+			
+			System.out.println("Logic Manager: Game has finished");
 			networkManager.sendEndGameToAllClients();
 			//Logger.writeLog();
 			//Logger.endLog();
-		}catch(Exception e){
+		} catch (Exception e){
 			e.printStackTrace();
 		}
-		LOG.info("GAME IS OVER");
+
+		//System.out.println("Logic Manager: Thread Finished Running");
+
 	}
 }

@@ -11,10 +11,4 @@ public class Wall extends Entity {
 	//Constructors
 	public Wall(){};
 	public Wall(int x, int y){ super(x,y);}
-	
-	//Methods
-	public void draw(){
-		//Draw Itself
-		System.out.println("Drawing a Wall at " + pos());
-	}
 }

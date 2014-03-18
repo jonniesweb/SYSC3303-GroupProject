@@ -7,17 +7,16 @@ import java.lang.String;
 import java.util.concurrent.Semaphore;
 import Networking.*;
 
-
 public class TestDriver implements Runnable {
 
 	String file;
-	ArrayList<String>list = new ArrayList<String>();
+	ArrayList<String> list = new ArrayList<String>();
 	int count = 0;
 	String serverIp = "127.0.0.1";
-	int serverPort = Network.SEVER_PORT_NO;
+	int serverPort = Network.SERVER_PORT_NO;
 	Network net;
 
-	public TestDriver(String filename,int port) {
+	public TestDriver(String filename, int port) {
 		this.file = filename;
 		net = new Network(port, new Semaphore(0));
 		new Thread(net).start();
@@ -57,8 +56,13 @@ public class TestDriver implements Runnable {
 		 * send list of test messages to server
 		 */
 		for (String command : list) {
-			try{Thread.sleep(1000);}catch(Exception e){e.printStackTrace();}
-			net.sendMessage(new Message(command,serverIp,serverPort,System.nanoTime()));
+			try {
+				Thread.sleep(1000);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			net.sendMessage(new Message(command, serverIp, serverPort, System
+					.nanoTime()));
 		}
 	}
 
@@ -67,10 +71,11 @@ public class TestDriver implements Runnable {
 		runTest();
 
 	}
-	public static void main(String[] args){
-		new TestDriver("testNumber1.txt",8878);
-		new TestDriver("testNumber2.txt",8869);
-		
+
+	public static void main(String[] args) {
+		new TestDriver("testNumber1.txt", 8878);
+		// new TestDriver("testNumber2.txt",8869);
+
 	}
 
 }

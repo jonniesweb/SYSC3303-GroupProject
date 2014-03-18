@@ -42,15 +42,7 @@ public class Entity {
 	public int getPosX(){ return posX;}
 	public int getPosY(){ return posY;}
 	
-	public String pos(){
+	public String getPos(){
 		return "("+posX+","+posY+")";
-	}
-	
-	/**
-	 * @deprecated Let the GUI take the entities and draw them, not the Model
-	 */
-	public void draw(){
-		// Draw itself
-		System.out.println("Default Draw at " + pos());
 	}
 }

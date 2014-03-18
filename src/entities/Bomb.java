@@ -28,9 +28,4 @@ public class Bomb extends Entity {
 			System.out.println("The Bomb has yet to explode");
 		}
 	}
-	
-	public void draw(){
-		//Draws Itself
-		System.out.println("Drawing a Bomb at " + pos());
-	}
 }

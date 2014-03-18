@@ -24,11 +24,4 @@ public class Door extends Entity{
 	public boolean isVisible(){return this.visibility;}
 	
 	public void makeVisible(){ this.visibility = true;}
-	
-	public void draw(){
-		//Draw Itself
-		if(this.visibility){System.out.print("Drawing the Door - Visible at ");}
-		else{System.out.print("Drawing the Door - Invisible at ");}
-		System.out.println(pos());
-	}
 }

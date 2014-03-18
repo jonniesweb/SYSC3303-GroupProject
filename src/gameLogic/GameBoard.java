@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
+
 import entities.Door;
 import entities.Entity;
 import entities.Player;
@@ -17,6 +19,7 @@ import entities.Wall;
 //import entities.Explosion;
 //import entities.PowerUp;
 
+import serverLogic.LogicManager;
 import serverLogic.UserManager;
 import serverLogic.User;
 
@@ -32,6 +35,9 @@ public class GameBoard {
 	private Entity[][] board;
 	private int width;
 	private int height;
+	
+	private static final Logger LOG = Logger.getLogger(
+            GameBoard.class.getName());
 	
 	//UserManager userManager;
 
@@ -82,9 +88,10 @@ public class GameBoard {
 			e.printStackTrace();
 		}
 		
-		System.out.println("gameboard: height:"+ height +" width: "+width);
-		board = new Entity[width][height];
+		//System.out.println("gameboard: height:"+ height +" width: "+width);
 		
+		board = new Entity[width][height];
+		LOG.info("Gameboard: height:"+ height +" width: "+width);
 		/*
 		 * Parse serializedGameBoard to create the board
 		 */
@@ -137,7 +144,7 @@ public class GameBoard {
 		return height;
 	}
 	public boolean hasDoor(int x,int y){
-		if(x<0 || x>width || y<0 || y>height) return false;
+		if(x<0 || x>=width || y<0 || y>=height) return false;
 		return board[x][y] instanceof Door;
 	}
 
@@ -233,9 +240,10 @@ public class GameBoard {
 	
 	public Entity set(Entity entity, int x, int y) {
 		if(x < 0 || x > width)
-			System.out.println("x out of bounds: "+ x);
+			//System.out.println("x out of bounds: "+ x);
+			LOG.error("X IS OUT OF BOUND : "+ x);
 		if(y < 0 || y > height)
-			System.out.println("y out of bounds: "+ y);
+			LOG.error("Y IS OUT OF BOUND : "+ y);
 		Entity previousEntity = board[x][y];
 		board[x][y] = entity;
 		return previousEntity;
@@ -260,11 +268,19 @@ public class GameBoard {
 					return;
 			}
 		}
-		board[0][6] = new Door(0,6);	
+
+		board[3][3] = new Door(3,3);
+
 	}
 	
+	/**
+	 * for testing
+	 * @return
+	 */
 	public Door getDoor(){
-		return (Door)board[0][6];
+
+		return (Door)board[3][3];
+
 	}
 	/**
 	 * For testing purposes

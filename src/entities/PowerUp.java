@@ -17,13 +17,4 @@ public class PowerUp extends Entity {
 	public PowerUp(int x, int y){
 		super(x,y);
 	}
-	
-	//Methods
-	public void draw(){
-		
-		//Draw Itself
-		//Due to possibility of many different types of power ups
-		// More logic deciding on which one to draw will be needed
-		System.out.println("Drawing a Power Up at " + pos());
-	}
 }

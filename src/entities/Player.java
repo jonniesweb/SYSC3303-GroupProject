@@ -84,12 +84,4 @@ public class Player extends Entity {
 	 * 
 	 */
 	public void resetLife(){ lives = 1;}
-	
-	/**
-	 * @deprecated
-	 */
-	public void draw(){
-		//Draws Itself
-		System.out.println("Drawing a Player at " + pos());
-	}	
 }
