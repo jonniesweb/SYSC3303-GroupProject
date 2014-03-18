@@ -22,6 +22,7 @@ public class ServerMain {
 	LogicManager logicManager;
 	NetworkManager networkManager;
 	UserManager userManager;
+	EnemyManager enemyManager;
 	Logger logger;
 	
 	Semaphore testSem;
@@ -35,6 +36,7 @@ public class ServerMain {
 		logicManager = new LogicManager(userManager);
 		networkManager = new NetworkManager(logicManager,userManager);
 		logicManager.setNetworkManager(networkManager);
+		enemyManager = new EnemyManager(logicManager);
 	}
 	
 	public ServerMain(Semaphore s, int tMode){

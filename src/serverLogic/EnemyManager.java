@@ -31,6 +31,7 @@ public class EnemyManager implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		System.out.println("TEST");
 		int  r; 
 		while(logicManager.getGameInProgress()){
 			for(Enemy e : enemyList){
@@ -58,7 +59,12 @@ public class EnemyManager implements Runnable {
 					;
 				}
 				logicManager.setEnemy(e);
-				Thread.sleep(3000);
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 			}
 		}
