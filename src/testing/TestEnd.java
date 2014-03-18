@@ -40,7 +40,7 @@ public class TestEnd {
 		
 		
 		try{//TODO: Set timeout to a logic length
-			//Waits for the 
+			//Waits for the the players to end or the timeout occurs
 			testSem.wait(timeout);
 			
 			//Assert that the player ended the game
@@ -56,13 +56,19 @@ public class TestEnd {
 	@Test
 	/**
 	 * 
+	 * Testing a multiplayer game
+	 * 	Test both players exiting (mode 1)
+	 * 	Test one player exiting (mode 0)
+	 *
 	 * @param mode
 	 */
 	public void multiPlayerGameSession(int mode){
 		
 		
+		//Start the server
 		server = new ServerMain(testSem, 3);
 		
+		//Initializes the file to use in the TestDrivers
 		String playerOneFile = "/TestingFiles/End/SinglePlayerGameSessionEnd";
 		String playerTwoFile;
 		
@@ -71,11 +77,13 @@ public class TestEnd {
 		else if(mode == 1)
 			playerTwoFile = "/TestingFiles/End/MutliPlayerGameSessionEnd.player2";
 		
+		//Run the TestDrivers
 		new TestDriver(playerOneFile, playerOnePort);
 		new TestDriver(playerTwoFile, playerTwoPort);
 		
 		
 		try{//TODO: Set timeout to a logic length
+			//Waits for the the players to end or the timeout occurs
 			testSem.wait(timeout);
 			
 			//Assert that the player managed to get to the door 
