@@ -27,6 +27,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
+
 
 // TODO: fix testing of client because it crashes
 public class ClientGUIFrame extends JFrame {
@@ -47,6 +49,9 @@ public class ClientGUIFrame extends JFrame {
 
 	private JPanel contentPane;
 	private GridLayout layoutManager = new GridLayout();
+	
+	private static final Logger LOG = Logger.getLogger(
+			ClientGUIFrame.class.getName());
 	
 	public ClientGUIFrame() {
 		setupContentPane();
@@ -188,7 +193,8 @@ public class ClientGUIFrame extends JFrame {
 			}
 		}
 
-		System.out.println("called GUI update");
+		//System.out.println("called GUI update");
+		LOG.info("GUI UPDATE CALL");
 		Entity[][] entityArray = gameBoard.getBoard();
 
 		for (int i = 0; i < entityArray.length; i++) {
