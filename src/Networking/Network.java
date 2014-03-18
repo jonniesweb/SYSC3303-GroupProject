@@ -24,7 +24,7 @@ public class Network extends Thread {
 	public static final int CLIENT_PORT_NO = 8871;
 	int port;
 	private Semaphore inboxLock;
-	//private static final Logger LOG = Logger.getLogger("TEST");
+	private static final Logger LOG = Logger.getLogger(Network.class.getName());
 
 	// constructor
 	public Network(int p, Semaphore lock) {
@@ -49,7 +49,7 @@ public class Network extends Thread {
 		if(hasMessage())
 			return inbox.remove(0);
 		else{
-			//LOG.error("ERROR EMPTY INBOX RETURNING NULL");
+			LOG.error("ERROR EMPTY INBOX RETURNING NULL");
 			return null;
 		}
 	}
@@ -63,7 +63,7 @@ public class Network extends Thread {
 				try{
 					socket.send(m.datagram);
 				}catch(Exception e){
-					}//LOG.error(e);
+					LOG.error(e);}
 			}
 		};
 		pool.submit(r1);
@@ -76,7 +76,7 @@ public class Network extends Thread {
 			socket = new DatagramSocket(port);
 			acceptLoop();
 		} catch (Exception e) {
-			//LOG.error("SOCKET ERROR" + e);
+			LOG.error("SOCKET ERROR" + e);
 		}
 	}
 
@@ -95,7 +95,7 @@ public class Network extends Thread {
 				public void run(){
 					Message m1 = new Message(receivePacket);
 					String command = new String(receivePacket.getData());
-					//LOG.info("GOT COMMAND: "+ command);
+					LOG.info("GOT COMMAND: "+ command);
 					inbox.add(m1);
 					inboxLock.release(1);
 				}

@@ -218,6 +218,8 @@ public class LogicManager implements Runnable {
 			board.set(player, newPosX, newPosY);
 			//System.out.println("LogicManager: Player '" + player.getName() + "' Moved Safely");
 			LOG.info(player.getName() + "' Moved Safely");
+			LOG.info("BOARD VIEW\n" + board.toString());
+			LOG.info(player.getName() + " NEW LOCATION : " + player.getPos());
 			return 1;
 		} else if (board.hasDoor(newPosX, newPosY)){
 			playerCount--;
@@ -331,8 +333,8 @@ public class LogicManager implements Runnable {
 					//Is this the User?
 					if(u.getUUID().equals(uuid)){
 
-						System.out.println("LogicManager: Manipulating player '" + u.getPlayer().getName() + "' currently at location " + u.getPlayer().getPos());
-
+						//System.out.println(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
+						LOG.info(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 						// Proper way to do handle command
 						//handleCommand(u, command);
 						

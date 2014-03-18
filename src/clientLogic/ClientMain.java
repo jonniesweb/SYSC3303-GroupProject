@@ -4,10 +4,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
+
 import Networking.Message;
 import Networking.Network;
 
 public class ClientMain extends SpectatorMain {
+	
+	private static final Logger LOG = Logger.getLogger(
+			ClientMain.class.getName());
 
 	public static void main(String[] args) {
 		Random r = new Random();
@@ -83,7 +88,8 @@ public class ClientMain extends SpectatorMain {
 	 */
 	void sendMessage(String data) {
 		network.sendMessage(new Message(data, "127.0.0.1", Network.SERVER_PORT_NO, System.nanoTime()));
-		System.out.println("send command: " + data);
+		//System.out.println("send command: " + data);
+		LOG.info("SEND COMMAND : " + data);
 	}
 
 }
