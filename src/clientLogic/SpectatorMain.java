@@ -6,7 +6,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.Semaphore;
 
-import Networking.Message;
+import Networking.UserMessage;
 import Networking.Network;
 import testing.TestDriver;
 
@@ -63,7 +63,7 @@ public class SpectatorMain {
 		
 		startListening();
 		
-//		network.sendMessage(new Message(connectCommand, ip, port, time));
+//		network.sendMessage(new UserMessage(connectCommand, ip, port, time));
 	}
 	
 	/**
@@ -75,10 +75,10 @@ public class SpectatorMain {
 			@Override
 			public void run() {
 				running = true;
-				Message message;
+				UserMessage userMessage;
 				while(running) {
-					message = readInbox();
-					byte[] data = message.datagram.getData();
+					userMessage = readInbox();
+					byte[] data = userMessage.datagram.getData();
 					String gameString = new String(data).trim();
 					
 					if (gameString.equals("END_GAME")) {
@@ -97,7 +97,7 @@ public class SpectatorMain {
 
 
 
-	private Message readInbox() {
+	private UserMessage readInbox() {
 		try {
 			inboxLock.acquire();
 		} catch (InterruptedException e) {

@@ -19,7 +19,7 @@ import entities.Wall;
 
 //import testing.Logger;
 import gameLogic.GameBoard;
-import Networking.Message;
+import Networking.UserMessage;
 
 import org.apache.log4j.*;
 
@@ -32,7 +32,7 @@ import org.apache.log4j.*;
  */
 public class LogicManager implements Runnable {
 	
-	private BlockingQueue<Message> commandQueue = new LinkedBlockingQueue<Message>();
+	private BlockingQueue<UserMessage> commandQueue = new LinkedBlockingQueue<UserMessage>();
 	
 	private GameBoard board;
 	
@@ -81,7 +81,7 @@ public class LogicManager implements Runnable {
 	 * @param command
 	 * @param playerID
 	 */
-	public void execute(Message m){
+	public void execute(UserMessage m){
 		try{
 			commandQueue.put(m);			
 		}catch(Exception e){
@@ -315,9 +315,13 @@ public class LogicManager implements Runnable {
 
 	public void run(){
 
+<<<<<<< HEAD
 		//initialing variable
 		LOG.info("LOGIC MANAGER STARTED...");
 		Message m;
+=======
+		UserMessage m;
+>>>>>>> MessageRefactor
 		String command;
 		String uuid;
 		Player p;

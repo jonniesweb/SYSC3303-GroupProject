@@ -61,7 +61,7 @@ public class TestDriver implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			net.sendMessage(new Message(command, serverIp, serverPort, System
+			net.sendMessage(new UserMessage(command, serverIp, serverPort, System
 					.nanoTime()));
 		}
 	}
