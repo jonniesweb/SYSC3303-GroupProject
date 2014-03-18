@@ -3,12 +3,16 @@ package Networking;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
+import org.apache.log4j.Logger;
+
 public class Message {
 	public DatagramPacket datagram;
 	public String Message;
 	public InetAddress ip;
 	public int packetPort;
 	public long time;
+	private static final Logger LOG = Logger.getLogger(
+            Message.class.getName());
 
 	public Message(DatagramPacket p) {
 		datagram = p;
@@ -23,7 +27,8 @@ public class Message {
 		try {
 			ip = InetAddress.getByName(hostName);
 		} catch (Exception e) {
-			System.out.println(e);
+			//System.out.println(e);
+			LOG.error(e);
 		}
 		datagram = new DatagramPacket(message.getBytes(), message.getBytes().length, ip,
 				packetPort);

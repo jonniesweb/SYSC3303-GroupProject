@@ -1,5 +1,8 @@
 package clientLogic;
 
+import org.apache.log4j.Logger;
+
+import Networking.Network;
 import gameLogic.GameBoard;
 
 /**
@@ -11,6 +14,8 @@ import gameLogic.GameBoard;
 public class ClientGUI {
 
 	ClientGUIFrame guiFrame;
+	private static final Logger LOG = Logger.getLogger(
+			ClientGUI.class.getName());
 
 	public ClientGUI() {
 
@@ -20,11 +25,13 @@ public class ClientGUI {
 	}
 
 	public void update(GameBoard gameBoard) {
-		System.out.println("The Client GUI is updating");
+		//System.out.println("The Client GUI is updating");
+		LOG.info("The Client GUI is updating");
 
 		guiFrame.update(gameBoard);
 
-		System.out.println("The Client GUI has finished updating");
+		//System.out.println("The Client GUI has finished updating");
+		LOG.info("The Client GUI has finished updating");
 	}
 	
 	private Runnable testUpdater = new Runnable() {
