@@ -61,7 +61,6 @@ public class BombFactory {
 					u.getPlayer().getPosY(),
 					createdTime,blowUpTime);
 			bombs.add(b);
-			logicManager.execute(new BombMessage("BOMB_ADDED",b.getPosX(),b.getPosY()));
 			bombMapper.put(b,u);
 			timerExecute();
 			return true;
@@ -127,7 +126,6 @@ public class BombFactory {
 				User u = bombMapper.get(b);
 				bombMapper.remove(b);
 				bombCounter.put(u, bombCounter.get(u)+1);
-				logicManager.execute(new BombMessage("BOMB_REMOVED",b.getPosX(),b.getPosY()));
 				createExplosions(b);
 			}
 		}
@@ -139,16 +137,16 @@ public class BombFactory {
 		for(int i =0; i < explosions.size(); i++){
 			if(explosions.get(i).isDone(time)){
 				r = explosions.remove(i);
-				logicManager.execute(new BombMessage("EXP_REMOVED",r.getPosX(),r.getPosY()));
+				logicManager.execute( new BombMessage("EXP_REMOVED",r.getPosX(),r.getPosY()));
 			}
 		}
 	}
 	
 	public Bomb[] returnBombs(){
-		return (Bomb[])bombs.toArray();
+		return bombs.toArray(new Bomb[0]);
 	}
 	public Explosion[] returnExplosions(){
-		return (Explosion[])explosions.toArray();
+		return (explosions.toArray(new Explosion[0]));
 	}
 	
 	public void timerExecute(){
