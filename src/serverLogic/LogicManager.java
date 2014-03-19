@@ -19,7 +19,7 @@ import entities.Wall;
 
 //import testing.Logger;
 import gameLogic.GameBoard;
-import Networking.UserMessage;
+import Networking.*;
 
 import org.apache.log4j.*;
 
@@ -32,9 +32,10 @@ import org.apache.log4j.*;
  */
 public class LogicManager implements Runnable {
 	
-	private BlockingQueue<UserMessage> commandQueue = new LinkedBlockingQueue<UserMessage>();
+	private BlockingQueue<Message> commandQueue = new LinkedBlockingQueue<Message>();
 	
 	private GameBoard board;
+	private BombFactory bombFactory;
 	
 	private NetworkManager networkManager;
 	private UserManager userManager;
@@ -81,7 +82,7 @@ public class LogicManager implements Runnable {
 	 * @param command
 	 * @param playerID
 	 */
-	public void execute(UserMessage m){
+	public void execute(Message m){
 		try{
 			commandQueue.put(m);			
 		}catch(Exception e){
@@ -172,6 +173,7 @@ public class LogicManager implements Runnable {
 	public void setGameInProgress(boolean b){
 		gameInProgress = b;
 		placePlayers(board, userManager);
+		bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight());
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
 	public void setNetworkManager(NetworkManager m){
@@ -255,7 +257,26 @@ public class LogicManager implements Runnable {
 		
 		return 0;
 	}
-
+	private void checkBurnedPlayers(){
+		
+	}
+	private boolean checkExplosion(int x,int y){
+		Explosion[] explosions = bombFactory.returnExplosions();
+		for(int i = 0; i< explosions.length; i ++){
+			if(explosions[i].getPosX()== x && explosions[i].getPosY() == y)
+				return true;
+		}
+		return false;
+	}
+	private boolean checkBomb(int x, int y){
+		Bomb[] bombs = bombFactory.returnBombs();
+		for(int i=0; i< bombs.length; i++){
+			if(bombs[i].getPosX() == x && bombs[i].getPosY() ==y){
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * 
 	 * @param u
@@ -351,7 +372,7 @@ public class LogicManager implements Runnable {
 			while(playerCount > 0){
 				LOG.info("Attempting to read command ...");
 				//reading command from queue
-				m = commandQueue.take();
+				m = (UserMessage)commandQueue.take();
 				LOG.info("Command accepted");
 				
 				command = new String(m.datagram.getData()).trim();

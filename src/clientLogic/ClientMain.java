@@ -8,7 +8,7 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 import Networking.Message;
 
-import Networking.Network;
+import Networking.*;
 
 public class ClientMain extends SpectatorMain {
 	
