@@ -7,7 +7,10 @@ import java.nio.ByteBuffer;
 
 import entities.Door;
 import entities.Player;
+import entities.PowerUp;
+import entities.Enemy;
 import entities.Wall;
+import entities.Entity;
 import gameLogic.GameBoard;
 
 import org.junit.After;
@@ -20,6 +23,7 @@ public class TestGameBoard {
 	@Before
 	public void setUp() throws Exception {
 		game = new GameBoard(7,7);
+		System.out.println("Before the test exectued");
 	}
 
 	@After
@@ -129,6 +133,8 @@ public class TestGameBoard {
 	//TODO testEnemyExistance()
 		//Make sure that the number of expected Enemies actually exist
 		
+		
+		
 		//Setup the board
 		//place an expected number of enemies on the board
 		//iterate over the board counting number of enemies
@@ -139,6 +145,21 @@ public class TestGameBoard {
 	public void testPowerUpExistance() throws Exception {
 	//TODO testPowerUpExistance()
 		//Make sure that the expected number of powerups actually exist
+		
+		game.randomizeFloor(2);
+		int powerUpCount = 0;
+		
+		Entity[][] board = game.getBoard();
+		
+		for(int i = 0; i < game.getWidth(); i++){
+			for(int k = 0; k < game.getHeight(); k++){
+				
+				if(board[i][k] instanceof PowerUp)
+					powerUpCount++;	
+			}
+		}
+		
+		assertEquals(2, powerUpCount);
 		
 		//Setup the board
 		//Placing of powerup should be taken care of by board generation

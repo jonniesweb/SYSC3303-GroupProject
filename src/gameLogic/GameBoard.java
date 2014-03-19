@@ -15,10 +15,8 @@ import entities.Entity;
 import entities.Player;
 import entities.Wall;
 //import entities.Bomb;
-//import entities.Door;
-//import entities.Enemy;
 //import entities.Explosion;
-//import entities.PowerUp;
+import entities.PowerUp;
 
 import serverLogic.LogicManager;
 import serverLogic.UserManager;
@@ -225,6 +223,18 @@ public class GameBoard {
 					board[i][j] = new Entity();
 				}
 			}
+		}
+		
+		int powerUpX, powerUpY;
+		
+		for (int i = 0; i < playerCount; i++){
+			do{
+				powerUpX = r.nextInt(width-1) + 1;
+				powerUpY = r.nextInt(height-1) + 1;	
+			}while(!(board[powerUpX][powerUpY] instanceof PowerUp));
+		
+			//TODO make powerup either randomize itself or specify a type here in construction
+			board[powerUpX][powerUpY] = new PowerUp(powerUpX,powerUpY);
 		}
 	}
 	
