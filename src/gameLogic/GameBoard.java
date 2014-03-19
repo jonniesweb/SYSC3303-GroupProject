@@ -49,8 +49,8 @@ public class GameBoard {
 		this.height = height;
 		board = new Entity[height][width];
 		this.randomizeFloor(4);
-		this.generateFloor("FloorTest.txt");
-		this.initializeDoor();
+		//this.generateFloor("FloorTest.txt");
+		//this.initializeDoor();
 	}
 	
 	/**
@@ -183,6 +183,7 @@ public class GameBoard {
 				i++;
 
 			}
+			initializeDoor();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -208,14 +209,22 @@ public class GameBoard {
 			for (int j = 0; j < width; j++) {
 				//top left and bot right should have space for player to move
 				//if the position is top left(Player 1 position),skip randomization
-				if( (i == 0 && j == 0) || (i == 0 && j == 1)||(i == 1 && j == 0))
+				if( (i == 0 && j == 0) || (i == 0 && j == 1)||(i == 1 && j == 0)){
+					board[i][j] = new Entity();
 					continue;
-				if(playerCount >1  && ((i == height-1 && j == width-1) || (i == height-1&&j == width-2)||(i == height-2 && j == width-1)) )
+				}
+				if(playerCount >1  && ((i == height-1 && j == width-1) || (i == height-1&&j == width-2)||(i == height-2 && j == width-1)) ){
+					board[i][j] = new Entity();
 					continue;
-				if(playerCount >2 && ((i==height-2 && j==0) || (i==height-1&&j==0)||(i==height-1&&j==1)) )
+				}
+				if(playerCount >2 && ((i==height-2 && j==0) || (i==height-1&&j==0)||(i==height-1&&j==1)) ){
+					board[i][j] = new Entity();
 					continue;
-				if(playerCount >3 && ((i==0 && j == width-1) || (i == 0 && j == width-2)||(i == 1 && j == width-1)) )
+				}
+				if(playerCount >3 && ((i==0 && j == width-1) || (i == 0 && j == width-2)||(i == 1 && j == width-1)) ){
+					board[i][j] = new Entity();
 					continue;
+				}
 				
 				if (r.nextInt(10) < 7) {
 					board[i][j] = new Wall();
@@ -225,16 +234,20 @@ public class GameBoard {
 			}
 		}
 		
+		initializeDoor();
+		
 		int powerUpX, powerUpY;
 		
 		for (int i = 0; i < playerCount; i++){
 			do{
-				powerUpX = r.nextInt(width-1) + 1;
-				powerUpY = r.nextInt(height-1) + 1;	
-			}while(!(board[powerUpX][powerUpY] instanceof PowerUp));
+				powerUpX = r.nextInt(width-2) + 1;
+				powerUpY = r.nextInt(height-2) + 1;	
+				
+			}while((board[powerUpX][powerUpY] instanceof PowerUp) || board[powerUpX][powerUpY] instanceof Door);
 		
 			//TODO make powerup either randomize itself or specify a type here in construction
 			board[powerUpX][powerUpY] = new PowerUp(powerUpX,powerUpY);
+			System.out.println("PowerUp Placed at: ("+powerUpX+","+powerUpY+")");
 		}
 	}
 	
@@ -277,6 +290,8 @@ public class GameBoard {
 	 * 
 	 */
 	public void initializeDoor(){
+		
+		System.out.println("initializeDoor");
 		for(int i = 0;i<height;i++){
 			for(int j = 0;j<height;j++){
 				if(board[i][j] instanceof Door)
@@ -284,6 +299,8 @@ public class GameBoard {
 			}
 		}
 
+		
+		System.out.println("Creating a door");
 		board[3][3] = new Door(3,3);
 	}
 	
