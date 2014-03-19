@@ -34,7 +34,8 @@ public class BombFactory {
 	private int width, height;
 	// constructor inits maps
 	// maps each user to max bomb number
-	public BombFactory(Object[] users,  int w, int h){
+	public BombFactory(Object[] users,  int w, int h,LogicManager m){
+		logicManager = m;
 		width = w; height = h;
 		timer = new Timer();
 		bombCounter = Collections.synchronizedMap(new HashMap<User,Integer>());
@@ -60,7 +61,9 @@ public class BombFactory {
 					u.getPlayer().getPosY(),
 					createdTime,blowUpTime);
 			bombs.add(b);
+			logicManager.execute(new BombMessage("BOMB_ADDED",b.getPosX(),b.getPosY()));
 			bombMapper.put(b,u);
+			timerExecute();
 			return true;
 		}else{
 			return false;
@@ -73,34 +76,38 @@ public class BombFactory {
 	public void createExplosions(Bomb b){
 		long time = System.currentTimeMillis();
 		for(int i =0; i < EXP_NUM; i++){
-			if( i-1 > 0){
+			if( b.getPosY()-1-i > 0){
 				explosions.add(new Explosion(b.getPosX(),
 					b.getPosY()-1-i,
 					time, time+explode));
+				logicManager.execute(new BombMessage("EXP_ADDED",b.getPosX(),b.getPosY()-1-i));
 			}
 		}
 		// bottom
 		for(int i = 0; i< EXP_NUM; i++){
-			if(i+ 1 < height){
+			if(b.getPosY()+i+ 1 < height){
 				explosions.add(new Explosion(b.getPosX(),
 					b.getPosY()+1+i,
 					time, time+explode));
+				logicManager.execute(new BombMessage("EXP_ADDED",b.getPosX(),b.getPosY()+1+i));
 			}
 		}
 		// left
 		for(int i =0; i < EXP_NUM; i++ ){
-			if(i -1 > 0){
+			if(b.getPosX()-i -1 > 0){
 				explosions.add(new Explosion(b.getPosX()-1-i,
 					b.getPosY(),
 					time, time+explode));
+				logicManager.execute(new BombMessage("EXP_ADDED",b.getPosX()-1-i,b.getPosY()));
 			}
 		}
 		//right
 		for(int i=0; i< EXP_NUM;i++){
-			if(i + 1 < width){
+			if(b.getPosX()+i + 1 < width){
 				explosions.add(new Explosion(b.getPosX()+1+i,
 					b.getPosY(),
 					time, time+explode));
+				logicManager.execute(new BombMessage("EXP_ADDED",b.getPosX()+1+i,b.getPosY()));
 			}
 		}
 		
@@ -120,17 +127,19 @@ public class BombFactory {
 				User u = bombMapper.get(b);
 				bombMapper.remove(b);
 				bombCounter.put(u, bombCounter.get(u)+1);
+				logicManager.execute(new BombMessage("BOMB_REMOVED",b.getPosX(),b.getPosY()));
 				createExplosions(b);
 			}
 		}
 	}
 	// remove any explosions that have stayed past their welcome
 	private void removeExplosions(){
-		Entity removeFrom;
+		Entity r;
 		long time = System.currentTimeMillis();
 		for(int i =0; i < explosions.size(); i++){
 			if(explosions.get(i).isDone(time)){
-				removeFrom = explosions.remove(i);
+				r = explosions.remove(i);
+				logicManager.execute(new BombMessage("EXP_REMOVED",r.getPosX(),r.getPosY()));
 			}
 		}
 	}
@@ -142,11 +151,18 @@ public class BombFactory {
 		return (Explosion[])explosions.toArray();
 	}
 	
-	public void startTimer(){
-		TimerTask t = new TimerTask(){
+	public void timerExecute(){
+		TimerTask t1 = new TimerTask(){
 			public void run(){
 				blowUpBombs();
-				removeExplosions();
 			}};
+		TimerTask t2 = new TimerTask(){
+				public void run(){
+					removeExplosions();
+				}};
+		// 100 delay to make sure bomb exploded
+		timer.schedule(t1, blowUp+100);
+		timer.schedule(t2, blowUp+explode+ 100);
 	}
+	
 }
