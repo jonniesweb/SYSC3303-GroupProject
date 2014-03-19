@@ -19,7 +19,7 @@ import entities.Wall;
 
 //import testing.Logger;
 import gameLogic.GameBoard;
-import Networking.UserMessage;
+import Networking.*;
 
 import org.apache.log4j.*;
 
@@ -31,9 +31,10 @@ import org.apache.log4j.*;
  */
 public class LogicManager implements Runnable {
 	
-	private BlockingQueue<UserMessage> commandQueue = new LinkedBlockingQueue<UserMessage>();
+	private BlockingQueue<Message> commandQueue = new LinkedBlockingQueue<Message>();
 	
 	private GameBoard board;
+	private BombFactory bombFactory;
 	
 	private NetworkManager networkManager;
 	private UserManager userManager;
@@ -80,7 +81,7 @@ public class LogicManager implements Runnable {
 	 * @param command
 	 * @param playerID
 	 */
-	public void execute(UserMessage m){
+	public void execute(Message m){
 		try{
 			commandQueue.put(m);			
 		}catch(Exception e){
@@ -171,6 +172,7 @@ public class LogicManager implements Runnable {
 	public void setGameInProgress(boolean b){
 		gameInProgress = b;
 		placePlayers(board, userManager);
+		bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
 	public void setNetworkManager(NetworkManager m){
@@ -233,9 +235,6 @@ public class LogicManager implements Runnable {
 
 		if(!safeMove(newPosX, newPosY)){
 			player.loseLife();
-			removePlayerFromGameBoard(player);
-			//System.out.println("LogicManager: Player '" + player.getName() + "' removed from board");
-			LOG.info(player.getName() + " removed from board");
 			return (-1);
 		} else if (validMove(newPosX, newPosY)){
 			board.remove(player.getPosX(), player.getPosY());
@@ -255,7 +254,36 @@ public class LogicManager implements Runnable {
 		
 		return 0;
 	}
-
+	
+	// check to see if an explosion has gone off
+	// at a players location
+	private void checkBurnedPlayers(){
+		User[] users = (User[])(userManager.getCurrentPlayerList().toArray());
+		for(int i= 0; i < users.length; i++){
+			
+		}
+	}
+	// check to see if there is an explosion 
+	// where the player is moving to
+	private boolean checkExplosion(int x,int y){
+		Explosion[] explosions = bombFactory.returnExplosions();
+		for(int i = 0; i< explosions.length; i ++){
+			if(explosions[i].getPosX()== x && explosions[i].getPosY() == y)
+				return true;
+		}
+		return false;
+	}
+	// check if there is a bomb where the
+	// player is moving to
+	private boolean checkBomb(int x, int y){
+		Bomb[] bombs = bombFactory.returnBombs();
+		for(int i=0; i< bombs.length; i++){
+			if(bombs[i].getPosX() == x && bombs[i].getPosY() ==y){
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * Executes the Users Commands
 	 * @param u
@@ -294,6 +322,8 @@ public class LogicManager implements Runnable {
 				case (-1)://Died
 					if(!u.getPlayer().isAlive()){
 						playerCount--;
+						removePlayerFromGameBoard(u.getPlayer());
+						LOG.info(u.getPlayer().getName() + " removed from board");
 						userManager.moveCurrentToFuture(u);
 						if(testMode==1)
 							testSem.release();
@@ -355,7 +385,7 @@ public class LogicManager implements Runnable {
 			while(playerCount > 0){
 				LOG.info("Attempting to read command ...");
 				//reading command from queue
-				m = commandQueue.take();
+				m = (UserMessage)commandQueue.take();
 				LOG.info("Command accepted");
 				
 				command = new String(m.datagram.getData()).trim();

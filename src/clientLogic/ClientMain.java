@@ -4,11 +4,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
 
-
 import org.apache.log4j.Logger;
-import Networking.Message;
 
+import Networking.Message;
 import Networking.Network;
+import Networking.UserMessage;
+
 
 public class ClientMain extends SpectatorMain {
 	

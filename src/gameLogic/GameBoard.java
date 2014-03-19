@@ -22,7 +22,6 @@ import serverLogic.LogicManager;
 import serverLogic.UserManager;
 import serverLogic.User;
 
-
 //TODO: gameboard should be init with a list of players
 public class GameBoard {
 
@@ -34,17 +33,17 @@ public class GameBoard {
 	private Entity[][] board;
 	private int width;
 	private int height;
-	
-	private static final Logger LOG = Logger.getLogger(
-            GameBoard.class.getName());
-	
-	//UserManager userManager;
+
+	private static final Logger LOG = Logger.getLogger(GameBoard.class
+			.getName());
+
+	// UserManager userManager;
 
 	/**
 	 * 
 	 * 
 	 */
-	public GameBoard(int width,int height){
+	public GameBoard(int width, int height) {
 		this.width = width;
 		this.height = height;
 		board = new Entity[height][width];
@@ -58,17 +57,18 @@ public class GameBoard {
 	 * 
 	 * @param filename
 	 */
-	public GameBoard(String filename){
-		generateFloor(filename);	
-		
+	public GameBoard(String filename) {
+		generateFloor(filename);
+
 	}
-	
+
 	/**
 	 * Creates a GameBoard from a serialized byte array
+	 * 
 	 * @param serializedGameBoard
 	 */
 	public GameBoard(char[] serializedGameBoard) {
-		
+
 		this.width = 0;
 		this.height = 0;
 		int totalBytes = serializedGameBoard.length;
@@ -79,29 +79,29 @@ public class GameBoard {
 				break;
 			}
 		}
-		
+
 		// determine height
 		try {
 			height = totalBytes / (width + 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		//System.out.println("gameboard: height:"+ height +" width: "+width);
-		
+
+		// System.out.println("gameboard: height:"+ height +" width: "+width);
+
 		board = new Entity[width][height];
-		LOG.info("Gameboard: height:"+ height +" width: "+width);
+		LOG.info("Gameboard: height:" + height + " width: " + width);
 		/*
 		 * Parse serializedGameBoard to create the board
 		 */
 		int x = 0;
 		int y = 0;
 		char entity;
-		
+
 		for (int i = 0; i < serializedGameBoard.length; i++) {
-			
+
 			entity = (char) serializedGameBoard[i];
-			
+
 			if (entity == 'W') {
 				set(new Wall(x, y), x, y);
 			} else if (entity == 'P') {
@@ -114,7 +114,7 @@ public class GameBoard {
 			} else {
 				set(new Entity(x, y), x, y);
 			}
-			
+
 			x++;
 		}
 	}
@@ -142,12 +142,16 @@ public class GameBoard {
 	public int getHeight() {
 		return height;
 	}
-	public boolean hasDoor(int x,int y){
-		if(x<0 || x>=width || y<0 || y>=height) return false;
+
+	public boolean hasDoor(int x, int y) {
+		if (x < 0 || x >= width || y < 0 || y >= height)
+			return false;
 		return board[x][y] instanceof Door;
 	}
-	public boolean hasEnemy(int x,int y){
-		if(x<0 || x>=width || y<0 || y>=height) return false;
+
+	public boolean hasEnemy(int x, int y) {
+		if (x < 0 || x >= width || y < 0 || y >= height)
+			return false;
 		return board[x][y] instanceof Enemy;
 	}
 
@@ -178,7 +182,7 @@ public class GameBoard {
 					else if (line.charAt(j) == '.')
 						board[j][i] = new Entity(j, i);
 					else if (line.charAt(j) == 'D')
-						board[j][i] = new Door(j,i);
+						board[j][i] = new Door(j, i);
 				}
 				i++;
 
@@ -193,7 +197,7 @@ public class GameBoard {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Initialize with random position of wall. Takes number of player so that
 	 * the player will not be surrounded by wall
@@ -259,39 +263,73 @@ public class GameBoard {
 	 * @return
 	 */
 	public Entity get(int x, int y) {
-		if(x < 0 || x >= width )
+		if (x < 0 || x >= width)
 			return new Wall();
-		if(y< 0 || y >= height)
+		if (y < 0 || y >= height)
 			return new Wall();
 		return board[x][y];
 	}
-	
-	public Entity set(Entity entity, int x, int y) {
-		if(x < 0 || x > width)
-			//System.out.println("x out of bounds: "+ x);
-			LOG.error("X IS OUT OF BOUND : "+ x);
-		if(y < 0 || y > height)
-			LOG.error("Y IS OUT OF BOUND : "+ y);
+
+	/**
+	 * Place an entity on the gameboard at the given x and y position.
+	 * 
+	 * @deprecated Use set(Entity) instead
+	 * @param entity
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public Entity set(Entity entity, int x, int y) { // TODO: remove x and y
+														// parameters. Use
+														// entity.getx() and
+														// entity.getY() instead
+		if (x < 0 || x > width) {
+			LOG.error("X IS OUT OF BOUND : " + x);
+		}
+		if (y < 0 || y > height) {
+			LOG.error("Y IS OUT OF BOUND : " + y);
+		}
+
 		Entity previousEntity = board[x][y];
 		board[x][y] = entity;
 		return previousEntity;
 	}
+
+	/**
+	 * Places an entity on the gameboard at the x,y position specified in
+	 * itself.
+	 * 
+	 * @param entity
+	 * @return
+	 */
+	public Entity set(Entity entity) {
+		int x = entity.getPosX();
+		int y = entity.getPosY();
+		Entity previousEntity = board[x][y];
+		board[x][y] = entity;
+		return previousEntity;
+	}
+	
 	/**
 	 * Remove entity at specified position
+	 * 
 	 * @param x
 	 * @param y
 	 */
-	public void remove(int x, int y){
-		board[x][y]= new Entity(x,y);
+	public Entity remove(int x, int y) {
+		Entity previous = board[x][y];
+		board[x][y] = new Entity(x, y);
+		return previous;
 	}
+
 	/**
-	 * Initialize door into the board
-	 * If there is door already e.g door initialized inside prescribed file
+	 * Initialize door into the board If there is door already e.g door
+	 * initialized inside prescribed file
 	 * 
 	 */
+
 	public void initializeDoor(){
 		
-		System.out.println("initializeDoor");
 		for(int i = 0;i<height;i++){
 			for(int j = 0;j<height;j++){
 				if(board[i][j] instanceof Door)
@@ -299,22 +337,22 @@ public class GameBoard {
 			}
 		}
 
-		
-		System.out.println("Creating a door");
-		board[3][3] = new Door(3,3);
+
+		board[3][3] = new Door(3, 3);
 	}
-	
+
 	/**
 	 * for testing
+	 * 
 	 * @return
 	 */
-	public Door getDoor(){
+	public Door getDoor() {
 
-		return (Door)board[3][3];
+		return (Door) board[3][3];
 	}
+
 	/**
-	 * For testing purposes
-	 * eg. log into file the board view in string
+	 * For testing purposes eg. log into file the board view in string
 	 */
 	public String toString() {
 		int playerCount = 0;
@@ -325,9 +363,9 @@ public class GameBoard {
 					s += "W";
 				else if (board[x][y] instanceof Player)
 					s += "P";
-				else if(board[x][y] instanceof Door)
+				else if (board[x][y] instanceof Door)
 					s += "D";
-				else 
+				else
 					s += ".";
 			}
 			s += "\n";

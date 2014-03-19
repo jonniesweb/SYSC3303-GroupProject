@@ -8,9 +8,16 @@ package entities;
 
 public class Explosion extends Entity {
 
-	//Constructors
+	private long create;
+	private long blow;
 	public Explosion(){};
-	public Explosion(int x, int y){
+	public Explosion(int x, int y,long created, long blowUp){
 		super(x,y);
+		this.create = created;
+		this.blow = blowUp;
+	}
+	
+	public boolean isDone(long time){
+		return (time > blow);
 	}
 }
