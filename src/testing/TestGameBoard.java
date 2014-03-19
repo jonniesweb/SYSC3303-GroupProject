@@ -123,5 +123,27 @@ public class TestGameBoard {
 		
 		assertTrue(newBoard.toString().equals(game.toString()));
 	}
-
+	
+	@Test
+	public void testEnemyExistance() throws Exception {
+	//TODO testEnemyExistance()
+		//Make sure that the number of expected Enemies actually exist
+		
+		//Setup the board
+		//place an expected number of enemies on the board
+		//iterate over the board counting number of enemies
+		//assertEquals(expectedNumber, actualNumber)
+	}
+	
+	@Test
+	public void testPowerUpExistance() throws Exception {
+	//TODO testPowerUpExistance()
+		//Make sure that the expected number of powerups actually exist
+		
+		//Setup the board
+		//Placing of powerup should be taken care of by board generation
+		// or playerPlacing
+		//iterate over the board counting number of powerups
+		//assertEquals(expectedNumber, actualNumber)
+	}
 }

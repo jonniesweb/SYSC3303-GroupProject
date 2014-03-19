@@ -23,7 +23,6 @@ import Networking.UserMessage;
 
 import org.apache.log4j.*;
 
-// TODO: this class should manage the server GameBoard
 
 /**
  * 
