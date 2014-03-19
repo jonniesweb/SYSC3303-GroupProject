@@ -69,6 +69,7 @@ public class NetworkManager implements Runnable{
 					String board;
 					// take the board from the double buffer
 					try {
+						// block until a new gameboard is avaliable
 						board = gameboardUpdateQueue.take();
 						List<User> users = userManager.getAllUsers();
 
@@ -86,7 +87,7 @@ public class NetworkManager implements Runnable{
 				}
 
 			}
-		});
+		}).start();
 	}
 
 	/**
