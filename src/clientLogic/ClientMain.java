@@ -10,6 +10,7 @@ import Networking.Message;
 import Networking.Network;
 import Networking.UserMessage;
 
+
 public class ClientMain extends SpectatorMain {
 	
 	private static final Logger LOG = Logger.getLogger(

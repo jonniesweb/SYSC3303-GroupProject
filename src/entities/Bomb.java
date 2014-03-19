@@ -13,19 +13,14 @@ public class Bomb extends Entity {
 	
 	//Constructors
 	public Bomb(){};
-	public Bomb(int x, int y, long time){
+	public Bomb(int x, int y, long time,long blowUp){
 		super(x,y);
-		this.creationTime = System.currentTimeMillis();
-		this.bombTimer = time;
+		this.creationTime = time;
+		this.bombTimer = blowUp;
 	}
 	
 	//Methods
-	public void hasExploded(){
-		//Check time and compare
-		if (System.currentTimeMillis() > (creationTime + bombTimer)){
-			System.out.println("The Bomb has exploded");
-		} else {
-			System.out.println("The Bomb has yet to explode");
-		}
+	public boolean hasExploded(long time){
+		return (time > bombTimer);
 	}
 }
