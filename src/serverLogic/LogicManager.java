@@ -1,6 +1,8 @@
 package serverLogic;
 
+import java.io.IOException;
 import java.lang.String;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.*;
@@ -15,11 +17,12 @@ import entities.Wall;
 //import entities.Door;
 //import entities.PowerUp;
 
-import testing.Logger;
+//import testing.Logger;
 import gameLogic.GameBoard;
-import Networking.Message;
+import Networking.UserMessage;
 
-// TODO: this class should manage the server GameBoard
+import org.apache.log4j.*;
+
 
 /**
  * 
@@ -28,7 +31,7 @@ import Networking.Message;
  */
 public class LogicManager implements Runnable {
 	
-	private BlockingQueue<Message> commandQueue = new LinkedBlockingQueue<Message>();
+	private BlockingQueue<UserMessage> commandQueue = new LinkedBlockingQueue<UserMessage>();
 	
 	private GameBoard board;
 	
@@ -37,7 +40,13 @@ public class LogicManager implements Runnable {
 	
 	private Integer playerCount;
 	
+	private int testMode = 0;
+	
+	public Semaphore testSem = null;
+	
 	private boolean gameInProgress;
+	
+	private static final Logger LOG = Logger.getLogger(LogicManager.class.getName());
 	/**
 	 * 
 	 * @param uManager
@@ -50,7 +59,16 @@ public class LogicManager implements Runnable {
 		this.board = new GameBoard(7,7);
 		this.userManager = uManager;
 		this.playerCount = uManager.getCurrentPlayerList().size();
+		//log = Logger.getLogger(
+	    //        LogicManager.class.getName());
+	    //log = Logger.getLogger("Global");
 
+	}
+	
+	public LogicManager(UserManager uManager, Semaphore s, int tMode){
+		this(uManager);
+		testSem = s;
+		testMode = tMode;
 	}
 	
 	public void setGameBoard(GameBoard board) {
@@ -62,7 +80,7 @@ public class LogicManager implements Runnable {
 	 * @param command
 	 * @param playerID
 	 */
-	public void execute(Message m){
+	public void execute(UserMessage m){
 		try{
 			commandQueue.put(m);			
 		}catch(Exception e){
@@ -92,7 +110,7 @@ public class LogicManager implements Runnable {
 	 * @param y
 	 * @return
 	 */
-	private boolean validMove(int x, int y){
+	public boolean validMove(int x, int y){
 		Entity entity = board.get(x,y);
 		if(entity instanceof Bomb || entity instanceof Wall || entity instanceof Door) { return false; }
 		else { return true; }
@@ -115,23 +133,31 @@ public class LogicManager implements Runnable {
 		
 		int x;
 		int y;
-		System.out.println("LogicManager: Setting Player Positions");
+		LOG.info("LogicManager: Setting Player Positions");
 		List<User> players = new ArrayList<User>();
 		players.addAll(users.getCurrentPlayerList());
+		//set all player on board
 		for(int i= 0; i<players.size();i++){
-			System.out.println(i);
 				if(i==0){
 					players.get(i).setPlayer(new Player(0,0,"Player 1"));
 					board.set(players.get(i).getPlayer(),0,0);
-					System.out.println(players.get(i).getPlayer().getName());
+					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
 				if(i == 1){
 					players.get(i).setPlayer(new Player(6,6,"Player 2"));
 					board.set(players.get(i).getPlayer(),6,6);
-					System.out.println(players.get(i).getPlayer().getName());
+					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
 		}
-		System.out.println("LogicManager: Current GameBoard\n" + board.toString());
+		LOG.info("LogicManager: Current GameBoard\n" + board.toString());
+	}
+	public void placeEnemy(ArrayList<Enemy> eList){
+		for(Enemy e : eList){
+			board.set(e, e.getPosX(), e.getPosY());
+		}
+	}
+	public void setEnemy(Enemy e){
+		board.set(e, e.getPosX(), e.getPosY());
 	}
 	
 	/**
@@ -145,7 +171,7 @@ public class LogicManager implements Runnable {
 	public void setGameInProgress(boolean b){
 		gameInProgress = b;
 		placePlayers(board, userManager);
-		System.out.println("LogicManager: gameInProgress has been set to '"+gameInProgress + "'");
+		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
 	public void setNetworkManager(NetworkManager m){
 		this.networkManager = m;
@@ -184,11 +210,17 @@ public class LogicManager implements Runnable {
 		int x = player.getPosX();
 		int y = player.getPosY();
 		board.set(new Entity(x, y), x, y);
+		LOG.info(player.getName() + " DIED");
+	}
+	public void removeEnemyFromGameBoard(Enemy enemy){
+		board.remove(enemy.getPosX(), enemy.getPosY());
+	}
+	public void enemyValidMove(){
 		
-		System.out.println("LogicManager: " + player.getName() + " died");
 	}
 	
 	/**
+
 	 * Handles Movement of the Player
 	 * @param user
 	 * @param newPosX
@@ -202,17 +234,22 @@ public class LogicManager implements Runnable {
 		if(!safeMove(newPosX, newPosY)){
 			player.loseLife();
 			removePlayerFromGameBoard(player);
-			System.out.println("LogicManager: Player '" + player.getName() + "' removed from board");
+			//System.out.println("LogicManager: Player '" + player.getName() + "' removed from board");
+			LOG.info(player.getName() + " removed from board");
 			return (-1);
 		} else if (validMove(newPosX, newPosY)){
 			board.remove(player.getPosX(), player.getPosY());
 			player.setPos(newPosX, newPosY);
 			board.set(player, newPosX, newPosY);
-			System.out.println("LogicManager: Player '" + player.getName() + "' Moved Safely");
+			//System.out.println("LogicManager: Player '" + player.getName() + "' Moved Safely");
+			LOG.info(player.getName() + "' Moved Safely");
+			LOG.info("BOARD VIEW\n" + board.toString());
+			LOG.info(player.getName() + " NEW LOCATION : " + player.getPos());
 			return 1;
 		} else if (board.hasDoor(newPosX, newPosY)){
 			playerCount--;
-			System.out.println("LogicManager: Player '" + player.getName() + "' Found the Door");
+			//System.out.println("LogicManager: Player '" + player.getName() + "' Found the Door");
+			LOG.info(player.getName() + "' found the Door");
 			return 2;
 		}
 		
@@ -258,27 +295,35 @@ public class LogicManager implements Runnable {
 					if(!u.getPlayer().isAlive()){
 						playerCount--;
 						userManager.moveCurrentToFuture(u);
+						if(testMode==1)
+							testSem.release();
 					}
 					break;
 				case 1://Moved Safely
-					Logger.acceptMessage(u.getUUID() + " moved " + command);
+					//Logger.acceptMessage(u.getUUID() + " moved " + command);
 					break;
 				case 2://Found Door
 					userManager.moveCurrentToFuture(u);
+					if(testMode==2)
+						testSem.release();
 					break;
 				case 3://End_Game Command Received
 					//Same as Found Door
 					//Added so that more functionality can be added to either
 					// without affecting the other
 					userManager.moveCurrentToFuture(u);
+					if(testMode==3)
+						testSem.release();
 					break;
 				default:
-					System.out.println("LogicManager: Player Didn't Move");
+					//System.out.println("LogicManager: Player Didn't Move");
+					LOG.info("Player Didn't Move");
 			}
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-		System.out.println("LogicManager: Command '" + command + "' handled");
+		//System.out.println("LogicManager: Command '" + command + "' handled");
+		LOG.info("Command '" + command + "' handled");
 		return playerStatus;
 	}
 
@@ -287,35 +332,34 @@ public class LogicManager implements Runnable {
 	 * 
 	 */
 	public void run(){
-		System.out.println("LogicManager: Now Active");
 
-		Message m;
+		//initialing variable
+		LOG.info("LOGIC MANAGER STARTED...");
+		UserMessage m;
 		String command;
 		String uuid;
-
-		System.out.println("LogicManager: Waiting on the Game to begin");
-
+		Player p;
+		
+		//check if there is game still in progress
+		LOG.info("WAITING FOR GAME TO START");
 		while(!gameInProgress){
 			//Don't do anything until the game has started
 			Thread.yield();
 		}
 
-		System.out.println("LogicManager: The Games have begun!");
-
+		LOG.info("GAME IS NOW IN PROGRESS");
 		try{
 
 			outerLoop:
 			
 			while(playerCount > 0){
-			
-				System.out.println("LogicManager: Attempting to read a command.");
-				//Block until a command message exists
+				LOG.info("Attempting to read command ...");
+				//reading command from queue
 				m = commandQueue.take();
-				System.out.println("LogicManager: Command has been recieved.");
+				LOG.info("Command accepted");
 				
 				command = new String(m.datagram.getData()).trim();
 				uuid = m.datagram.getAddress().toString() + m.datagram.getPort();
-				System.out.println("LogicManager: Recieved '" + command + "' from " + uuid);
 				
 				Object[] users = userManager.getCurrentPlayerList().toArray();
 				for(int i = 0; i < users.length; i++){
@@ -323,8 +367,9 @@ public class LogicManager implements Runnable {
 					
 					//Is this the User?
 					if(u.getUUID().equals(uuid)){
-						System.out.println("LogicManager: Manipulating player '" + u.getPlayer().getName() + "' currently at location " + u.getPlayer().getPos());
 
+						//System.out.println(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
+						LOG.info(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 						// Proper way to do handle command
 						handleCommand(u, command);
 						
@@ -339,17 +384,19 @@ public class LogicManager implements Runnable {
 				}
 				
 				networkManager.sendBoardToAllClients(board.toString());
-				Logger.acceptMessage("Board sent to all clients\n" + board.toString());
+
+				//Logger.acceptMessage("Board sent to all clients\n" + board.toString());
 			}
 			
 			System.out.println("Logic Manager: Game has finished");
 			networkManager.sendEndGameToAllClients();
-			Logger.writeLog();
-			Logger.endLog();
+			//Logger.writeLog();
+			//Logger.endLog();
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 
-		System.out.println("Logic Manager: Thread Finished Running");
+		//System.out.println("Logic Manager: Thread Finished Running");
+
 	}
 }

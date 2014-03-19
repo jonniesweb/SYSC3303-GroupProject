@@ -11,24 +11,30 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
+
+import serverLogic.LogicManager;
+
 // TODO: add timestamp to all sent commands, then add to inbox SortedList
 public class Network extends Thread {
 	private DatagramSocket socket;
 	private ExecutorService pool;
-	private List<Message> inbox;
+	private List<UserMessage> inbox;
 	public static final int SERVER_PORT_NO = 8888;
 	public static final int CLIENT_PORT_NO = 8871;
 	int port;
 	private Semaphore inboxLock;
+	private static final Logger LOG = Logger.getLogger(Network.class.getName());
 
 	// constructor
 	public Network(int p, Semaphore lock) {
 		port = p;
 		pool = Executors.newCachedThreadPool();
-		inbox = Collections.synchronizedList(new LinkedList<Message>());
+		inbox = Collections.synchronizedList(new LinkedList<UserMessage>());
 		inboxLock = lock;
 		// just incase lock was initialized with number other than 0
 		inboxLock.drainPermits();
+		//Logger log = Logger.getLogger("Global");
 	}
 
 	/**
@@ -39,11 +45,11 @@ public class Network extends Thread {
 		return (inbox.size() > 0);
 	}
 	
-	public Message getMessage(){
+	public UserMessage getMessage(){
 		if(hasMessage())
 			return inbox.remove(0);
 		else{
-			System.out.println("Error empty inbox returning null");
+			LOG.error("ERROR EMPTY INBOX RETURNING NULL");
 			return null;
 		}
 	}
@@ -51,12 +57,13 @@ public class Network extends Thread {
 	 * sendMessage 
 	 * @param m
 	 */
-	public void sendMessage(final Message m) {
+	public void sendMessage(final UserMessage m) {
 		Runnable r1 = new Runnable(){
 			public void run(){
 				try{
 					socket.send(m.datagram);
-				}catch(Exception e){System.out.println("Sending error: "+ e);}
+				}catch(Exception e){
+					LOG.error(e);}
 			}
 		};
 		pool.submit(r1);
@@ -69,7 +76,7 @@ public class Network extends Thread {
 			socket = new DatagramSocket(port);
 			acceptLoop();
 		} catch (Exception e) {
-			System.out.println("Socket error " + e);
+			LOG.error("SOCKET ERROR" + e);
 		}
 	}
 
@@ -78,7 +85,7 @@ public class Network extends Thread {
 	 * @throws IOException
 	 */
 	private void acceptLoop() throws IOException {
-		System.out.println("listening on port: " + port);
+		//LOG.info("LISTENING ON PORT : " + port);
 		while (true) {
 			byte[] inBuffer = new byte[1024];
 			
@@ -86,9 +93,9 @@ public class Network extends Thread {
 					inBuffer.length);
 			Runnable r1 = new Runnable(){
 				public void run(){
-					Message m1 = new Message(receivePacket);
+					UserMessage m1 = new UserMessage(receivePacket);
 					String command = new String(receivePacket.getData());
-					System.out.println("got command: "+ command);
+					LOG.info("GOT COMMAND: "+ command);
 					inbox.add(m1);
 					inboxLock.release(1);
 				}

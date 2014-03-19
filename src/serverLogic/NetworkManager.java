@@ -4,10 +4,10 @@ package serverLogic;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import Networking.Message;
+import Networking.UserMessage;
 import Networking.Network;
 
-import testing.Logger;
+import org.apache.log4j.Logger;
 
 
 
@@ -24,7 +24,7 @@ public class NetworkManager implements Runnable{
 	private LogicManager logic;
 	private UserManager userManager;
 	private boolean running;
-	
+	private final static Logger LOG = Logger.getLogger(NetworkManager.class.getName());
 	/**
 	 * 
 	 */
@@ -46,46 +46,46 @@ public class NetworkManager implements Runnable{
 
 		new Thread(net).start();
 		running = true;
-		Message message;
+		UserMessage userMessage;
 		
 		while(running){
 			
-			message = readInbox();
+			userMessage = readInbox();
 			//log.acceptMessage(new String(message.datagram.getData()));
-			Logger.acceptMessage("Read data from inbox - " + new String(message.datagram.getData()) + "- from " + message.ip);			
+			// Logger.acceptMessage("Read data from inbox - " + new String(userMessage.datagram.getData()) + "- from " + userMessage.ip);			
 			// should join game before starting game
-			if (readCommand(message).equals("START_GAME")){
+			if (readCommand(userMessage).equals("START_GAME")){
 				System.out.println("got start game command");
 				if(!logic.getGameInProgress()){
-					System.out.println("game is not in progress");
+					//System.out.println("game is not in progress");
 					if(userManager.getCurrentPlayerList().size()> 0){
-						System.out.println("playerList is greater than 0");
+						//System.out.println("playerList is greater than 0");
 						logic.setGameInProgress(true);
 						
 						// XXX: network manager should never create a LogicManager
 						//logic = new LogicManager(userManager, log, this);
 					}else{
-						System.out.println("attempted to join before start");
+						LOG.info("attempted to join before start");
 					}
 				}
 				continue;
 			}
-			if (readCommand(message).equals("JOIN_GAME")){
-				joinCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
+			if (readCommand(userMessage).equals("JOIN_GAME")){
+				joinCommand(userMessage.datagram.getAddress().toString(), userMessage.datagram.getPort());
 				continue;
 			}
-			else if (readCommand(message).equals("SPECTATE_GAME")){
-				spectate(message.datagram.getAddress().toString(), message.datagram.getPort());
+			else if (readCommand(userMessage).equals("SPECTATE_GAME")){
+				spectate(userMessage.datagram.getAddress().toString(), userMessage.datagram.getPort());
 				continue;
 			}
-			else if (readCommand(message).equals("END_GAME") && logic.getGameInProgress()){
+			else if (readCommand(userMessage).equals("END_GAME") && logic.getGameInProgress()){
 				System.out.println("got end game.. game in progress is: "+ logic.getGameInProgress());
-				endGameCommand(message.datagram.getAddress().toString(), message.datagram.getPort());
+				endGameCommand(userMessage.datagram.getAddress().toString(), userMessage.datagram.getPort());
 				continue;
 			}
 			else {
 				if(logic.getGameInProgress())
-					logic.execute(message);
+					logic.execute(userMessage);
 			}	
 		}	
 	}
@@ -94,11 +94,11 @@ public class NetworkManager implements Runnable{
 	 * 
 	 * @return
 	 */
-	private Message readInbox() {
+	private UserMessage readInbox() {
 		try {
 			inboxLock.acquire();
 		} catch (InterruptedException e) {
-			System.out.println("Thread Interrupted returning empty message");
+			LOG.error("Thread Interrupted returning empty message");
 			return null;
 		}
 		return net.getMessage();
@@ -108,14 +108,11 @@ public class NetworkManager implements Runnable{
 	 * 
 	 */
 	public void sendBoardToAllClients(String board) {
-		System.out.println();
-		System.out.println(board);
-		System.out.println();
 		List<User> users = userManager.getAllUsers();
 		for(int i=0; i< users.size(); i++){
 			String ip = users.get(i).getIp();
 			int port = users.get(i).getPort();
-			Message m = new Message(board,ip,port,System.nanoTime());
+			UserMessage m = new UserMessage(board,ip,port,System.nanoTime());
 			net.sendMessage(m);
 		}
 	}
@@ -124,13 +121,13 @@ public class NetworkManager implements Runnable{
 	 * 
 	 */
 	public void sendEndGameToAllClients(){
-		System.out.println("game is over");
+		LOG.info("END GAME SENT TO ALL CLIENT");
 		String endGame = "END_GAME";
 		List<User> users = userManager.getAllUsers();
 		for (int i = 0; i < users.size(); i++) {
 			String ip = users.get(i).getIp();
 			int port = users.get(i).getPort();
-			Message m = new Message(endGame, ip, port,System.nanoTime());
+			UserMessage m = new UserMessage(endGame, ip, port,System.nanoTime());
 			net.sendMessage(m);
 		}
 		logic.setGameInProgress(false);
@@ -142,7 +139,7 @@ public class NetworkManager implements Runnable{
 	 * @param m
 	 * @return
 	 */
-	private String readCommand(Message m) {
+	private String readCommand(UserMessage m) {
 		String s = new String(m.datagram.getData()).trim();
 		return s;
 	}
@@ -158,7 +155,7 @@ public class NetworkManager implements Runnable{
 			if(u.getIp().equals(playerIP)){
 				try{
 				userManager.moveCurrentToFuture(u.getUUID());
-				Logger.acceptMessage("Player from " + playerIP + "port : "+ playerPort + " END THE GAME");
+				//Logger.acceptMessage("Player from " + playerIP + "port : "+ playerPort + " END THE GAME");
 				}catch(Exception e){
 					e.printStackTrace();
 					}
@@ -176,16 +173,16 @@ public class NetworkManager implements Runnable{
 			try {
 
 				userManager.addPlayerToFuture(playerIP, playerPort);
-				Logger.acceptMessage("Player from " + playerIP + "port : "+ playerPort + " JOIN GAME");
+				LOG.info("Player from " + playerIP + "port : "+ playerPort + " JOIN GAME");
 
 			} catch (Exception E) {
-				System.out.println("Added same player to future twice");
+				LOG.error("ERROR - ADDED SAME PLAYER TO FUTURE TWICE");
 			}
 		} else {
 			try {
 				userManager.addPlayerToCurrent(playerIP, playerPort);
 			} catch (Exception E) {
-				System.out.println("Added same player to current twice");
+				LOG.error("ERROR - ADDED SAME PLAYER TO CURRENT TWICE");
 			}
 			logic.incrementPlayerCount();
 		}
@@ -200,9 +197,9 @@ public class NetworkManager implements Runnable{
 		try {
 
 			userManager.addSpectator(playerIP, playerPort);
-			Logger.acceptMessage("Player from " + playerIP + "port : "+ playerPort + " SPECTATE GAME");
+			LOG.info("Player from " + playerIP + "port : "+ playerPort + " SPECTATE GAME");
 		} catch (Exception E) {
-			System.out.println("added same player to specator twice");
+			LOG.error("ERROR - ADDED SAME PLAYER TO SPECTATOR TWICE");
 		}
 	}
 

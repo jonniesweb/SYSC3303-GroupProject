@@ -7,16 +7,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
+
 import entities.Door;
+import entities.Enemy;
 import entities.Entity;
 import entities.Player;
 import entities.Wall;
 //import entities.Bomb;
-//import entities.Door;
-//import entities.Enemy;
 //import entities.Explosion;
-//import entities.PowerUp;
+import entities.PowerUp;
 
+import serverLogic.LogicManager;
 import serverLogic.UserManager;
 import serverLogic.User;
 
@@ -33,6 +35,9 @@ public class GameBoard {
 	private int width;
 	private int height;
 	
+	private static final Logger LOG = Logger.getLogger(
+            GameBoard.class.getName());
+	
 	//UserManager userManager;
 
 	/**
@@ -44,8 +49,8 @@ public class GameBoard {
 		this.height = height;
 		board = new Entity[height][width];
 		this.randomizeFloor(4);
-		this.generateFloor("FloorTest.txt");
-		this.initializeDoor();
+		//this.generateFloor("FloorTest.txt");
+		//this.initializeDoor();
 	}
 	
 	/**
@@ -82,9 +87,10 @@ public class GameBoard {
 			e.printStackTrace();
 		}
 		
-		System.out.println("gameboard: height:"+ height +" width: "+width);
-		board = new Entity[width][height];
+		//System.out.println("gameboard: height:"+ height +" width: "+width);
 		
+		board = new Entity[width][height];
+		LOG.info("Gameboard: height:"+ height +" width: "+width);
 		/*
 		 * Parse serializedGameBoard to create the board
 		 */
@@ -140,6 +146,10 @@ public class GameBoard {
 		if(x<0 || x>=width || y<0 || y>=height) return false;
 		return board[x][y] instanceof Door;
 	}
+	public boolean hasEnemy(int x,int y){
+		if(x<0 || x>=width || y<0 || y>=height) return false;
+		return board[x][y] instanceof Enemy;
+	}
 
 	/**
 	 * Generate floor from prescribed file
@@ -173,6 +183,7 @@ public class GameBoard {
 				i++;
 
 			}
+			initializeDoor();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -198,14 +209,22 @@ public class GameBoard {
 			for (int j = 0; j < width; j++) {
 				//top left and bot right should have space for player to move
 				//if the position is top left(Player 1 position),skip randomization
-				if( (i == 0 && j == 0) || (i == 0 && j == 1)||(i == 1 && j == 0))
+				if( (i == 0 && j == 0) || (i == 0 && j == 1)||(i == 1 && j == 0)){
+					board[i][j] = new Entity();
 					continue;
-				if(playerCount >1  && ((i == height-1 && j == width-1) || (i == height-1&&j == width-2)||(i == height-2 && j == width-1)) )
+				}
+				if(playerCount >1  && ((i == height-1 && j == width-1) || (i == height-1&&j == width-2)||(i == height-2 && j == width-1)) ){
+					board[i][j] = new Entity();
 					continue;
-				if(playerCount >2 && ((i==height-2 && j==0) || (i==height-1&&j==0)||(i==height-1&&j==1)) )
+				}
+				if(playerCount >2 && ((i==height-2 && j==0) || (i==height-1&&j==0)||(i==height-1&&j==1)) ){
+					board[i][j] = new Entity();
 					continue;
-				if(playerCount >3 && ((i==0 && j == width-1) || (i == 0 && j == width-2)||(i == 1 && j == width-1)) )
+				}
+				if(playerCount >3 && ((i==0 && j == width-1) || (i == 0 && j == width-2)||(i == 1 && j == width-1)) ){
+					board[i][j] = new Entity();
 					continue;
+				}
 				
 				if (r.nextInt(10) < 7) {
 					board[i][j] = new Wall();
@@ -213,6 +232,22 @@ public class GameBoard {
 					board[i][j] = new Entity();
 				}
 			}
+		}
+		
+		initializeDoor();
+		
+		int powerUpX, powerUpY;
+		
+		for (int i = 0; i < playerCount; i++){
+			do{
+				powerUpX = r.nextInt(width-2) + 1;
+				powerUpY = r.nextInt(height-2) + 1;	
+				
+			}while((board[powerUpX][powerUpY] instanceof PowerUp) || board[powerUpX][powerUpY] instanceof Door);
+		
+			//TODO make powerup either randomize itself or specify a type here in construction
+			board[powerUpX][powerUpY] = new PowerUp(powerUpX,powerUpY);
+			System.out.println("PowerUp Placed at: ("+powerUpX+","+powerUpY+")");
 		}
 	}
 	
@@ -233,9 +268,10 @@ public class GameBoard {
 	
 	public Entity set(Entity entity, int x, int y) {
 		if(x < 0 || x > width)
-			System.out.println("x out of bounds: "+ x);
+			//System.out.println("x out of bounds: "+ x);
+			LOG.error("X IS OUT OF BOUND : "+ x);
 		if(y < 0 || y > height)
-			System.out.println("y out of bounds: "+ y);
+			LOG.error("Y IS OUT OF BOUND : "+ y);
 		Entity previousEntity = board[x][y];
 		board[x][y] = entity;
 		return previousEntity;
@@ -254,12 +290,17 @@ public class GameBoard {
 	 * 
 	 */
 	public void initializeDoor(){
+		
+		System.out.println("initializeDoor");
 		for(int i = 0;i<height;i++){
 			for(int j = 0;j<height;j++){
 				if(board[i][j] instanceof Door)
 					return;
 			}
 		}
+
+		
+		System.out.println("Creating a door");
 		board[3][3] = new Door(3,3);
 	}
 	
@@ -268,6 +309,7 @@ public class GameBoard {
 	 * @return
 	 */
 	public Door getDoor(){
+
 		return (Door)board[3][3];
 	}
 	/**
