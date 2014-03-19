@@ -23,7 +23,6 @@ import Networking.*;
 
 import org.apache.log4j.*;
 
-// TODO: this class should manage the server GameBoard
 
 /**
  * 
@@ -223,11 +222,12 @@ public class LogicManager implements Runnable {
 	}
 	
 	/**
-	 * 
+
+	 * Handles Movement of the Player
 	 * @param user
 	 * @param newPosX
 	 * @param newPosY
-	 * @return
+	 * @return playerStatus
 	 */
 	private int handleMovement(User user, int newPosX, int newPosY){
 
@@ -285,10 +285,10 @@ public class LogicManager implements Runnable {
 		return false;
 	}
 	/**
-	 * 
+	 * Executes the Users Commands
 	 * @param u
 	 * @param command
-	 * @return
+	 * @return playerStatus
 	 */
 	private int handleCommand(User u, String command){
 
@@ -357,6 +357,10 @@ public class LogicManager implements Runnable {
 		return playerStatus;
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void run(){
 
 		//initialing variable
@@ -397,15 +401,15 @@ public class LogicManager implements Runnable {
 						//System.out.println(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 						LOG.info(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 						// Proper way to do handle command
-						//handleCommand(u, command);
+						handleCommand(u, command);
 						
 						//The following is to preserve the debugging
 						// functionality which ends the game
 						// after a single player finds the door
-						if (handleCommand(u, command) == 2){
+						/*if (handleCommand(u, command) == 2){
 							playerCount = 0;
 							break outerLoop;
-						}
+						}*/
 					}
 				}
 				
