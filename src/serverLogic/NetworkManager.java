@@ -2,6 +2,7 @@ package serverLogic;
 
 
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import Networking.UserMessage;
@@ -9,11 +10,6 @@ import Networking.Network;
 
 import org.apache.log4j.Logger;
 
-
-
-//TODO: construct logic Manager with playerlist 
-//TODO: add mainLoop
-//TODO: when a new user joins, add user to Usermanager.addNewPlayer() then call LogicManager.notifyNewPlayer() or an equivalent method.
 /**
  * 
  */
@@ -24,7 +20,23 @@ public class NetworkManager implements Runnable{
 	private LogicManager logic;
 	private UserManager userManager;
 	private boolean running;
+	
+	/*
+	 * Create a double buffer out of an ArrayBlockingQueue. This is possible
+	 * because whenever the sendBoardToAllClients method is called, the method
+	 * checks if a gameboard already exists in the buffer of size 1. If it
+	 * exists it clears the buffer and places the new gameboard into it. If its
+	 * empty, just add it.
+	 * 
+	 * The setupSendBoardToAllClients() method creates a thread that gets and
+	 * blocks on taking a gameboard update from the gameboardUpdateQueue
+	 * whenever it is full or empty, respectively.
+	 */
+	private ArrayBlockingQueue<String> gameboardUpdateQueue = new ArrayBlockingQueue<String>(1);
+	
 	private final static Logger LOG = Logger.getLogger(NetworkManager.class.getName());
+	
+	
 	/**
 	 * 
 	 */
@@ -37,10 +49,50 @@ public class NetworkManager implements Runnable{
 		
 		userManager = m;
 		new Thread(this).start();
+		
+		setupSendBoardToAllClients();
 	}
 	
 	/**
-	 * 
+	 * Spawns a thread to take a gameboard from the gameboard double buffer and
+	 * send it out to all users. Runs forever.
+	 */
+	private void setupSendBoardToAllClients() {
+		new Thread(new Runnable() {
+
+			
+			@Override
+			public void run() {
+
+				while (true) {
+
+					String board;
+					// take the board from the double buffer
+					try {
+						// block until a new gameboard is avaliable
+						board = gameboardUpdateQueue.take();
+						List<User> users = userManager.getAllUsers();
+
+						// send out the gameboard to all users
+						for (int i = 0; i < users.size(); i++) {
+							String ip = users.get(i).getIp();
+							int port = users.get(i).getPort();
+							UserMessage m = new UserMessage(board, ip, port,
+									System.nanoTime());
+							net.sendMessage(m);
+						}
+					} catch (InterruptedException e) {
+						LOG.error("Failed to take from gameboard update buffer");
+					}
+				}
+
+			}
+		}).start();
+	}
+
+	/**
+	 * Reads messages from the network inbox queue. Sends valid messages to the
+	 * Logic Manager and manages adding and removing users to the User Manager. 
 	 */
 	public void run(){
 
@@ -55,17 +107,15 @@ public class NetworkManager implements Runnable{
 			// Logger.acceptMessage("Read data from inbox - " + new String(userMessage.datagram.getData()) + "- from " + userMessage.ip);			
 			// should join game before starting game
 			if (readCommand(userMessage).equals("START_GAME")){
-				System.out.println("got start game command");
+				//System.out.println("got start game command");
 				if(!logic.getGameInProgress()){
 					//System.out.println("game is not in progress");
 					if(userManager.getCurrentPlayerList().size()> 0){
-						//System.out.println("playerList is greater than 0");
+						LOG.info("SETTING GAME PROGRESS TO TRUE");
 						logic.setGameInProgress(true);
 						
-						// XXX: network manager should never create a LogicManager
-						//logic = new LogicManager(userManager, log, this);
 					}else{
-						LOG.info("attempted to join before start");
+						LOG.error("attempted to join before start");
 					}
 				}
 				continue;
@@ -91,6 +141,8 @@ public class NetworkManager implements Runnable{
 	}
 	
 	/**
+	 * Get a UserMessage from the network inbox queue, or block until it
+	 * receives one
 	 * 
 	 * @return
 	 */
@@ -103,18 +155,23 @@ public class NetworkManager implements Runnable{
 		}
 		return net.getMessage();
 	}
-	
+
 	/**
 	 * 
 	 */
 	public void sendBoardToAllClients(String board) {
-		List<User> users = userManager.getAllUsers();
-		for(int i=0; i< users.size(); i++){
-			String ip = users.get(i).getIp();
-			int port = users.get(i).getPort();
-			UserMessage m = new UserMessage(board,ip,port,System.nanoTime());
-			net.sendMessage(m);
+		
+		if (gameboardUpdateQueue.offer(board)) {
+			return;
+		} else {
+			gameboardUpdateQueue.clear();
+			try {
+				gameboardUpdateQueue.add(board);
+			} catch (IllegalStateException e) {
+				LOG.error("Failed to add the GameBoard to the update buffer");
+			}
 		}
+
 	}
 	
 	/**

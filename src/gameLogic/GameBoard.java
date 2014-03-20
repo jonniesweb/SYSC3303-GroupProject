@@ -9,7 +9,22 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
+<<<<<<< HEAD
 import entities.*;
+=======
+import entities.Door;
+import entities.Enemy;
+import entities.Entity;
+import entities.Player;
+import entities.Wall;
+//import entities.Bomb;
+//import entities.Explosion;
+import entities.PowerUp;
+
+//import serverLogic.LogicManager;
+//import serverLogic.UserManager;
+//import serverLogic.User;
+>>>>>>> 1e992bfd2214770acd8debb5f5d81b12f9bfc723
 
 //TODO: gameboard should be init with a list of players
 public class GameBoard {
@@ -37,8 +52,8 @@ public class GameBoard {
 		this.height = height;
 		board = new Entity[height][width];
 		this.randomizeFloor(4);
-		this.generateFloor("FloorTest.txt");
-		this.initializeDoor();
+		//this.generateFloor("FloorTest.txt");
+		//this.initializeDoor();
 	}
 	
 	/**
@@ -176,6 +191,7 @@ public class GameBoard {
 				i++;
 
 			}
+			initializeDoor();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -201,14 +217,22 @@ public class GameBoard {
 			for (int j = 0; j < width; j++) {
 				//top left and bot right should have space for player to move
 				//if the position is top left(Player 1 position),skip randomization
-				if( (i == 0 && j == 0) || (i == 0 && j == 1)||(i == 1 && j == 0))
+				if( (i == 0 && j == 0) || (i == 0 && j == 1)||(i == 1 && j == 0)){
+					board[i][j] = new Entity();
 					continue;
-				if(playerCount >1  && ((i == height-1 && j == width-1) || (i == height-1&&j == width-2)||(i == height-2 && j == width-1)) )
+				}
+				if(playerCount >1  && ((i == height-1 && j == width-1) || (i == height-1&&j == width-2)||(i == height-2 && j == width-1)) ){
+					board[i][j] = new Entity();
 					continue;
-				if(playerCount >2 && ((i==height-2 && j==0) || (i==height-1&&j==0)||(i==height-1&&j==1)) )
+				}
+				if(playerCount >2 && ((i==height-2 && j==0) || (i==height-1&&j==0)||(i==height-1&&j==1)) ){
+					board[i][j] = new Entity();
 					continue;
-				if(playerCount >3 && ((i==0 && j == width-1) || (i == 0 && j == width-2)||(i == 1 && j == width-1)) )
+				}
+				if(playerCount >3 && ((i==0 && j == width-1) || (i == 0 && j == width-2)||(i == 1 && j == width-1)) ){
+					board[i][j] = new Entity();
 					continue;
+				}
 				
 				if (r.nextInt(10) < 7) {
 					board[i][j] = new Wall();
@@ -217,7 +241,24 @@ public class GameBoard {
 				}
 			}
 		}
+		
+		initializeDoor();
+		
+		int powerUpX, powerUpY;
+		
+		for (int i = 0; i < playerCount; i++){
+			do{
+				powerUpX = r.nextInt(width-2) + 1;
+				powerUpY = r.nextInt(height-2) + 1;	
+				
+			}while(((board[powerUpX][powerUpY] instanceof PowerUp) || (board[powerUpX][powerUpY] instanceof Door)));
+		
+			//TODO make powerup either randomize itself or specify a type here in construction
+			board[powerUpX][powerUpY] = new PowerUp(powerUpX,powerUpY);
+			System.out.println("PowerUp Placed at: ("+powerUpX+","+powerUpY+")");
+		}
 	}
+
 	
 	/**
 	 * Get entity
@@ -291,13 +332,16 @@ public class GameBoard {
 	 * initialized inside prescribed file
 	 * 
 	 */
-	public void initializeDoor() {
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < height; j++) {
-				if (board[i][j] instanceof Door)
+
+	public void initializeDoor(){
+		
+		for(int i = 0;i<height;i++){
+			for(int j = 0;j<height;j++){
+				if(board[i][j] instanceof Door)
 					return;
 			}
 		}
+
 
 		board[3][3] = new Door(3, 3);
 	}
@@ -326,8 +370,8 @@ public class GameBoard {
 	/**
 	 * For testing purposes eg. log into file the board view in string
 	 */
+
 	public String toString(Bomb[] bombs, Explosion[] explos) {
-		int playerCount = 0;
 		String s = "";
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {

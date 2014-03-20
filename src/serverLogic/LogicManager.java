@@ -23,7 +23,6 @@ import Networking.*;
 
 import org.apache.log4j.*;
 
-// TODO: this class should manage the server GameBoard
 
 /**
  * 
@@ -142,12 +141,12 @@ public class LogicManager implements Runnable {
 		for(int i= 0; i<players.size();i++){
 				if(i==0){
 					players.get(i).setPlayer(new Player(0,0,"Player 1"));
-					board.set(players.get(i).getPlayer(),0,0);
+					board.set(players.get(i).getPlayer());
 					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
 				if(i == 1){
 					players.get(i).setPlayer(new Player(6,6,"Player 2"));
-					board.set(players.get(i).getPlayer(),6,6);
+					board.set(players.get(i).getPlayer());
 					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
 		}
@@ -155,11 +154,11 @@ public class LogicManager implements Runnable {
 	}
 	public void placeEnemy(ArrayList<Enemy> eList){
 		for(Enemy e : eList){
-			board.set(e, e.getPosX(), e.getPosY());
+			board.set(e);
 		}
 	}
 	public void setEnemy(Enemy e){
-		board.set(e, e.getPosX(), e.getPosY());
+		board.set(e);
 	}
 	
 	/**
@@ -212,7 +211,7 @@ public class LogicManager implements Runnable {
 	public void removePlayerFromGameBoard(Player player) {
 		int x = player.getPosX();
 		int y = player.getPosY();
-		board.set(new Entity(x, y), x, y);
+		board.set(new Entity(x, y));
 		LOG.info(player.getName() + " DIED");
 	}
 	public void removeEnemyFromGameBoard(Enemy enemy){
@@ -223,11 +222,12 @@ public class LogicManager implements Runnable {
 	}
 	
 	/**
-	 * 
+
+	 * Handles Movement of the Player
 	 * @param user
 	 * @param newPosX
 	 * @param newPosY
-	 * @return
+	 * @return playerStatus
 	 */
 	private int handleMovement(User user, int newPosX, int newPosY){
 
@@ -239,7 +239,7 @@ public class LogicManager implements Runnable {
 		} else if (validMove(newPosX, newPosY)){
 			board.remove(player.getPosX(), player.getPosY());
 			player.setPos(newPosX, newPosY);
-			board.set(player, newPosX, newPosY);
+			board.set(player);
 			//System.out.println("LogicManager: Player '" + player.getName() + "' Moved Safely");
 			LOG.info(player.getName() + "' Moved Safely");
 			LOG.info("BOARD VIEW\n" + board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions()));
@@ -296,10 +296,10 @@ public class LogicManager implements Runnable {
 		return false;
 	}
 	/**
-	 * 
+	 * Executes the Users Commands
 	 * @param u
 	 * @param command
-	 * @return
+	 * @return playerStatus
 	 */
 	private int handleCommand(User u, String command){
 
@@ -326,6 +326,7 @@ public class LogicManager implements Runnable {
 				break;
 			default:
 				System.out.println("LogicManager: '" + command + "' Unknown");
+				LOG.error("COMMAND : " + command + " UNKNOWN");
 		}
 		
 		try{
@@ -368,6 +369,7 @@ public class LogicManager implements Runnable {
 		return playerStatus;
 	}
 
+
 	private boolean handleBombCommand(String command){
 		if(command.equals("EXP_ADDED")){
 			checkBurnedPlayers();
@@ -376,6 +378,7 @@ public class LogicManager implements Runnable {
 		}
 			return true;
 	}
+
 	public void run(){
 
 		//initialing variable
@@ -418,16 +421,18 @@ public class LogicManager implements Runnable {
 						//System.out.println(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 							LOG.info(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 						// Proper way to do handle command
-						//handleCommand(u, command);
+						handleCommand(u, command);
 						
 						//The following is to preserve the debugging
 						// functionality which ends the game
 						// after a single player finds the door
+
 							if (handleCommand(u, command) == 2){
 								playerCount = 0;
 								break outerLoop;
 							}
 						}
+
 					}
 				}else{
 					bm = (BombMessage)mes;

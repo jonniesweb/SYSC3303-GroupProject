@@ -1,31 +1,36 @@
 package testing;
 
 import static org.junit.Assert.*;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
-import java.io.ByteArrayInputStream;
-import java.nio.ByteBuffer;
+
+//import java.io.ByteArrayInputStream;
+//import java.nio.ByteBuffer;
 
 import entities.Door;
 import entities.Player;
+import entities.PowerUp;
 import entities.Wall;
+import entities.Entity;
 import gameLogic.GameBoard;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class TestGameBoard {
 	GameBoard game;
 	
-	@Before
+	//@Before
 	public void setUp() throws Exception {
 		game = new GameBoard(7,7);
+		//System.out.println("Before the test exectued");
 	}
 
-	@After
+	/*@After
 	public void tearDown() throws Exception {
 		
-	}
+	}*/
 
 	@Test
 	public void testRandomize() throws Exception {
@@ -68,13 +73,13 @@ public class TestGameBoard {
 		game.randomizeFloor(2);
 		//Set one player on top left corner
 		//check if top left corner is instance of player
-		game.set(new Player(0,0,"P1"), 0, 0);
+		game.set(new Player(0,0,"P1"));
 		assertTrue(game.get(0, 0) instanceof Player);
 		assertEquals(((Player)game.get(0, 0)).getName(),"P1");
 		
 		//Set one player on top left corner
 		//check if top left corner is instance of player
-		game.set(new Player(6,6,"P2"), 6, 6);
+		game.set(new Player(6,6,"P2"));
 		assertTrue(game.get(6, 6) instanceof Player);
 		assertEquals(((Player)game.get(6, 6)).getName(),"P2");
 
@@ -83,7 +88,7 @@ public class TestGameBoard {
 	public void testRemoveEntity() throws Exception{
 		setUp();
 		game.randomizeFloor(2);
-		game.set(new Player(0,0,"P1"), 0, 0);
+		game.set(new Player(0,0,"P1"));
 		game.remove(0, 0);
 		assertFalse(game.get(0, 0) instanceof Player);
 	}
@@ -98,21 +103,30 @@ public class TestGameBoard {
 	}
 	@Test
 	public void testDoor() throws Exception{
+		System.out.println("");
+		System.out.println("-------------------------");
+		System.out.println("TestDoor");
 		setUp();
+		Entity d = game.getDoor();
+		if(d instanceof Door) System.out.println("It's a door");
+		System.out.println("-------------------------");
+		System.out.println("");
 		assertTrue(game.getDoor() instanceof Door);	
 	}
 	
 	@Test
 	public void testGameBoardSerialized() throws Exception {
+		setUp();
+		
 		char[] charBoard = game.toString().toCharArray();
-		byte[] byteBoard = new byte[charBoard.length];
+		byte[] byteBoard = game.toString().getBytes();
 		System.out.println("printing byte boarding");
-		for (int i = 0; i < charBoard.length; i++) {
+		/*for (int i = 0; i < charBoard.length; i++) {
 			byteBoard[i] = (byte) charBoard[i];
-		}
+		}*/
 		
 		for (int i = 0; i < byteBoard.length; i++) {
-			System.out.print((char) byteBoard[i]);
+			System.out.print(charBoard[i]);
 		}
 		GameBoard newBoard = new GameBoard(new String(byteBoard).toCharArray());
 		System.out.println("printing gameboard");
@@ -123,5 +137,47 @@ public class TestGameBoard {
 		
 		assertTrue(newBoard.toString().equals(game.toString()));
 	}
-
+	
+	@Test
+	public void testPowerUpExistance() throws Exception {
+	//	game = new GameBoard(7,7);
+		setUp();
+		System.out.println("testPowerUpExistance");
+		//Make sure that the expected number of powerups actually exist
+		
+		game.randomizeFloor(2);
+		int powerUpCount = 0;
+		
+		Entity[][] board = game.getBoard();
+		System.out.println("\nboard -------------------");
+		for(int i = 0; i < game.getWidth(); i++){
+			for(int k = 0; k < game.getHeight(); k++){
+			
+				if(board[i][k] instanceof Door)
+					System.out.print(" D");
+				else if(board[i][k] instanceof Wall)
+					System.out.print(" W");
+				
+				else if(board[i][k] instanceof PowerUp){
+					powerUpCount++;	
+					System.out.print(" P");
+				} else {
+					System.out.print(" .");
+				}
+			}
+			System.out.println("");
+		}
+		System.out.println("board -------------------\n");
+		System.out.println("PowerUpCount " + powerUpCount);
+		assertEquals(2, powerUpCount);
+	}
+	
+	public static void main(String[] args) {
+		System.out.println("Something something main");
+      Result result = JUnitCore.runClasses(TestGameBoard.class);
+      for (Failure failure : result.getFailures()) {
+         System.out.println(failure.toString());
+      }
+      System.out.println(result.wasSuccessful());
+	}
 }
