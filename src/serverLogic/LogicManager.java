@@ -35,7 +35,6 @@ public class LogicManager implements Runnable {
 	
 	private GameBoard board;
 	private BombFactory bombFactory;
-	private EnemyManager enemies;
 	
 	private NetworkManager networkManager;
 	private UserManager userManager;
@@ -174,7 +173,6 @@ public class LogicManager implements Runnable {
 		gameInProgress = b;
 		placePlayers(board, userManager);
 		bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
-		enemies = new EnemyManager(this);
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
 	public void setNetworkManager(NetworkManager m){
@@ -322,6 +320,8 @@ public class LogicManager implements Runnable {
 			case "RIGHT":
 				playerStatus = handleMovement(u, posX + 1, posY);
 				break;
+			//case "BOMB" :
+				
 			case "END_GAME":
 				playerCount--;
 				playerStatus = 3;
@@ -426,6 +426,7 @@ public class LogicManager implements Runnable {
 						//System.out.println(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 							LOG.info(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 						// Proper way to do handle command
+						//handleCommand(u, command);
 						
 						//The following is to preserve the debugging
 						// functionality which ends the game

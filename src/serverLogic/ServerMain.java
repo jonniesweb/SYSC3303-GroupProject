@@ -35,6 +35,7 @@ public class ServerMain {
 		logicManager = new LogicManager(userManager);
 		networkManager = new NetworkManager(logicManager,userManager);
 		logicManager.setNetworkManager(networkManager);
+		//EnemyManager e = new EnemyManager(logicManager);
 	}
 	
 	public ServerMain(Semaphore s, int tMode){
