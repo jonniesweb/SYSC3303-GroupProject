@@ -107,15 +107,15 @@ public class NetworkManager implements Runnable{
 			// Logger.acceptMessage("Read data from inbox - " + new String(userMessage.datagram.getData()) + "- from " + userMessage.ip);			
 			// should join game before starting game
 			if (readCommand(userMessage).equals("START_GAME")){
-				System.out.println("got start game command");
+				//System.out.println("got start game command");
 				if(!logic.getGameInProgress()){
 					//System.out.println("game is not in progress");
 					if(userManager.getCurrentPlayerList().size()> 0){
-						//System.out.println("playerList is greater than 0");
+						LOG.info("SETTING GAME PROGRESS TO TRUE");
 						logic.setGameInProgress(true);
 						
 					}else{
-						LOG.info("attempted to join before start");
+						LOG.error("attempted to join before start");
 					}
 				}
 				continue;
