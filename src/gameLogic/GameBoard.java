@@ -18,9 +18,9 @@ import entities.Wall;
 //import entities.Explosion;
 import entities.PowerUp;
 
-import serverLogic.LogicManager;
-import serverLogic.UserManager;
-import serverLogic.User;
+//import serverLogic.LogicManager;
+//import serverLogic.UserManager;
+//import serverLogic.User;
 
 //TODO: gameboard should be init with a list of players
 public class GameBoard {
@@ -247,13 +247,14 @@ public class GameBoard {
 				powerUpX = r.nextInt(width-2) + 1;
 				powerUpY = r.nextInt(height-2) + 1;	
 				
-			}while((board[powerUpX][powerUpY] instanceof PowerUp) || board[powerUpX][powerUpY] instanceof Door);
+			}while(((board[powerUpX][powerUpY] instanceof PowerUp) || (board[powerUpX][powerUpY] instanceof Door)));
 		
 			//TODO make powerup either randomize itself or specify a type here in construction
 			board[powerUpX][powerUpY] = new PowerUp(powerUpX,powerUpY);
 			System.out.println("PowerUp Placed at: ("+powerUpX+","+powerUpY+")");
 		}
 	}
+
 	
 	/**
 	 * Get entity
@@ -355,7 +356,7 @@ public class GameBoard {
 	 * For testing purposes eg. log into file the board view in string
 	 */
 	public String toString() {
-		int playerCount = 0;
+		//int playerCount = 0;
 		String s = "";
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {

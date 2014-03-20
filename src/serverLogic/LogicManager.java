@@ -141,12 +141,12 @@ public class LogicManager implements Runnable {
 		for(int i= 0; i<players.size();i++){
 				if(i==0){
 					players.get(i).setPlayer(new Player(0,0,"Player 1"));
-					board.set(players.get(i).getPlayer(),0,0);
+					board.set(players.get(i).getPlayer());
 					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
 				if(i == 1){
 					players.get(i).setPlayer(new Player(6,6,"Player 2"));
-					board.set(players.get(i).getPlayer(),6,6);
+					board.set(players.get(i).getPlayer());
 					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
 		}
@@ -154,11 +154,11 @@ public class LogicManager implements Runnable {
 	}
 	public void placeEnemy(ArrayList<Enemy> eList){
 		for(Enemy e : eList){
-			board.set(e, e.getPosX(), e.getPosY());
+			board.set(e);
 		}
 	}
 	public void setEnemy(Enemy e){
-		board.set(e, e.getPosX(), e.getPosY());
+		board.set(e);
 	}
 	
 	/**
@@ -211,7 +211,7 @@ public class LogicManager implements Runnable {
 	public void removePlayerFromGameBoard(Player player) {
 		int x = player.getPosX();
 		int y = player.getPosY();
-		board.set(new Entity(x, y), x, y);
+		board.set(new Entity(x, y));
 		LOG.info(player.getName() + " DIED");
 	}
 	public void removeEnemyFromGameBoard(Enemy enemy){
@@ -239,7 +239,7 @@ public class LogicManager implements Runnable {
 		} else if (validMove(newPosX, newPosY)){
 			board.remove(player.getPosX(), player.getPosY());
 			player.setPos(newPosX, newPosY);
-			board.set(player, newPosX, newPosY);
+			board.set(player);
 			//System.out.println("LogicManager: Player '" + player.getName() + "' Moved Safely");
 			LOG.info(player.getName() + "' Moved Safely");
 			LOG.info("BOARD VIEW\n" + board.toString());

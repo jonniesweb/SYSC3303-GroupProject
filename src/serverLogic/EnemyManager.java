@@ -30,7 +30,6 @@ public class EnemyManager implements Runnable {
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		int  r; 
 		while(logicManager.getGameInProgress()){
 			for(Enemy e : enemyList){

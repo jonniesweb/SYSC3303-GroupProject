@@ -6,19 +6,16 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 
-import java.io.ByteArrayInputStream;
-import java.nio.ByteBuffer;
+//import java.io.ByteArrayInputStream;
+//import java.nio.ByteBuffer;
 
 import entities.Door;
 import entities.Player;
 import entities.PowerUp;
-import entities.Enemy;
 import entities.Wall;
 import entities.Entity;
 import gameLogic.GameBoard;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class TestGameBoard {
@@ -76,13 +73,13 @@ public class TestGameBoard {
 		game.randomizeFloor(2);
 		//Set one player on top left corner
 		//check if top left corner is instance of player
-		game.set(new Player(0,0,"P1"), 0, 0);
+		game.set(new Player(0,0,"P1"));
 		assertTrue(game.get(0, 0) instanceof Player);
 		assertEquals(((Player)game.get(0, 0)).getName(),"P1");
 		
 		//Set one player on top left corner
 		//check if top left corner is instance of player
-		game.set(new Player(6,6,"P2"), 6, 6);
+		game.set(new Player(6,6,"P2"));
 		assertTrue(game.get(6, 6) instanceof Player);
 		assertEquals(((Player)game.get(6, 6)).getName(),"P2");
 
@@ -91,7 +88,7 @@ public class TestGameBoard {
 	public void testRemoveEntity() throws Exception{
 		setUp();
 		game.randomizeFloor(2);
-		game.set(new Player(0,0,"P1"), 0, 0);
+		game.set(new Player(0,0,"P1"));
 		game.remove(0, 0);
 		assertFalse(game.get(0, 0) instanceof Player);
 	}
@@ -142,23 +139,10 @@ public class TestGameBoard {
 	}
 	
 	@Test
-	public void testEnemyExistance() throws Exception {
-		
-	//TODO testEnemyExistance()
-		//Make sure that the number of expected Enemies actually exist
-		
-		
-		
-		//Setup the board
-		//place an expected number of enemies on the board
-		//iterate over the board counting number of enemies
-		//assertEquals(expectedNumber, actualNumber)
-	}
-	@Test
 	public void testPowerUpExistance() throws Exception {
 	//	game = new GameBoard(7,7);
 		setUp();
-		System.out.println("testPowerUpExistance1");
+		System.out.println("testPowerUpExistance");
 		//Make sure that the expected number of powerups actually exist
 		
 		game.randomizeFloor(2);
