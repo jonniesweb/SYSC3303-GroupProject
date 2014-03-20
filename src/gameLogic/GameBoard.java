@@ -9,14 +9,8 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-<<<<<<< HEAD
+
 import entities.*;
-=======
-import entities.Door;
-import entities.Enemy;
-import entities.Entity;
-import entities.Player;
-import entities.Wall;
 //import entities.Bomb;
 //import entities.Explosion;
 import entities.PowerUp;
@@ -24,7 +18,6 @@ import entities.PowerUp;
 //import serverLogic.LogicManager;
 //import serverLogic.UserManager;
 //import serverLogic.User;
->>>>>>> 1e992bfd2214770acd8debb5f5d81b12f9bfc723
 
 //TODO: gameboard should be init with a list of players
 public class GameBoard {
@@ -51,8 +44,8 @@ public class GameBoard {
 		this.width = width;
 		this.height = height;
 		board = new Entity[height][width];
-		this.randomizeFloor(4);
-		//this.generateFloor("FloorTest.txt");
+		//this.randomizeFloor(4);
+		this.generateFloor("FloorTest.txt");
 		//this.initializeDoor();
 	}
 	
@@ -112,6 +105,12 @@ public class GameBoard {
 				set(new Player(x, y, ""), x, y);
 			} else if (entity == 'D') {
 				set(new Door(x, y), x, y);
+			}else if(entity == 'O'){
+				set(new Enemy(x,y),x,y);
+			}else if(entity == 'E'){
+				set(new Explosion(x,y));
+			}else if(entity == 'B'){
+				set(new Bomb(x,y));
 			} else if (entity == '\n') {
 				y++;
 				x = -1;
@@ -385,6 +384,8 @@ public class GameBoard {
 					s += "P";
 				else if (board[x][y] instanceof Door)
 					s += "D";
+				else if(board[x][y] instanceof Enemy)
+					s+= "O";
 				else
 					s += ".";
 			}

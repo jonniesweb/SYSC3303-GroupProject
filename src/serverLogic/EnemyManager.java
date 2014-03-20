@@ -57,7 +57,7 @@ public class EnemyManager implements Runnable {
 					;
 				}
 				logicManager.setEnemy(e);
-				Thread.sleep(3000);
+				try{Thread.sleep(3000);}catch(Exception E){System.out.println(E);};
 				
 			}
 		}
