@@ -12,7 +12,6 @@ import org.junit.runner.notification.Failure;
 import entities.Door;
 import entities.Player;
 import entities.PowerUp;
-import entities.Enemy;
 import entities.Wall;
 import entities.Entity;
 import gameLogic.GameBoard;
@@ -139,22 +138,6 @@ public class TestGameBoard {
 		assertTrue(newBoard.toString().equals(game.toString()));
 	}
 	
-	@Test
-	public void testEnemyExistance() throws Exception {
-		
-	//TODO testEnemyExistance()
-		//Make sure that the number of expected Enemies actually exist
-		
-		setUp();
-		System.out.println("testEnemyExistance");
-		
-		game.randomizeFloor(2);
-		
-		//Setup the board
-		//place an expected number of enemies on the board
-		//iterate over the board counting number of enemies
-		//assertEquals(expectedNumber, actualNumber)
-	}
 	@Test
 	public void testPowerUpExistance() throws Exception {
 	//	game = new GameBoard(7,7);

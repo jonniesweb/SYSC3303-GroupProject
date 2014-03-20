@@ -247,13 +247,14 @@ public class GameBoard {
 				powerUpX = r.nextInt(width-2) + 1;
 				powerUpY = r.nextInt(height-2) + 1;	
 				
-			}while((board[powerUpX][powerUpY] instanceof PowerUp) || board[powerUpX][powerUpY] instanceof Door);
+			}while(((board[powerUpX][powerUpY] instanceof PowerUp) || (board[powerUpX][powerUpY] instanceof Door)));
 		
 			//TODO make powerup either randomize itself or specify a type here in construction
 			board[powerUpX][powerUpY] = new PowerUp(powerUpX,powerUpY);
 			System.out.println("PowerUp Placed at: ("+powerUpX+","+powerUpY+")");
 		}
 	}
+
 	
 	/**
 	 * Get entity
