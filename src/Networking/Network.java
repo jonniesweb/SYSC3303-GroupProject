@@ -95,7 +95,8 @@ public class Network extends Thread {
 				public void run(){
 					UserMessage m1 = new UserMessage(receivePacket);
 					String command = new String(receivePacket.getData());
-					LOG.info("GOT COMMAND: "+ command);
+					//command.trim() will remove all null after the command for better log
+					LOG.info("GOT MESSAGE: "+ command.trim());
 					inbox.add(m1);
 					inboxLock.release(1);
 				}
