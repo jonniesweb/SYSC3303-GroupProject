@@ -16,6 +16,9 @@ public class Explosion extends Entity {
 		this.create = created;
 		this.blow = blowUp;
 	}
+	public Explosion(int x, int y){
+		super(x,y);
+	}
 	
 	public boolean isDone(long time){
 		return (time > blow);
