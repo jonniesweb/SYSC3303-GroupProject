@@ -315,6 +315,7 @@ public class LogicManager implements Runnable {
 				break;
 			default:
 				System.out.println("LogicManager: '" + command + "' Unknown");
+				LOG.error("COMMAND : " + command + " UNKNOWN");
 		}
 		
 		try{
