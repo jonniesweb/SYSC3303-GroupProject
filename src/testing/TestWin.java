@@ -22,6 +22,7 @@ public class TestWin {
 	int playerOnePort = 8878;
 	int playerTwoPort = 8869;
 	Semaphore testSem = new Semaphore(0);
+	long timeout = 5000;
 	
 	@Test
 	/**
@@ -70,7 +71,7 @@ public class TestWin {
 
 		//Initialize the files to use in the TestDrivers		
 		String playerOneFile = "/TestingFiles/Win/SinglePlayerGameSessionWin";
-		String playerTwoFile;
+		String playerTwoFile = null;
 		
 		if (mode == 0)
 			playerTwoFile = "TestingFiles/End/MultiPlayerGameSessionEnd.player2";
