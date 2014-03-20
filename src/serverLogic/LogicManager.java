@@ -320,6 +320,8 @@ public class LogicManager implements Runnable {
 			case "RIGHT":
 				playerStatus = handleMovement(u, posX + 1, posY);
 				break;
+			//case "BOMB" :
+				
 			case "END_GAME":
 				playerCount--;
 				playerStatus = 3;
@@ -421,7 +423,7 @@ public class LogicManager implements Runnable {
 						//System.out.println(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 							LOG.info(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 						// Proper way to do handle command
-						handleCommand(u, command);
+						//handleCommand(u, command);
 						
 						//The following is to preserve the debugging
 						// functionality which ends the game

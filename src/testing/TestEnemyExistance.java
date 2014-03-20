@@ -54,6 +54,7 @@ public class TestEnemyExistance {
 			
 			enemyList.add(new Enemy(posX,posY));
 			logic.placeEnemy(enemyList);
+			
 		}
 		
 		assertEquals(3, enemyCount());

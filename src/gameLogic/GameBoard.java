@@ -9,9 +9,9 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-<<<<<<< HEAD
+
 import entities.*;
-=======
+
 import entities.Door;
 import entities.Enemy;
 import entities.Entity;
@@ -24,7 +24,7 @@ import entities.PowerUp;
 //import serverLogic.LogicManager;
 //import serverLogic.UserManager;
 //import serverLogic.User;
->>>>>>> 1e992bfd2214770acd8debb5f5d81b12f9bfc723
+
 
 //TODO: gameboard should be init with a list of players
 public class GameBoard {
@@ -51,8 +51,8 @@ public class GameBoard {
 		this.width = width;
 		this.height = height;
 		board = new Entity[height][width];
-		this.randomizeFloor(4);
-		//this.generateFloor("FloorTest.txt");
+		//this.randomizeFloor(4);
+		this.generateFloor("FloorTest.txt");
 		//this.initializeDoor();
 	}
 	
@@ -385,6 +385,8 @@ public class GameBoard {
 					s += "P";
 				else if (board[x][y] instanceof Door)
 					s += "D";
+				else if (board[x][y] instanceof Enemy)
+					s += "O";
 				else
 					s += ".";
 			}
