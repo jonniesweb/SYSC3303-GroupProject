@@ -260,7 +260,7 @@ public class LogicManager implements Runnable {
 	// check to see if an explosion has gone off
 	// at a players location
 	private void checkBurnedPlayers(){
-		User[] users = (User[])(userManager.getCurrentPlayerList().toArray());
+		User[] users = userManager.getCurrentPlayerList().toArray(new User[0]);
 		Explosion[] explosions = bombFactory.returnExplosions();
 		for(int i= 0; i < users.length; i++){
 			Player p = users[i].getPlayer();
@@ -326,6 +326,9 @@ public class LogicManager implements Runnable {
 				playerCount--;
 				playerStatus = 3;
 				break;
+			case "BOMB":
+				bombFactory.startBomb(u);
+				playerStatus = 0;
 			default:
 				System.out.println("LogicManager: '" + command + "' Unknown");
 				LOG.error("COMMAND : " + command + " UNKNOWN");
