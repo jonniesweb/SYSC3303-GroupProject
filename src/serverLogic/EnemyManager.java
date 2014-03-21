@@ -40,18 +40,22 @@ public class EnemyManager implements Runnable {
 					case 1 :
 						if(logicManager.validMove(e.getPosX(), e.getPosY() + 1))
 							e.moveUp();
+						else continue;
 						break;
 					case 2 :
 						if(logicManager.validMove(e.getPosX(), e.getPosY() - 1))
 							e.moveDown();
+						else continue;
 						break;
 					case 3 :
 						if(logicManager.validMove(e.getPosX() + 1, e.getPosY()))
 							e.moveRight();
+						else continue;
 						break;
 					case 4 :
 						if(logicManager.validMove(e.getPosX() - 1, e.getPosY()))
 							e.moveLeft();
+						else continue;
 						break;
 					default :
 					;

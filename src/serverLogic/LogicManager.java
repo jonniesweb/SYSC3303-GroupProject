@@ -42,6 +42,8 @@ public class LogicManager implements Runnable {
 	private Integer playerCount;
 	
 	private int testMode = 0;
+	
+	private EnemyManager enemies;
 
 	
 	public Semaphore testSem = null;
@@ -173,6 +175,7 @@ public class LogicManager implements Runnable {
 		gameInProgress = b;
 		placePlayers(board, userManager);
 		bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
+		enemies = new EnemyManager(this);
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
 	public void setNetworkManager(NetworkManager m){
