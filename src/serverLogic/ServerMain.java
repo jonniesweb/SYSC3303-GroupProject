@@ -1,9 +1,12 @@
 package serverLogic;
 
-import entities.Entity;
+//import entities.Entity;
+import entities.Door;
+import entities.PowerUp;
 import gameLogic.GameBoard;
 import testing.Logger;
 
+import java.util.Collection;
 import java.util.concurrent.Semaphore;
 
 // TODO: add command line arguments to allow starting up from a predefined,
@@ -56,9 +59,24 @@ public class ServerMain {
 			
 			logicManager.setGameBoard(board);
 		} else {
-			board.set(new Entity(3, 3), 3, 3);
+			board.set(new Door(3, 3));
 			logicManager.setGameBoard(board);
 		}
+	}
+	
+	/**
+	 * Testing hook function
+	 */
+	public Collection<User> getCurrentPlayerList() {
+		return userManager.getCurrentPlayerList();
+	}
+	
+	public void setPowerUp(){
+		
+		GameBoard board = logicManager.getGameBoard();
+		board.set(new PowerUp(1,0));
+		
+		logicManager.setGameBoard(board);
 	}
 
 	/**
