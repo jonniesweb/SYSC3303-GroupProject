@@ -27,17 +27,18 @@ public class EnemyManager implements Runnable {
 		//this.board = board;
 		enemyList = Collections.synchronizedList(new ArrayList<Enemy>());
 		enemyList.add(new Enemy(0,3));
+		//enemyList.add(new Enemy(2,4));
 		 
 		 logicManager.placeEnemy(enemyList);
 	}
 	public void removeEnemy(int x,int y){
 		
-		int i =0 ;
+		int i = enemyList.size()-1;
 		while(!enemyList.isEmpty()){
 			if(enemyList.get(i).getPosX() == x && enemyList.get(i).getPosY() == y){
 				enemyList.remove(i);
 			}
-			i++;
+			i--;
 		}
 	}
 
