@@ -173,9 +173,11 @@ public class LogicManager implements Runnable {
 	
 	public void setGameInProgress(boolean b){
 		gameInProgress = b;
-		placePlayers(board, userManager);
-		bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
-		enemies = new EnemyManager(this);
+		if(b){
+			placePlayers(board, userManager);
+			enemies = new EnemyManager(this);
+			bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
+		}
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
 	public void setNetworkManager(NetworkManager m){
@@ -261,15 +263,18 @@ public class LogicManager implements Runnable {
 	// check to see if an explosion has gone off
 	// at a players location
 	private void checkBurnedPlayers(){
-		User[] users = (User[])(userManager.getCurrentPlayerList().toArray());
+		User[] users = userManager.getCurrentPlayerList().toArray(new User[0]);
 		Explosion[] explosions = bombFactory.returnExplosions();
+		LOG.info("There are:"+explosions.length+" many explosions");
 		for(int i= 0; i < users.length; i++){
 			Player p = users[i].getPlayer();
 			for(int x =0; x < explosions.length; x++){
 				if(p.getPosX() == explosions[x].getPosX() && p.getPosY()==explosions[x].getPosY()){
+					LOG.info("explosion x y is:"+ p.getPosX() +p.getPosY());
 					p.loseLife();
 					if(!p.isAlive()){
 						removePlayerFromGameBoard(p);
+						LOG.info("player died...");
 						playerCount--;
 					}
 				}
@@ -329,6 +334,9 @@ public class LogicManager implements Runnable {
 				playerCount--;
 				playerStatus = 3;
 				break;
+			case "BOMB":
+				bombFactory.startBomb(u);
+				playerStatus = 0;
 			default:
 				System.out.println("LogicManager: '" + command + "' Unknown");
 				LOG.error("COMMAND : " + command + " UNKNOWN");
@@ -377,11 +385,13 @@ public class LogicManager implements Runnable {
 
 	private boolean handleBombCommand(String command){
 		if(command.equals("EXP_ADDED")){
+			LOG.info("playerCount before burn check: "+playerCount);
 			checkBurnedPlayers();
-			if(playerCount > 0)
-				return false;
+			if(playerCount < 0)
+				return true;
 		}
-			return true;
+			LOG.info("bomb command should say game is not over");
+			return false;
 	}
 
 	public void run(){
@@ -441,8 +451,11 @@ public class LogicManager implements Runnable {
 					}
 				}else{
 					bm = (BombMessage)mes;
-					if(!handleBombCommand(bm.message))
+					LOG.info("got bomb command");
+					if(handleBombCommand(bm.message)){
+						LOG.info("bomb command said end game");
 						break outerLoop;
+					}
 					
 				}
 				
