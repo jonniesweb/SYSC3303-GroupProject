@@ -179,6 +179,7 @@ public class LogicManager implements Runnable {
 		gameInProgress = b;
 		if(b){
 			placePlayers(board, userManager);
+			this.playerCount = this.userManager.getCurrentPlayerList().size();
 			enemies = new EnemyManager(this);
 			bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
 		}
@@ -217,11 +218,15 @@ public class LogicManager implements Runnable {
 		}
 	}
 	
-	public void removePlayerFromGameBoard(Player player) {
-		int x = player.getPosX();
-		int y = player.getPosY();
+	public void removePlayerFromGameBoard(User player) {
+		int x = player.getPlayer().getPosX();
+		int y = player.getPlayer().getPosY();
 		board.set(new Entity(x, y));
-		LOG.info(player.getName() + " DIED");
+		LOG.info(player.getPlayer().getName() + " DIED");
+		try{
+		userManager.moveCurrentToFuture(player.getUUID());
+		}catch(Exception e){e.printStackTrace();}
+		
 	}
 	public void removeEnemyFromGameBoard(Enemy enemy){
 		board.remove(enemy.getPosX(), enemy.getPosY());
@@ -275,7 +280,7 @@ public class LogicManager implements Runnable {
 					LOG.info("explosion x y is:"+ p.getPosX() +p.getPosY());
 					p.loseLife();
 					if(!p.isAlive()){
-						removePlayerFromGameBoard(p);
+						removePlayerFromGameBoard(users[i]);
 						LOG.info("player died...");
 						playerCount--;
 					}
@@ -350,7 +355,7 @@ public class LogicManager implements Runnable {
 				case (-1)://Died
 					if(!u.getPlayer().isAlive()){
 						playerCount--;
-						removePlayerFromGameBoard(u.getPlayer());
+						removePlayerFromGameBoard(u);
 						LOG.info(u.getPlayer().getName() + " removed from board");
 						userManager.moveCurrentToFuture(u);
 						if(testMode==1)
@@ -418,6 +423,7 @@ public class LogicManager implements Runnable {
 		
 		//check if there is game still in progress
 		LOG.info("WAITING FOR GAME TO START");
+		playerCount = userManager.getCurrentPlayerList().size();
 		while(!gameInProgress){
 			//Don't do anything until the game has started
 			Thread.yield();
@@ -429,6 +435,7 @@ public class LogicManager implements Runnable {
 			outerLoop:
 			
 			while(playerCount > 0){
+				LOG.info("PLAYER COUNT IS: "+playerCount);
 				LOG.info("Attempting to read command ...");
 				//reading command from queue
 				mes = commandQueue.take();

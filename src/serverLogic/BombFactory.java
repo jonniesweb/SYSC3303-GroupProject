@@ -107,6 +107,9 @@ public class BombFactory {
 				logicManager.execute(new BombMessage("EXP_ADDED",b.getPosX()+1+i,b.getPosY()));
 			}
 		}
+		// add bomb on myself
+		explosions.add(new Explosion(b.getPosX(),b.getPosY(),time,time+explode));
+		logicManager.execute(new BombMessage("EXP_ADDED",b.getPosX(),b.getPosY()));
 		
 	}
 	
