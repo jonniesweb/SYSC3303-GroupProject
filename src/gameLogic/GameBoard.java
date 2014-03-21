@@ -10,7 +10,9 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 
 
+
 import entities.*;
+
 //import entities.Bomb;
 //import entities.Explosion;
 import entities.PowerUp;
@@ -386,10 +388,8 @@ public class GameBoard {
 					s += "P";
 				else if (board[x][y] instanceof Door)
 					s += "D";
-
 				else if(board[x][y] instanceof Enemy)
 					s+= "O";
-
 				else
 					s += ".";
 			}

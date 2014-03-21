@@ -73,7 +73,7 @@ public class BombFactory {
 	public void createExplosions(Bomb b){
 		long time = System.currentTimeMillis();
 		for(int i =0; i < EXP_NUM; i++){
-			if( b.getPosY()-1-i > 0){
+			if( b.getPosY()-1-i >= 0){
 				explosions.add(new Explosion(b.getPosX(),
 					b.getPosY()-1-i,
 					time, time+explode));
@@ -91,7 +91,7 @@ public class BombFactory {
 		}
 		// left
 		for(int i =0; i < EXP_NUM; i++ ){
-			if(b.getPosX()-i -1 > 0){
+			if(b.getPosX()-i -1 >= 0){
 				explosions.add(new Explosion(b.getPosX()-1-i,
 					b.getPosY(),
 					time, time+explode));

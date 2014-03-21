@@ -14,10 +14,6 @@ import entities.Enemy;
 import entities.Explosion;
 import entities.Player;
 import entities.Wall;
-//import entities.Door;
-//import entities.PowerUp;
-
-//import testing.Logger;
 import gameLogic.GameBoard;
 import Networking.*;
 
@@ -35,7 +31,6 @@ public class LogicManager implements Runnable {
 	
 	private GameBoard board;
 	private BombFactory bombFactory;
-	private EnemyManager enemies;
 	
 	private NetworkManager networkManager;
 	private UserManager userManager;
@@ -43,6 +38,8 @@ public class LogicManager implements Runnable {
 	private Integer playerCount;
 	
 	private int testMode = 0;
+	
+	private EnemyManager enemies;
 
 	
 	public Semaphore testSem = null;
@@ -62,24 +59,30 @@ public class LogicManager implements Runnable {
 		this.board = new GameBoard(7,7);
 		this.userManager = uManager;
 		this.playerCount = uManager.getCurrentPlayerList().size();
-		//log = Logger.getLogger(
-	    //        LogicManager.class.getName());
-	    //log = Logger.getLogger("Global");
 
 	}
+	/**
+	 * For Testing Purposes
+	 * @param uManager
+	 * @param s
+	 * @param tMode
+	 */
 	
 	public LogicManager(UserManager uManager, Semaphore s, int tMode){
 		this(uManager);
 		testSem = s;
 		testMode = tMode;
 	}
-	
+	/**
+	 * Set board to logic manager
+	 * @param board
+	 */
 	public void setGameBoard(GameBoard board) {
 		this.board = board;
 	}
 	
 	/**
-	 * 
+	 * Put message into queue
 	 * @param command
 	 * @param playerID
 	 */
@@ -92,7 +95,8 @@ public class LogicManager implements Runnable {
 	}
 	
 	/**
-	 * 
+	 * Check whether the next command player will make is a safemove or not.
+	 * e.g If next movement touch enemy,player lose life
 	 * @param x
 	 * @param y
 	 * @return
@@ -106,7 +110,8 @@ public class LogicManager implements Runnable {
 	}
 	
 	/**
-	 * 
+	 * Check next movement of player is valid or not
+	 * e.g No Wall on next movement
 	 * @param x
 	 * @param y
 	 * @return
@@ -153,7 +158,7 @@ public class LogicManager implements Runnable {
 		}
 		LOG.info("LogicManager: Current GameBoard\n" + board.toString() );
 	}
-	public void placeEnemy(ArrayList<Enemy> eList){
+	public void placeEnemy(List<Enemy> eList){
 		for(Enemy e : eList){
 			board.set(e);
 		}
@@ -244,14 +249,12 @@ public class LogicManager implements Runnable {
 			board.remove(player.getPosX(), player.getPosY());
 			player.setPos(newPosX, newPosY);
 			board.set(player);
-			//System.out.println("LogicManager: Player '" + player.getName() + "' Moved Safely");
 			LOG.info(player.getName() + "' Moved Safely");
 			LOG.info("BOARD VIEW\n" + board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions()));
 			LOG.info(player.getName() + " NEW LOCATION : " + player.getPos());
 			return 1;
 		} else if (board.hasDoor(newPosX, newPosY)){
 			playerCount--;
-			//System.out.println("LogicManager: Player '" + player.getName() + "' Found the Door");
 			LOG.info(player.getName() + "' found the Door");
 			return 2;
 		}
@@ -261,7 +264,7 @@ public class LogicManager implements Runnable {
 	
 	// check to see if an explosion has gone off
 	// at a players location
-	private void checkBurnedPlayers(){
+	private void checkBurnedEntities(){
 		User[] users = userManager.getCurrentPlayerList().toArray(new User[0]);
 		Explosion[] explosions = bombFactory.returnExplosions();
 		LOG.info("There are:"+explosions.length+" many explosions");
@@ -277,9 +280,10 @@ public class LogicManager implements Runnable {
 						playerCount--;
 					}
 				}
-			}
-			
+			}	
 		}
+		for(int i = 0; i< explosions.length; i++)
+			this.destroy(explosions[i].getPosX(), explosions[i].getPosY());
 	}
 	// check to see if there is an explosion 
 	// where the player is moving to
@@ -354,7 +358,6 @@ public class LogicManager implements Runnable {
 					}
 					break;
 				case 1://Moved Safely
-					//Logger.acceptMessage(u.getUUID() + " moved " + command);
 					break;
 				case 2://Found Door
 					userManager.moveCurrentToFuture(u);
@@ -370,13 +373,11 @@ public class LogicManager implements Runnable {
 						testSem.release();
 					break;
 				default:
-					//System.out.println("LogicManager: Player Didn't Move");
 					LOG.info("Player Didn't Move");
 			}
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-		//System.out.println("LogicManager: Command '" + command + "' handled");
 		LOG.info("Command '" + command + "' handled");
 		return playerStatus;
 	}
@@ -385,12 +386,23 @@ public class LogicManager implements Runnable {
 	private boolean handleBombCommand(String command){
 		if(command.equals("EXP_ADDED")){
 			LOG.info("playerCount before burn check: "+playerCount);
-			checkBurnedPlayers();
+			checkBurnedEntities();
 			if(playerCount < 0)
 				return true;
 		}
 			LOG.info("bomb command should say game is not over");
 			return false;
+	}
+	private void destroy(int x,int y){
+		if(board.get(x, y) instanceof Wall ){
+			LOG.info("REMOVED WALL ON (" + x + "," + y + ")");
+			board.remove(x, y);
+		}
+		else if(board.get(x, y) instanceof Enemy){
+			LOG.info("REMOVED ENEMY ON (" + x + "," + y + ")");
+			board.remove(x, y);
+			enemies.removeEnemy(x, y);
+		}
 	}
 
 	public void run(){
@@ -459,18 +471,13 @@ public class LogicManager implements Runnable {
 				}
 				
 				networkManager.sendBoardToAllClients(board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions()));
-
-				//Logger.acceptMessage("Board sent to all clients\n" + board.toString());
 			}
-			System.out.println("Logic Manager: Game has finished");
+		
+			LOG.info("GAME ENDED!");
 			networkManager.sendEndGameToAllClients();
-			//Logger.writeLog();
-			//Logger.endLog();
+			
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-
-		//System.out.println("Logic Manager: Thread Finished Running");
-
 	}
 }
