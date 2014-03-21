@@ -10,14 +10,8 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 
 
+
 import entities.*;
-
-
-import entities.Door;
-import entities.Enemy;
-import entities.Entity;
-import entities.Player;
-import entities.Wall;
 
 //import entities.Bomb;
 //import entities.Explosion;
@@ -386,6 +380,7 @@ public class GameBoard {
 	 */
 
 	public String toString(Bomb[] bombs, Explosion[] explos) {
+		LOG.info("bombslength: "+bombs.length+" explosion length:"+explos.length);
 		String s = "";
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
