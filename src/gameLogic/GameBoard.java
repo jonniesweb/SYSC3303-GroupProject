@@ -395,7 +395,6 @@ public class GameBoard {
 					s += "D";
 				else if(board[x][y] instanceof Enemy)
 					s+= "O";
-
 				else
 					s += ".";
 			}

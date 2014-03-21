@@ -27,6 +27,13 @@ public class EnemyManager implements Runnable {
 		 
 		 logicManager.placeEnemy(enemyList);
 	}
+	public void removeEnemy(int x,int y){
+		for(Enemy e : enemyList){
+			if(e.getPosX() == x && e.getPosY() == y){
+				enemyList.remove(e);
+			}
+		}
+	}
 
 	@Override
 	public void run() {
