@@ -11,15 +11,6 @@ import org.apache.log4j.Logger;
 
 
 import entities.*;
-<<<<<<< HEAD
-
-import entities.Door;
-import entities.Enemy;
-import entities.Entity;
-import entities.Player;
-import entities.Wall;
-=======
->>>>>>> 3a805c1652bad7a787eefd6d07f591d0ead63ac1
 //import entities.Bomb;
 //import entities.Explosion;
 import entities.PowerUp;
@@ -27,10 +18,7 @@ import entities.PowerUp;
 //import serverLogic.LogicManager;
 //import serverLogic.UserManager;
 //import serverLogic.User;
-<<<<<<< HEAD
 
-=======
->>>>>>> 3a805c1652bad7a787eefd6d07f591d0ead63ac1
 
 //TODO: gameboard should be init with a list of players
 public class GameBoard {
@@ -384,6 +372,7 @@ public class GameBoard {
 	 */
 
 	public String toString(Bomb[] bombs, Explosion[] explos) {
+		LOG.info("bombslength: "+bombs.length+" explosion length:"+explos.length);
 		String s = "";
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {

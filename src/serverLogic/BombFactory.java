@@ -29,7 +29,6 @@ public class BombFactory {
 	private Map<Bomb, User>	  bombMapper;
 	private List<Explosion>  explosions;
 	private List<Bomb> 	  bombs;
-	private Timer timer;
 	private LogicManager logicManager;
 	private int width, height;
 	// constructor inits maps
@@ -37,7 +36,6 @@ public class BombFactory {
 	public BombFactory(Object[] users,  int w, int h,LogicManager m){
 		logicManager = m;
 		width = w; height = h;
-		timer = new Timer();
 		bombCounter = Collections.synchronizedMap(new HashMap<User,Integer>());
 		bombMapper = Collections.synchronizedMap(new HashMap<Bomb,User>());
 		explosions = Collections.synchronizedList(new ArrayList<Explosion>());
@@ -134,14 +132,16 @@ public class BombFactory {
 	private void removeExplosions(){
 		Entity r;
 		long time = System.currentTimeMillis();
-		for(int i =0; i < explosions.size(); i++){
-			if(explosions.get(i).isDone(time)){
-				r = explosions.remove(i);
+		int length = explosions.size();
+		while(!explosions.isEmpty() ){
+			if(explosions.get(explosions.size()-1).isDone(time)){
+				r = explosions.remove(explosions.size()-1);
 				logicManager.execute( new BombMessage("EXP_REMOVED",r.getPosX(),r.getPosY()));
+			}else{
+				System.out.println("Explosion isnt done for some reason....");
 			}
 		}
 	}
-	
 	public Bomb[] returnBombs(){
 		return bombs.toArray(new Bomb[0]);
 	}
@@ -159,8 +159,8 @@ public class BombFactory {
 					removeExplosions();
 				}};
 		// 100 delay to make sure bomb exploded
-		timer.schedule(t1, blowUp+100);
-		timer.schedule(t2, blowUp+explode+ 100);
+		new Timer().schedule(t1, blowUp+100);
+		new Timer().schedule(t2, blowUp+explode+ 1000);
 	}
 	
 }
