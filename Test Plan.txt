@@ -1,0 +1,44 @@
+Bomberman Test Plan
+
+In order to test the functionality of the code a series of unit tests will be executed. 
+Specifically a test for each of the following:
+
+	-Showing a player can win the game by finding the door
+		-when playing alone
+		-when playing with more than one player (only one player wins)
+		-when playing with more than one player (all players win)
+
+	-Showing a player can lose the game by touching an enemy
+		-when playing along
+		-when playing with more than one player (only one player wins)
+		-when playing with more than one player (all players win)
+
+	-Showing a player can end the game by sending the END_GAME command
+		-when playing along
+		-when playing with more than one player (only one player wins)
+		-when playing with more than one player (all players win)
+
+	-Showing that one player dies when two players touch
+
+	-Covered by showing that players can die/win the game is
+		-players can move
+		-player commands are ignored after END_GAME is sent
+
+	-Showing that players can pickup PowerUps
+
+	-Showing that one powerUp per player is placed upon game start
+
+	-Showing that for all the enemies provided they are placed on the gameboard
+
+	-Showing that a door exists
+
+	-Showing that a bomb can be deployed
+
+	-Showing that the game board can be randomized
+
+	-Showing that the game board can be loaded from file
+
+	-Showing that the game board can have entities set/removed
+
+	-Showing that the game board serializes properly
+
