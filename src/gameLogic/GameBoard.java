@@ -114,6 +114,8 @@ public class GameBoard {
 				set(new Explosion(x,y));
 			}else if(entity == 'B'){
 				set(new Bomb(x,y));
+			} else if(entity == 'U') {
+				set(new PowerUp(x, y));
 			} else if (entity == '\n') {
 				y++;
 				x = -1;
@@ -396,6 +398,8 @@ public class GameBoard {
 					s += "D";
 				else if(board[x][y] instanceof Enemy)
 					s+= "O";
+				else if (board[x][y] instanceof PowerUp)
+					s += "U";
 				else
 					s += ".";
 			}
