@@ -82,6 +82,10 @@ public class LogicManager implements Runnable {
 		this.board = board;
 	}
 	
+	public GameBoard getGameBoard(){
+		return this.board;
+	}
+	
 	/**
 	 * Put message into queue
 	 * @param command
