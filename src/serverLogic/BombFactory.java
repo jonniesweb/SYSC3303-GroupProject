@@ -23,7 +23,6 @@ public class BombFactory {
 	private final int MAX_BOMBS = 1;
 	// number of squares in a given direction to 
 	// add explosions to
-	private final int EXP_NUM = 1;
 	
 	private Map<User,Integer> bombCounter;
 	private Map<Bomb, User>	  bombMapper;
@@ -70,7 +69,10 @@ public class BombFactory {
 	// creates explosions at the specified squares
 	// length of row of explosions determined by EXP_NUM
 	// checks if square is within range
-	public void createExplosions(Bomb b){
+	public void createExplosions(Bomb b, boolean powerUp){
+		int EXP_NUM = 1;
+		if(powerUp)
+			EXP_NUM = 2;
 		long time = System.currentTimeMillis();
 		for(int i =0; i < EXP_NUM; i++){
 			if( b.getPosY()-1-i >= 0){
@@ -127,7 +129,7 @@ public class BombFactory {
 				User u = bombMapper.get(b);
 				bombMapper.remove(b);
 				bombCounter.put(u, bombCounter.get(u)+1);
-				createExplosions(b);
+				createExplosions(b, u.getPlayer().getBombRangePowerUpEnabled());
 			}
 		}
 	}
