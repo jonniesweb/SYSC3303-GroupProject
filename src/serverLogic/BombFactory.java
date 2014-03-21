@@ -29,7 +29,6 @@ public class BombFactory {
 	private Map<Bomb, User>	  bombMapper;
 	private List<Explosion>  explosions;
 	private List<Bomb> 	  bombs;
-	private Timer timer;
 	private LogicManager logicManager;
 	private int width, height;
 	// constructor inits maps
@@ -37,7 +36,6 @@ public class BombFactory {
 	public BombFactory(Object[] users,  int w, int h,LogicManager m){
 		logicManager = m;
 		width = w; height = h;
-		timer = new Timer();
 		bombCounter = Collections.synchronizedMap(new HashMap<User,Integer>());
 		bombMapper = Collections.synchronizedMap(new HashMap<Bomb,User>());
 		explosions = Collections.synchronizedList(new ArrayList<Explosion>());
@@ -61,7 +59,6 @@ public class BombFactory {
 					u.getPlayer().getPosY(),
 					createdTime,blowUpTime);
 			bombs.add(b);
-			logicManager.execute(new BombMessage("BOMB_ADDED",b.getPosX(),b.getPosY()));
 			bombMapper.put(b,u);
 			timerExecute();
 			return true;
@@ -76,7 +73,7 @@ public class BombFactory {
 	public void createExplosions(Bomb b){
 		long time = System.currentTimeMillis();
 		for(int i =0; i < EXP_NUM; i++){
-			if( b.getPosY()-1-i > 0){
+			if( b.getPosY()-1-i >= 0){
 				explosions.add(new Explosion(b.getPosX(),
 					b.getPosY()-1-i,
 					time, time+explode));
@@ -94,7 +91,7 @@ public class BombFactory {
 		}
 		// left
 		for(int i =0; i < EXP_NUM; i++ ){
-			if(b.getPosX()-i -1 > 0){
+			if(b.getPosX()-i -1 >= 0){
 				explosions.add(new Explosion(b.getPosX()-1-i,
 					b.getPosY(),
 					time, time+explode));
@@ -110,6 +107,9 @@ public class BombFactory {
 				logicManager.execute(new BombMessage("EXP_ADDED",b.getPosX()+1+i,b.getPosY()));
 			}
 		}
+		// add bomb on myself
+		explosions.add(new Explosion(b.getPosX(),b.getPosY(),time,time+explode));
+		logicManager.execute(new BombMessage("EXP_ADDED",b.getPosX(),b.getPosY()));
 		
 	}
 	
@@ -127,7 +127,6 @@ public class BombFactory {
 				User u = bombMapper.get(b);
 				bombMapper.remove(b);
 				bombCounter.put(u, bombCounter.get(u)+1);
-				logicManager.execute(new BombMessage("BOMB_REMOVED",b.getPosX(),b.getPosY()));
 				createExplosions(b);
 			}
 		}
@@ -136,19 +135,21 @@ public class BombFactory {
 	private void removeExplosions(){
 		Entity r;
 		long time = System.currentTimeMillis();
-		for(int i =0; i < explosions.size(); i++){
-			if(explosions.get(i).isDone(time)){
-				r = explosions.remove(i);
-				logicManager.execute(new BombMessage("EXP_REMOVED",r.getPosX(),r.getPosY()));
+		int length = explosions.size();
+		while(!explosions.isEmpty() ){
+			if(explosions.get(explosions.size()-1).isDone(time)){
+				r = explosions.remove(explosions.size()-1);
+				logicManager.execute( new BombMessage("EXP_REMOVED",r.getPosX(),r.getPosY()));
+			}else{
+				System.out.println("Explosion isnt done for some reason....");
 			}
 		}
 	}
-	
 	public Bomb[] returnBombs(){
-		return (Bomb[])bombs.toArray();
+		return bombs.toArray(new Bomb[0]);
 	}
 	public Explosion[] returnExplosions(){
-		return (Explosion[])explosions.toArray();
+		return (explosions.toArray(new Explosion[0]));
 	}
 	
 	public void timerExecute(){
@@ -161,8 +162,8 @@ public class BombFactory {
 					removeExplosions();
 				}};
 		// 100 delay to make sure bomb exploded
-		timer.schedule(t1, blowUp+100);
-		timer.schedule(t2, blowUp+explode+ 100);
+		new Timer().schedule(t1, blowUp+100);
+		new Timer().schedule(t2, blowUp+explode+ 1000);
 	}
 	
 }

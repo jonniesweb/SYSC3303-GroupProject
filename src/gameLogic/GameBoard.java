@@ -9,11 +9,10 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-import entities.Door;
-import entities.Enemy;
-import entities.Entity;
-import entities.Player;
-import entities.Wall;
+
+
+import entities.*;
+
 //import entities.Bomb;
 //import entities.Explosion;
 import entities.PowerUp;
@@ -21,6 +20,7 @@ import entities.PowerUp;
 //import serverLogic.LogicManager;
 //import serverLogic.UserManager;
 //import serverLogic.User;
+
 
 //TODO: gameboard should be init with a list of players
 public class GameBoard {
@@ -47,8 +47,8 @@ public class GameBoard {
 		this.width = width;
 		this.height = height;
 		board = new Entity[height][width];
-		this.randomizeFloor(4);
-		//this.generateFloor("FloorTest.txt");
+		//this.randomizeFloor(4);
+		this.generateFloor("FloorTest.txt");
 		//this.initializeDoor();
 	}
 	
@@ -108,6 +108,12 @@ public class GameBoard {
 				set(new Player(x, y, ""), x, y);
 			} else if (entity == 'D') {
 				set(new Door(x, y), x, y);
+			}else if(entity == 'O'){
+				set(new Enemy(x,y),x,y);
+			}else if(entity == 'E'){
+				set(new Explosion(x,y));
+			}else if(entity == 'B'){
+				set(new Bomb(x,y));
 			} else if (entity == '\n') {
 				y++;
 				x = -1;
@@ -351,21 +357,39 @@ public class GameBoard {
 
 		return (Door) board[3][3];
 	}
-
+	private boolean checkBomb(int x, int y, Bomb[] b ){
+		for(int i=0; i<b.length; i++ )
+			if(b[i].getPosX() == x && b[i].getPosY() == y)
+				return true;
+		return false;
+	}
+	private boolean checkExplos(int x, int y, Explosion[] b ){
+		for(int i=0; i<b.length; i++ )
+			if(b[i].getPosX() == x && b[i].getPosY() == y)
+				return true;
+		return false;
+	}
 	/**
 	 * For testing purposes eg. log into file the board view in string
 	 */
-	public String toString() {
-		//int playerCount = 0;
+
+	public String toString(Bomb[] bombs, Explosion[] explos) {
+		LOG.info("bombslength: "+bombs.length+" explosion length:"+explos.length);
 		String s = "";
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				if (board[x][y] instanceof Wall)
+				if(checkExplos(x,y,explos) && !(board[x][y] instanceof Player))
+					s+="E";
+				else if(checkBomb(x,y,bombs) && !(board[x][y] instanceof Player))
+					s+="B";
+				else if (board[x][y] instanceof Wall)
 					s += "W";
 				else if (board[x][y] instanceof Player)
 					s += "P";
 				else if (board[x][y] instanceof Door)
 					s += "D";
+				else if(board[x][y] instanceof Enemy)
+					s+= "O";
 				else
 					s += ".";
 			}

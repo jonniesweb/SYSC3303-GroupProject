@@ -18,6 +18,9 @@ public class Bomb extends Entity {
 		this.creationTime = time;
 		this.bombTimer = blowUp;
 	}
+	public Bomb(int x, int y){
+		super(x,y);
+	}
 	
 	//Methods
 	public boolean hasExploded(long time){

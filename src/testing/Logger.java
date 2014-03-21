@@ -15,6 +15,7 @@ import java.util.ArrayList;
  * In another thread:
  * 		write each message from log list to file
  */
+
 public class Logger{
 	
 	static PrintWriter out;
