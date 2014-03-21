@@ -160,6 +160,12 @@ public class GameBoard {
 			return false;
 		return board[x][y] instanceof Enemy;
 	}
+	
+	public boolean hasPowerUp(int x, int y) {
+		if (x < 0 || x >= width || y < 0 || y >= height)
+			return false;
+		return board[x][y] instanceof PowerUp;
+	}
 
 	/**
 	 * Generate floor from prescribed file

@@ -13,6 +13,7 @@ import entities.Bomb;
 import entities.Enemy;
 import entities.Explosion;
 import entities.Player;
+import entities.PowerUp;
 import entities.Wall;
 import gameLogic.GameBoard;
 import Networking.*;
@@ -182,6 +183,7 @@ public class LogicManager implements Runnable {
 			this.playerCount = this.userManager.getCurrentPlayerList().size();
 			enemies = new EnemyManager(this);
 			bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
+			board.set(new PowerUp(6, 5));
 		}
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
@@ -251,6 +253,23 @@ public class LogicManager implements Runnable {
 			player.loseLife();
 			return (-1);
 		} else if (validMove(newPosX, newPosY)){
+			
+			// check for powerup before moving to that location
+			if (board.hasPowerUp(newPosX, newPosY)) {
+				LOG.info(player.getName() + " got PowerUp at " + player.getPos());
+				player.setBombRangePowerUpEnabled(true);
+				
+				// move player, same as below. Should probably refactor
+				board.remove(player.getPosX(), player.getPosY());
+				player.setPos(newPosX, newPosY);
+				board.set(player);
+				LOG.info(player.getName() + "' Moved Safely");
+				LOG.info("BOARD VIEW\n" + board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions()));
+				LOG.info(player.getName() + " NEW LOCATION : " + player.getPos());
+				
+				return 4;
+			}
+			
 			board.remove(player.getPosX(), player.getPosY());
 			player.setPos(newPosX, newPosY);
 			board.set(player);
@@ -327,24 +346,29 @@ public class LogicManager implements Runnable {
 			case "UP":
 				playerStatus = handleMovement(u, posX, posY - 1);
 				break;
+				
 			case "DOWN":
 				playerStatus = handleMovement(u, posX, posY + 1);
 				break;
+				
 			case "LEFT":
 				playerStatus = handleMovement(u, posX - 1, posY);
 				break;
+				
 			case "RIGHT":
 				playerStatus = handleMovement(u, posX + 1, posY);
 				break;
-			//case "BOMB" :
 				
 			case "END_GAME":
 				playerCount--;
 				playerStatus = 3;
 				break;
+				
 			case "BOMB":
 				bombFactory.startBomb(u);
 				playerStatus = 0;
+				break;
+				
 			default:
 				System.out.println("LogicManager: '" + command + "' Unknown");
 				LOG.error("COMMAND : " + command + " UNKNOWN");
@@ -376,6 +400,8 @@ public class LogicManager implements Runnable {
 					userManager.moveCurrentToFuture(u);
 					if(testMode==3)
 						testSem.release();
+					break;
+				case 4: // player picked up powerup
 					break;
 				default:
 					LOG.info("Player Didn't Move");

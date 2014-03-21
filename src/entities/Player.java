@@ -10,6 +10,7 @@ public class Player extends Entity {
 
 	private int lives;
 	private String name;
+	private boolean bombRangePowerUpEnabled = false;
 	
 	//Constructors
 	
@@ -84,4 +85,10 @@ public class Player extends Entity {
 	 * 
 	 */
 	public void resetLife(){ lives = 1;}
+	public boolean getBombRangePowerUpEnabled() {
+		return bombRangePowerUpEnabled;
+	}
+	public void setBombRangePowerUpEnabled(boolean bombRangePowerUpEnabled) {
+		this.bombRangePowerUpEnabled = bombRangePowerUpEnabled;
+	}
 }

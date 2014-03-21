@@ -66,7 +66,9 @@ public class ServerMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new ServerMain();
+		new ServerMain().logicManager.setGameBoard(new GameBoard(7, 7));
+		
+		
 
 		
 		///????/ who inits player positions when they are added??????
