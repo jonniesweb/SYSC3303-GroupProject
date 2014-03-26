@@ -377,11 +377,17 @@ public class GameBoard {
 				return true;
 		return false;
 	}
+	private boolean checkEnemy(int x, int y, Enemy[] b ){
+		for(int i=0; i<b.length; i++ )
+			if(b[i].getPosX() == x && b[i].getPosY() == y)
+				return true;
+		return false;
+	}
 	/**
 	 * For testing purposes eg. log into file the board view in string
 	 */
 
-	public String toString(Bomb[] bombs, Explosion[] explos) {
+	public String toString(Bomb[] bombs, Explosion[] explos, Enemy[] enemies) {
 		LOG.info("bombslength: "+bombs.length+" explosion length:"+explos.length);
 		String s = "";
 		for (int y = 0; y < height; y++) {
@@ -390,14 +396,14 @@ public class GameBoard {
 					s+="E";
 				else if(checkBomb(x,y,bombs) && !(board[x][y] instanceof Player))
 					s+="B";
+				else if(checkEnemy(x,y, enemies)&& !(board[x][y] instanceof Player))
+					s+="O";
 				else if (board[x][y] instanceof Wall)
 					s += "W";
 				else if (board[x][y] instanceof Player)
 					s += "P";
 				else if (board[x][y] instanceof Door)
 					s += "D";
-				else if(board[x][y] instanceof Enemy)
-					s+= "O";
 				else if (board[x][y] instanceof PowerUp)
 					s += "U";
 				else

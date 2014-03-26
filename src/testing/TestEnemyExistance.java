@@ -53,7 +53,7 @@ public class TestEnemyExistance {
 			} while (enemyNotPlaceable(posX, posY));
 			
 			enemyList.add(new Enemy(posX,posY));
-			logic.placeEnemy(enemyList);
+
 			
 		}
 		
