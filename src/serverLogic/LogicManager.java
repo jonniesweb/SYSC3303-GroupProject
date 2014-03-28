@@ -109,6 +109,7 @@ public class LogicManager implements Runnable {
 	private boolean safeMove(int x, int y){
 		Entity entity = board.get(x,y);
 		if(checkExplosion(x,y)){return false;}
+		if(enemies.checkEnemy(x, y)){return false;}
 		if(entity instanceof Enemy || entity instanceof Explosion || entity instanceof Player){
 			return false;
 		} else {return true;}
@@ -122,6 +123,7 @@ public class LogicManager implements Runnable {
 	 * @return
 	 */
 	public boolean validMove(int x, int y){
+		if( (x < 0) || (x > board.getWidth()) || (y < 0) || (y>board.getHeight())) return false;
 		Entity entity = board.get(x,y);
 		if(checkBomb(x,y)){return false;}
 		if(entity instanceof Bomb || entity instanceof Wall || entity instanceof Door) { return false; }
@@ -133,7 +135,7 @@ public class LogicManager implements Runnable {
 	 * @return
 	 */
 	public String getBoard(){
-		return board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions());
+		return board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions(),enemies.returnEnemies());
 	}
 	
 	/**
@@ -163,14 +165,8 @@ public class LogicManager implements Runnable {
 		}
 		LOG.info("LogicManager: Current GameBoard\n" + board.toString() );
 	}
-	public void placeEnemy(List<Enemy> eList){
-		for(Enemy e : eList){
-			board.set(e);
-		}
-	}
-	public void setEnemy(Enemy e){
-		board.set(e);
-	}
+
+
 	
 	/**
 	 * 
@@ -188,6 +184,7 @@ public class LogicManager implements Runnable {
 			enemies = new EnemyManager(this);
 			bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
 			board.set(new PowerUp(6, 5));
+			new Thread(enemies).start();
 		}
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
@@ -234,9 +231,7 @@ public class LogicManager implements Runnable {
 		}catch(Exception e){e.printStackTrace();}
 		
 	}
-	public void removeEnemyFromGameBoard(Enemy enemy){
-		board.remove(enemy.getPosX(), enemy.getPosY());
-	}
+
 	public void enemyValidMove(){
 		
 	}
@@ -268,7 +263,7 @@ public class LogicManager implements Runnable {
 				player.setPos(newPosX, newPosY);
 				board.set(player);
 				LOG.info(player.getName() + "' Moved Safely");
-				LOG.info("BOARD VIEW\n" + board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions()));
+				LOG.info("BOARD VIEW\n" + board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions(),enemies.returnEnemies()));
 				LOG.info(player.getName() + " NEW LOCATION : " + player.getPos());
 				
 				return 4;
@@ -278,7 +273,7 @@ public class LogicManager implements Runnable {
 			player.setPos(newPosX, newPosY);
 			board.set(player);
 			LOG.info(player.getName() + "' Moved Safely");
-			LOG.info("BOARD VIEW\n" + board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions()));
+			LOG.info("BOARD VIEW\n" + board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions(),enemies.returnEnemies()));
 			LOG.info(player.getName() + " NEW LOCATION : " + player.getPos());
 			return 1;
 		} else if (board.hasDoor(newPosX, newPosY)){
@@ -315,7 +310,7 @@ public class LogicManager implements Runnable {
 	}
 	// check to see if there is an explosion 
 	// where the player is moving to
-	private boolean checkExplosion(int x,int y){
+	public boolean checkExplosion(int x,int y){
 		Explosion[] explosions = bombFactory.returnExplosions();
 		for(int i = 0; i< explosions.length; i ++){
 			if(explosions[i].getPosX()== x && explosions[i].getPosY() == y)
@@ -433,7 +428,7 @@ public class LogicManager implements Runnable {
 			LOG.info("REMOVED WALL ON (" + x + "," + y + ")");
 			board.remove(x, y);
 		}
-		else if(board.get(x, y) instanceof Enemy){
+		else if(enemies.removeEnemy(x, y)){
 			LOG.info("REMOVED ENEMY ON (" + x + "," + y + ")");
 			board.remove(x, y);
 			enemies.removeEnemy(x, y);
@@ -507,7 +502,8 @@ public class LogicManager implements Runnable {
 					
 				}
 				
-				networkManager.sendBoardToAllClients(board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions()));
+				networkManager.sendBoardToAllClients(board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions(),
+																	enemies.returnEnemies()));
 			}
 		
 			LOG.info("GAME ENDED!");
