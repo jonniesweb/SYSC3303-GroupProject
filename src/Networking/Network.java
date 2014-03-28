@@ -25,9 +25,12 @@ public class Network extends Thread {
 	int port;
 	private Semaphore inboxLock;
 	private static final Logger LOG = Logger.getLogger(Network.class.getName());
+	
+	boolean running;
 
 	// constructor
-	public Network(int p, Semaphore lock) {
+	public Network(int p, Semaphore lock, boolean serverRunning) {
+		running = serverRunning;
 		port = p;
 		pool = Executors.newCachedThreadPool();
 		inbox = Collections.synchronizedList(new LinkedList<UserMessage>());
@@ -86,7 +89,7 @@ public class Network extends Thread {
 	 */
 	private void acceptLoop() throws IOException {
 		//LOG.info("LISTENING ON PORT : " + port);
-		while (true) {
+		while (running) {
 			byte[] inBuffer = new byte[1024];
 			
 			final DatagramPacket receivePacket = new DatagramPacket(inBuffer,
@@ -104,6 +107,10 @@ public class Network extends Thread {
 			socket.receive(receivePacket);
 			pool.submit(r1);
 		}
+		
+		socket.close();
+		LOG.info("Network closed a socket");
+		System.out.println("super duper rabbits frolicking in a winter wonder land");
 
 	}
 

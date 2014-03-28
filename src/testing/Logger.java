@@ -20,10 +20,11 @@ public class Logger{
 	
 	static PrintWriter out;
 	static ArrayList<String> log;
+	static boolean running;
 	
-	public Logger(){
+	public Logger(boolean serverRunning){
 		log = new ArrayList<String>();
-		
+		running = serverRunning;
 		try {
 			out = new PrintWriter("Log.txt");
 			
@@ -49,7 +50,7 @@ public class Logger{
 	 * Break out of  loop if there is no more queue
 	 */
 	public static void writeLog(){
-		while(true){
+		while(running){
 			try{
 				out.println(log.get(0));
 				System.out.println(log.get(0));

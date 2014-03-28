@@ -25,31 +25,56 @@ public class TestLose {
 	/**
 	 * Test a singleplayer
 	 */
-	public void singlePlayerGameSession(){
+	public void onePlayerLoses(){
 
 		//Start the server
 		server = new ServerMain(testSem, 1);
 		
 		//Initialize the file to use in the TestDriver
-		String filename = "/TestingFiles/Lose/SinglePlayerGameSessionLose";
+		String filename = "./TestingFiles/Lose/SinglePlayerGameSessionLose";
 		
 		//Run the TestDriver
 		new TestDriver(filename, playerOnePort);
 		
 		
-		try{//TODO: Set timeout to a logic length
+		System.out.println("yada yada yada");
+		server.shutdown();
+		System.out.println("yo yo you yo");
+		
+		try{
+		Thread.sleep(1000);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		System.out.println("ha ha ha ha");
+		
+		while(true){
+			
+		}
+		
+		/*try{//TODO: Set timeout to a logic length
 			//Waits for the the players to end or the timeout occurs
 			testSem.wait(timeout);
 			
 			//Assert that the player managed to get to the door 
 			//within the specified time.
 			assertEquals(1,testSem.availablePermits());
-			
-			
 		}catch(Exception e){
 			e.printStackTrace();
-		}
+		}*/
 	}
+	
+	
+	/*@Test
+	public void twoPlayersBothLose(){
+		
+	}
+	
+	@Test
+	public void twoPlayersOneLoses(){
+		
+	}
+	
 	
 	@Test
 	/**
@@ -59,20 +84,20 @@ public class TestLose {
 	 *
 	 * @param mode
 	 */
-	public void multiPlayerGameSession(int mode){
+	/*public void multiPlayerGameSession(int mode){
 		
 		
 		//Start the server
 		server = new ServerMain(testSem, 1);
 		
 		//Initializes the file to use in the TestDrivers
-		String playerOneFile = "/TestingFiles/Lose/SinglePlayerGameSessionLose";
+		String playerOneFile = "./TestingFiles/Lose/SinglePlayerGameSessionLose";
 		String playerTwoFile = null;
 		
 		if (mode == 0)
-			playerTwoFile = "TestingFiles/End/MultiPlayerGameSessionEnd.player2";
+			playerTwoFile = "./TestingFiles/End/MultiPlayerGameSessionEnd.player2";
 		else if(mode == 1)
-			playerTwoFile = "/TestingFiles/Lose/MutliPlayerGameSessionLose.player2";
+			playerTwoFile = "./TestingFiles/Lose/MutliPlayerGameSessionLose.player2";
 		
 		//Run the TestDrivers
 		new TestDriver(playerOneFile, playerOnePort);
@@ -99,6 +124,6 @@ public class TestLose {
 		}
 		
 		
-	}
+	}*/
 
 }

@@ -40,12 +40,12 @@ public class NetworkManager implements Runnable{
 	/**
 	 * 
 	 */
-	public NetworkManager(LogicManager logic, UserManager m) {
+	public NetworkManager(LogicManager logic, UserManager m, boolean serverRunning) {
 		this.logic = logic;
 		
-		
+		this.running = serverRunning;
 		inboxLock = new Semaphore(0);
-		net = new Network(Network.SERVER_PORT_NO, inboxLock);
+		net = new Network(Network.SERVER_PORT_NO, inboxLock, running);
 		
 		userManager = m;
 		new Thread(this).start();
@@ -64,7 +64,7 @@ public class NetworkManager implements Runnable{
 			@Override
 			public void run() {
 
-				while (true) {
+				while (running) {
 
 					String board;
 					// take the board from the double buffer
@@ -97,7 +97,6 @@ public class NetworkManager implements Runnable{
 	public void run(){
 
 		new Thread(net).start();
-		running = true;
 		UserMessage userMessage;
 		
 		while(running){

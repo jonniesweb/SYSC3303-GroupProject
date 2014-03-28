@@ -19,6 +19,8 @@ import java.util.concurrent.Semaphore;
  */
 public class ServerMain {
 	
+	boolean serverRunning = true;
+	
 	private static final int NUM_PLAYERS = 2;
 	
 	// members
@@ -34,9 +36,9 @@ public class ServerMain {
 		// initialize all server components
 		
 		userManager = new UserManager(NUM_PLAYERS);
-		logger = new Logger();
+		logger = new Logger(serverRunning);
 		logicManager = new LogicManager(userManager);
-		networkManager = new NetworkManager(logicManager,userManager);
+		networkManager = new NetworkManager(logicManager,userManager,serverRunning);
 		logicManager.setNetworkManager(networkManager);
 		//EnemyManager e = new EnemyManager(logicManager);
 	}
@@ -44,9 +46,9 @@ public class ServerMain {
 	public ServerMain(Semaphore s, int tMode){
 		this.testSem = s;
 		userManager = new UserManager(NUM_PLAYERS);
-		logger = new Logger();
+		logger = new Logger(serverRunning);
 		logicManager = new LogicManager(userManager, testSem, tMode);
-		networkManager = new NetworkManager(logicManager,userManager);
+		networkManager = new NetworkManager(logicManager,userManager,serverRunning);
 		logicManager.setNetworkManager(networkManager);
 		
 	}
@@ -77,6 +79,11 @@ public class ServerMain {
 		board.set(new PowerUp(1,0));
 		
 		logicManager.setGameBoard(board);
+	}
+	
+	public void shutdown(){
+		serverRunning = false;
+		System.out.println("set Server Running to false <<<<<<<<<<<<================");
 	}
 
 	/**

@@ -34,7 +34,7 @@ public class TestWin {
 		server = new ServerMain(testSem, 2);
 		
 		//Initialize the file to use in the TestDriver
-		String filename = "/TestingFiles/Win/SinglePlayerGameSessionWin";
+		String filename = "./TestingFiles/Win/SinglePlayerGameSessionWin";
 		
 		//Run the TestDriver
 		new TestDriver(filename, playerOnePort);
@@ -70,13 +70,13 @@ public class TestWin {
 		server = new ServerMain(testSem, 2);
 
 		//Initialize the files to use in the TestDrivers		
-		String playerOneFile = "/TestingFiles/Win/SinglePlayerGameSessionWin";
+		String playerOneFile = "./TestingFiles/Win/SinglePlayerGameSessionWin";
 		String playerTwoFile = null;
 		
 		if (mode == 0)
-			playerTwoFile = "TestingFiles/End/MultiPlayerGameSessionEnd.player2";
+			playerTwoFile = "./TestingFiles/End/MultiPlayerGameSessionEnd.player2";
 		else if(mode == 1)
-			playerTwoFile = "/TestingFiles/Win/MutliPlayerGameSessionWin.player2";
+			playerTwoFile = "./TestingFiles/Win/MutliPlayerGameSessionWin.player2";
 		
 		//Run the TestDrivers
 		new TestDriver(playerOneFile, playerOnePort);

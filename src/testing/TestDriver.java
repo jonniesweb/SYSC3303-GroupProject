@@ -15,10 +15,13 @@ public class TestDriver implements Runnable {
 	String serverIp = "127.0.0.1";
 	int serverPort = Network.SERVER_PORT_NO;
 	Network net;
+	
+	boolean clientRunning;
 
 	public TestDriver(String filename, int port) {
+		clientRunning = true;
 		this.file = filename;
-		net = new Network(port, new Semaphore(0));
+		net = new Network(port, new Semaphore(0), clientRunning);
 		new Thread(net).start();
 		new Thread(this).start();
 	}
@@ -64,6 +67,8 @@ public class TestDriver implements Runnable {
 			net.sendMessage(new UserMessage(command, serverIp, serverPort, System
 					.nanoTime()));
 		}
+		
+		clientRunning = false;
 	}
 
 	public void run() {
