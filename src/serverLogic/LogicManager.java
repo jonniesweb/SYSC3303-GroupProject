@@ -185,6 +185,7 @@ public class LogicManager implements Runnable {
 			bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
 			board.set(new PowerUp(6, 5));
 			new Thread(enemies).start();
+			networkManager.sendBoardToAllClients(getBoard());
 		}
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
@@ -232,10 +233,6 @@ public class LogicManager implements Runnable {
 		
 	}
 
-	public void enemyValidMove(){
-		
-	}
-	
 	/**
 
 	 * Handles Movement of the Player
@@ -512,5 +509,10 @@ public class LogicManager implements Runnable {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	void sendGameBoardToAll() {
+		networkManager.sendBoardToAllClients(getBoard());
+		LOG.info("BOARD VIEW\n" + getBoard());
 	}
 }
