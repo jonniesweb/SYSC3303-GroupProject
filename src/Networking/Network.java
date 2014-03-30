@@ -25,6 +25,7 @@ public class Network extends Thread {
 	int port;
 	private Semaphore inboxLock;
 	private static final Logger LOG = Logger.getLogger(Network.class.getName());
+	private boolean running;
 
 	// constructor
 	public Network(int p, Semaphore lock) {
@@ -35,6 +36,10 @@ public class Network extends Thread {
 		// just incase lock was initialized with number other than 0
 		inboxLock.drainPermits();
 		//Logger log = Logger.getLogger("Global");
+	}
+	
+	public void shutdown(){
+		running = false;
 	}
 
 	/**
@@ -86,7 +91,8 @@ public class Network extends Thread {
 	 */
 	private void acceptLoop() throws IOException {
 		//LOG.info("LISTENING ON PORT : " + port);
-		while (true) {
+		running = true;
+		while (running) {
 			byte[] inBuffer = new byte[1024];
 			
 			final DatagramPacket receivePacket = new DatagramPacket(inBuffer,
@@ -104,7 +110,7 @@ public class Network extends Thread {
 			socket.receive(receivePacket);
 			pool.submit(r1);
 		}
-
+		socket.close();
 	}
 
 	/**

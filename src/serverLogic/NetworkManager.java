@@ -53,6 +53,11 @@ public class NetworkManager implements Runnable{
 		setupSendBoardToAllClients();
 	}
 	
+	public void shutdown(){
+		Network.shutdown();
+		this.running = false;
+	}
+	
 	/**
 	 * Spawns a thread to take a gameboard from the gameboard double buffer and
 	 * send it out to all users. Runs forever.

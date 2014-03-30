@@ -431,6 +431,12 @@ public class LogicManager implements Runnable {
 			enemies.removeEnemy(x, y);
 		}
 	}
+	
+	public void shutdown(){
+		playerCount = 0;
+		gameInProgress = false;
+		networkManager.shutdown();
+	}
 
 	public void run(){
 
