@@ -2,13 +2,13 @@ package clientLogic;
 
 import gameLogic.GameBoard;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Random;
 import java.util.concurrent.Semaphore;
 
-import Networking.UserMessage;
 import Networking.Network;
-import testing.TestDriver;
+import Networking.UserMessage;
 
 public class SpectatorMain {
 	
@@ -19,10 +19,45 @@ public class SpectatorMain {
 	
 
 	public static void main(String[] args) {
-	
+
+		// create dialog
+		final ConnectDialog dialog = new ConnectDialog();
 		
-		new SpectatorMain();
-		// new Thread(new TestDriver("testNumber1.txt")).start();
+		ActionListener join = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// get client port, server port, and hostname from dialog
+				Random r = new Random();
+				int cPort = 8000 + r.nextInt(100);
+				if (dialog.getClientPort().length() > 0) {
+					cPort = Integer.parseInt(dialog.getClientPort());
+				}
+				int sPort = Network.SERVER_PORT_NO;
+				if (dialog.getServerPort().length() > 0) {
+					sPort = Integer.parseInt(dialog.getServerPort());
+				}
+				String hostname = dialog.getServerIP();
+				
+				// start a new spectator window
+				dialog.dispose();
+				new SpectatorMain(cPort, hostname, sPort);
+				
+			}
+		};
+		
+		ActionListener exit = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialog.dispose();
+				System.exit(0);
+			}
+		};
+		
+		dialog.addConnectActionListener(join);
+		dialog.addExitActionListener(exit);
+		
+		// show dialog
+		dialog.setVisible(true);
 
 		// Loop while running
 		// Establish Connection
@@ -55,15 +90,10 @@ public class SpectatorMain {
 		int port = serverPort;
 		long time = System.nanoTime();
 		String ip = serverHostname;
-		try {
-			ip = InetAddress.getLocalHost().getHostAddress(); // XXX: remove since it's a hack
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
 		
 		startListening();
 		
-//		network.sendMessage(new UserMessage(connectCommand, ip, port, time));
+		network.sendMessage(new UserMessage(connectCommand, ip, port, time));
 	}
 	
 	/**

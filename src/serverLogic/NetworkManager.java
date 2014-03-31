@@ -259,7 +259,7 @@ public class NetworkManager implements Runnable{
 		try {
 
 			userManager.addSpectator(playerIP, playerPort);
-			LOG.info("Player from " + playerIP + "port : "+ playerPort + " SPECTATE GAME");
+			LOG.info("Player from " + playerIP + " port : "+ playerPort + " SPECTATE GAME");
 		} catch (Exception E) {
 			LOG.error("ERROR - ADDED SAME PLAYER TO SPECTATOR TWICE");
 		}

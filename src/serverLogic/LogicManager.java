@@ -106,13 +106,23 @@ public class LogicManager implements Runnable {
 	 * @param y
 	 * @return
 	 */
-	private boolean safeMove(int x, int y){
-		Entity entity = board.get(x,y);
-		if(checkExplosion(x,y)){return false;}
-		if(enemies.checkEnemy(x, y)){return false;}
-		if(entity instanceof Enemy || entity instanceof Explosion || entity instanceof Player){
+	private boolean safeMove(int x, int y) {
+		Entity entity = board.get(x, y);
+		if (checkExplosion(x, y)) {
+			LOG.info("Player died from explosion");
 			return false;
-		} else {return true;}
+		}
+		if (enemies.checkEnemy(x, y)) {
+			LOG.info("Player died from enemy");
+			return false;
+		}
+		if (entity instanceof Enemy || entity instanceof Explosion
+				|| entity instanceof Player) {
+			LOG.info("Player died from " + entity.toString());
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 	/**
@@ -296,7 +306,7 @@ public class LogicManager implements Runnable {
 					p.loseLife();
 					if(!p.isAlive()){
 						removePlayerFromGameBoard(users[i]);
-						LOG.info("player died...");
+						LOG.info("player died from bomb blast");
 						playerCount--;
 					}
 				}
