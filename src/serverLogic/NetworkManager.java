@@ -54,7 +54,7 @@ public class NetworkManager implements Runnable{
 	}
 	
 	public void shutdown(){
-		Network.shutdown();
+		net.shutdown();
 		this.running = false;
 	}
 	
