@@ -16,15 +16,17 @@ public class ConnectDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textServerIP;
-	private JTextField textField;
+	private JTextField textServerPort;
 	private JTextField textClientPort;
+	private JButton btnConnect;
+	private JButton btnExit;
 
 	/**
 	 * For Testing only
 	 */
 	public static void main(String[] args) {
 		try {
-			ConnectDialog dialog = new ConnectDialog(null, null);
+			ConnectDialog dialog = new ConnectDialog();
 			dialog.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -34,7 +36,7 @@ public class ConnectDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public ConnectDialog(ActionListener joinButton, ActionListener exitButton) {
+	public ConnectDialog() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setAlwaysOnTop(true);
@@ -67,11 +69,11 @@ public class ConnectDialog extends JDialog {
 			contentPanel.add(lblServerPort);
 		}
 		{
-			textField = new JTextField();
-			textField.setBounds(109, 58, 233, 19);
-			textField.setText("8888");
-			contentPanel.add(textField);
-			textField.setColumns(10);
+			textServerPort = new JTextField();
+			textServerPort.setBounds(109, 58, 233, 19);
+			textServerPort.setText("8888");
+			contentPanel.add(textServerPort);
+			textServerPort.setColumns(10);
 		}
 		{
 			JLabel lblOptional = new JLabel("Optional");
@@ -94,25 +96,42 @@ public class ConnectDialog extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				final JButton btnConnect = new JButton("Join");
+				btnConnect = new JButton("Join");
 				btnConnect.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						btnConnect.setEnabled(false);
 						btnConnect.setText("Joining...");
 					}
 				});
-				btnConnect.addActionListener(joinButton);
 				btnConnect.setActionCommand("Join");
 				buttonPane.add(btnConnect);
 				getRootPane().setDefaultButton(btnConnect);
 			}
 			{
-				JButton btnExit = new JButton("Exit");
+				btnExit = new JButton("Exit");
 				btnExit.setActionCommand("Exit");
 				buttonPane.add(btnExit);
-				btnExit.addActionListener(exitButton);
 			}
 		}
 	}
 
+	public String getServerIP() {
+		return textServerIP.getText();
+	}
+	
+	public String getServerPort() {
+		return textServerPort.getText();
+	}
+	
+	public String getClientPort() {
+		return textClientPort.getText();
+	}
+	
+	public void addConnectActionListener(ActionListener listener) {
+		btnConnect.addActionListener(listener);
+	}
+	
+	public void addExitActionListener(ActionListener listener) {
+		btnExit.addActionListener(listener);
+	}
 }
