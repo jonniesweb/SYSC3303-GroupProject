@@ -83,7 +83,7 @@ public class ServerMain {
 	public void shutdown(){
 		logicManager.shutdown();
 		networkManager.shutdown();
-		logger.endLog();
+		
 		
 		System.out.println("Server shutdown() executed");
 	}

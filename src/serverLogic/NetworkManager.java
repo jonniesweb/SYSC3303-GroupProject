@@ -16,10 +16,12 @@ import org.apache.log4j.Logger;
 public class NetworkManager implements Runnable{
 	//private boolean gameInProgress;
 	private Semaphore inboxLock;
-	private Network net;
+	private static Network net;
 	private LogicManager logic;
 	private UserManager userManager;
-	private boolean running;
+	public Thread networkThread;
+	public Thread networkManagerThread;
+	public Thread setupThread;
 	
 	/*
 	 * Create a double buffer out of an ArrayBlockingQueue. This is possible
@@ -48,14 +50,18 @@ public class NetworkManager implements Runnable{
 		net = new Network(Network.SERVER_PORT_NO, inboxLock);
 		
 		userManager = m;
-		new Thread(this).start();
+		networkManagerThread = new Thread(this);
+		networkManagerThread.start();
 		
 		setupSendBoardToAllClients();
 	}
 	
 	public void shutdown(){
+		System.out.println("NetworkManager : shutdown");
 		net.shutdown();
-		this.running = false;
+		networkThread.interrupt();
+		networkManagerThread.interrupt();
+		setupThread.interrupt();
 	}
 	
 	/**
@@ -63,13 +69,13 @@ public class NetworkManager implements Runnable{
 	 * send it out to all users. Runs forever.
 	 */
 	private void setupSendBoardToAllClients() {
-		new Thread(new Runnable() {
+		setupThread = new Thread(new Runnable() {
 
 			
 			@Override
 			public void run() {
 
-				while (true) {
+				while (!Thread.currentThread().isInterrupted()) {
 
 					String board;
 					// take the board from the double buffer
@@ -90,9 +96,12 @@ public class NetworkManager implements Runnable{
 						LOG.error("Failed to take from gameboard update buffer");
 					}
 				}
+				
+				System.out.println("=====setupSendBoardToAllClients Runnable has finished=====");
 
 			}
-		}).start();
+		});
+		setupThread.start();
 	}
 
 	/**
@@ -101,11 +110,12 @@ public class NetworkManager implements Runnable{
 	 */
 	public void run(){
 
-		new Thread(net).start();
-		running = true;
+		networkThread = new Thread(net);
+		networkThread.start();
+		
 		UserMessage userMessage;
 		
-		while(running){
+		while(!Thread.currentThread().isInterrupted()){
 			
 			userMessage = readInbox();
 			//log.acceptMessage(new String(message.datagram.getData()));
@@ -142,7 +152,9 @@ public class NetworkManager implements Runnable{
 				if(logic.getGameInProgress())
 					logic.execute(userMessage);
 			}	
-		}	
+		}
+		
+		System.out.println("======run has finished=====");
 	}
 	
 	/**

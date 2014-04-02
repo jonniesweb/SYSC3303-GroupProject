@@ -2,6 +2,7 @@ package testing;
 
 import org.junit.Test;
 import org.junit.Before;
+import org.junit.After;
 import static org.junit.Assert.assertEquals;
 
 import java.util.concurrent.Semaphore;
@@ -12,7 +13,7 @@ import serverLogic.ServerMain;
  * 
  * @author draymire
  *
- * For testing of winnning the game (aka the door being found)
+ * For testing of winning the game (aka the door being found)
  *
  */
 public class TestWin {
@@ -24,11 +25,12 @@ public class TestWin {
 	int playerTwoPort = 8869;
 	Semaphore testSem = new Semaphore(0);
 	long timeout = 15000;
-	
-	@Before
-	public void setup(){
-		testSem = new Semaphore(0);
-		server = new ServerMain(testSem, 2);
+		
+	@After
+	public void after(){
+		System.out.println("\n\n\n\n\n\n\n\n");
+		System.out.println("==================");
+		
 	}
 	
 	@Test
@@ -38,13 +40,14 @@ public class TestWin {
 	public void singlePlayerGameSession(){
 
 		//Start the server
+		testSem = new Semaphore(0);
 		server = new ServerMain(testSem, 2);
 		
 		//Initialize the file to use in the TestDriver
 		String filename = "./TestingFiles/Win/SinglePlayerGameSessionWin";
 		
 		//Run the TestDriver
-		new TestDriver(filename, playerOnePort);
+		TestDriver driverOne = new TestDriver(filename, playerOnePort, "SingleDriver");
 		
 		System.out.println("Sleeping for 15");
 		
@@ -55,6 +58,7 @@ public class TestWin {
 		}
 		
 		server.shutdown();
+		driverOne.shutdown();
 		assertEquals(1,testSem.availablePermits());
 	}
 	
@@ -67,66 +71,28 @@ public class TestWin {
 	 */
 	public void TwoPlayersBothWin(){
 		//Start the server		
+		testSem = new Semaphore(0);
 		server = new ServerMain(testSem, 2);
+		playerOnePort = 8879;
 
 		//Initialize the files to use in the TestDrivers		
 		String playerOneFile = "./TestingFiles/Win/SinglePlayerGameSessionWin";
-		String playerTwoFile = "./TestingFiles/Win/MutliPlayerGameSessionWin.player2";
+		String playerTwoFile = "./TestingFiles/Win/MultiPlayerGameSessionWin.player2";
 		
 		//Run the TestDrivers
-		new TestDriver(playerOneFile, playerOnePort);
-		new TestDriver(playerTwoFile, playerTwoPort);
+		TestDriver driverOne = new TestDriver(playerTwoFile, playerOnePort, "MultiDriverOne");
+		TestDriver driverTwo = new TestDriver(playerOneFile, playerTwoPort, "MultiDriverTwo");
 		
 		
 		try{
-			Thread.sleep(timeout);
+			Thread.sleep(20000);
 		}catch(Exception e){
 			e.printStackTrace();
 		}	
 		
 		server.shutdown();
+		driverOne.shutdown();
+		driverTwo.shutdown();
 		assertEquals(2,testSem.availablePermits());
 	}
-	/*public void multiPlayerGameSession(int mode){
-		
-		//Start the server		
-		server = new ServerMain(testSem, 2);
-
-		//Initialize the files to use in the TestDrivers		
-		String playerOneFile = "/TestingFiles/Win/SinglePlayerGameSessionWin";
-		String playerTwoFile = null;
-		
-		if (mode == 0)
-			playerTwoFile = "TestingFiles/End/MultiPlayerGameSessionEnd.player2";
-		else if(mode == 1)
-			playerTwoFile = "/TestingFiles/Win/MutliPlayerGameSessionWin.player2";
-		
-		//Run the TestDrivers
-		new TestDriver(playerOneFile, playerOnePort);
-		new TestDriver(playerTwoFile, playerTwoPort);
-		
-		
-		try{//TODO: Set timeout to a logic length
-			//Wait the specified time before checking
-			//to see if the player has won
-			testSem.wait(timeout);
-			
-			//Assert that the player managed to get to the door 
-			//within the specified time.
-			
-			if(mode == 0)
-				assertEquals(1,testSem.availablePermits());
-			
-			//Assert that the players managed to get to the door
-			else if (mode == 1)
-				assertEquals(2,testSem.availablePermits());
-			
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		
-	}
-*/
 }

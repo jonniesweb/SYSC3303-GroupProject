@@ -194,7 +194,8 @@ public class LogicManager implements Runnable {
 			enemies = new EnemyManager(this);
 			bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
 			board.set(new PowerUp(6, 5));
-			new Thread(enemies).start();
+			//Only use enemies if not testing
+			if(testMode == 0) new Thread(enemies).start();
 			networkManager.sendBoardToAllClients(getBoard());
 		}
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
@@ -443,9 +444,10 @@ public class LogicManager implements Runnable {
 	}
 	
 	public void shutdown(){
+		System.out.println("==========LogicManager shutdown");
 		playerCount = 0;
 		gameInProgress = false;
-		networkManager.shutdown();
+		//networkManager.shutdown();
 	}
 
 	public void run(){
@@ -492,16 +494,16 @@ public class LogicManager implements Runnable {
 						//System.out.println(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 							LOG.info(u.getPlayer().getName() + " CURRENT LOCATION : " + u.getPlayer().getPos());
 						// Proper way to do handle command
-						//handleCommand(u, command);
+						handleCommand(u, command);
 						
 						//The following is to preserve the debugging
 						// functionality which ends the game
 						// after a single player finds the door
 
-							if (handleCommand(u, command) == 2){
+						/*	if (handleCommand(u, command) == 2){
 								playerCount = 0;
 								break outerLoop;
-							}
+							}*/
 						}
 
 					}
@@ -525,6 +527,8 @@ public class LogicManager implements Runnable {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+		
+		System.out.println("=======logic manager done done done=======");
 	}
 	
 	void sendGameBoardToAll() {
