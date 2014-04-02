@@ -75,6 +75,7 @@ public class EnemyManager implements Runnable {
 					r = rand.nextInt(4) + 1;
 					switch (r) {
 					case 1:
+						//TODO this is why the enemies don't kill players
 						if(logicManager.validMove(e.getPosX(), e.getPosY() - 1))
 							e.moveUp();
 						else continue;
