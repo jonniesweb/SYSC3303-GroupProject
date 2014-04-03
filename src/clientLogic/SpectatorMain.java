@@ -69,16 +69,6 @@ public class SpectatorMain {
 
 	}
 	
-	
-
-	public SpectatorMain() {
-		this(Network.CLIENT_PORT_NO, "127.0.0.1", Network.SERVER_PORT_NO);
-	
-		
-	}
-
-
-
 	public SpectatorMain(int clientPort, String serverHostname, int serverPort) {
 		// setup network
 		network = new Network(clientPort, inboxLock);

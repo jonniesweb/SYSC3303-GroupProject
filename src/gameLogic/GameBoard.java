@@ -49,9 +49,9 @@ public class GameBoard {
 		this.width = width;
 		this.height = height;
 		board = new Entity[height][width];
-		//this.randomizeFloor(4);
-		this.generateFloor("FloorTest.txt");
-		//this.initializeDoor();
+		this.randomizeFloor(4);
+//		this.generateFloor("FloorTest.txt");
+		this.initializeDoor();
 		this.playerCount = 1;
 	}
 	
