@@ -19,7 +19,7 @@ public class TestPowerUp {
 	ServerMain server = null;
 	int playerOnePort = 8878;
 	Semaphore testSem = new Semaphore(0);
-	long timeout = 5000;
+	long timeout = 15000;
 	
 	@Test
 	public void testPowerUpFind(){
@@ -30,12 +30,12 @@ public class TestPowerUp {
 		String filename = "/TestingFiles/PowerUp/PowerUpFind";
 		
 		//Run the TestDriver
-		new TestDriver(filename, playerOnePort);
+		TestDriver driverOne = new TestDriver(filename, playerOnePort);
 		
 		
 		try{//TODO: Set timeout to a logic length
 			//Waits for the the players to end or the timeout occurs
-			testSem.wait(timeout);
+			Thread.sleep(timeout);
 			
 			List<User> list = new ArrayList<User>();
 			list.addAll(server.getCurrentPlayerList());
@@ -50,7 +50,8 @@ public class TestPowerUp {
 			e.printStackTrace();
 		}
 
-		
+		server.shutdown();
+		driverOne.shutdown();
 	}
 
 }

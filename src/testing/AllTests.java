@@ -7,8 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	TestGameBoard.class       ,
-	TestLog.class             , 
-	AllTests.class            ,
+	TestLog.class             ,
 	TestEnd.class             ,
 	TestEnemyExistance.class  ,
 	TestGameBoard.class       ,

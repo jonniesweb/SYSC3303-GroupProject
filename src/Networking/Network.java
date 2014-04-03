@@ -77,7 +77,7 @@ public class Network extends Thread {
 				try{
 					socket.send(m.datagram);
 				}catch(Exception e){
-					LOG.error(e);}
+					}
 			}
 		};
 		pool.submit(r1);

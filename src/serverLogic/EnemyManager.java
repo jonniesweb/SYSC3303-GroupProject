@@ -28,6 +28,7 @@ public class EnemyManager implements Runnable {
 		this.logicManager = logicManager;
 		// this.board = board;
 		enemyList = Collections.synchronizedList(new ArrayList<Enemy>());
+
 		enemyList.add(new Enemy(0, 5));
 		enemyList.add(new Enemy(1, 5));
 
@@ -67,6 +68,7 @@ public class EnemyManager implements Runnable {
 
 	@Override
 	public void run() {
+
 		int r;
 		while (logicManager.getGameInProgress()) {
 			for (Enemy e : enemyList) {
