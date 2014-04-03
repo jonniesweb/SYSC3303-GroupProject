@@ -40,7 +40,7 @@ public class TestTouching {
 			
 			//Assert that one player died
 			//within the specified time.
-			assertEquals(1,testSem.availablePermits());
+			
 			
 			
 		}catch(Exception e){
@@ -50,6 +50,7 @@ public class TestTouching {
 		driverOne.shutdown();
 		driverTwo.shutdown();
 		server.shutdown();
+		assertEquals(1,testSem.availablePermits());
 	}
 
 }
