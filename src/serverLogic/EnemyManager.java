@@ -27,18 +27,19 @@ public class EnemyManager implements Runnable {
 		//this.board = board;
 		enemyList = Collections.synchronizedList(new ArrayList<Enemy>());
 		enemyList.add(new Enemy(0,3));
-		//enemyList.add(new Enemy(2,4));
+		enemyList.add(new Enemy(2,4));
 		 
 		 logicManager.placeEnemy(enemyList);
 	}
 	public void removeEnemy(int x,int y){
-		
-		int i = enemyList.size()-1;
-		while(!enemyList.isEmpty()){
-			if(enemyList.get(i).getPosX() == x && enemyList.get(i).getPosY() == y){
-				enemyList.remove(i);
+		synchronized(enemyList){
+			int i = enemyList.size()-1;
+			while(!enemyList.isEmpty() && i >=0){
+				if(enemyList.get(i).getPosX() == x && enemyList.get(i).getPosY() == y){
+					enemyList.remove(i);
+				}
+				i--;
 			}
-			i--;
 		}
 	}
 
@@ -46,44 +47,45 @@ public class EnemyManager implements Runnable {
 	public void run() {
 		int  r; 
 		while(logicManager.getGameInProgress()){
-			for(Enemy e : enemyList){
-				//board.remove(e.getPosX(), e.getPosY());
-				logicManager.removeEnemyFromGameBoard(e);
-				r = rand.nextInt(4) + 1;
-				switch(r){
-					case 1 :
-						if(logicManager.validMove(e.getPosX(), e.getPosY() + 1))
-							e.moveUp();
-						else continue;
-						break;
-					case 2 :
-						if(logicManager.validMove(e.getPosX(), e.getPosY() - 1))
-							e.moveDown();
-						else continue;
-						break;
-					case 3 :
-						if(logicManager.validMove(e.getPosX() + 1, e.getPosY()))
-							e.moveRight();
-						else continue;
-						break;
-					case 4 :
-						if(logicManager.validMove(e.getPosX() - 1, e.getPosY()))
-							e.moveLeft();
-						else continue;
-						break;
-					default :
-					;
-				}
-				logicManager.setEnemy(e);
+			synchronized(enemyList){
+				for(Enemy e : enemyList){
+					//board.remove(e.getPosX(), e.getPosY());
+					logicManager.removeEnemyFromGameBoard(e);
+					r = rand.nextInt(4) + 1;
+					switch(r){
+						case 1 :
+							if(logicManager.validMove(e.getPosX(), e.getPosY() + 1))
+								e.moveUp();
+							else continue;
+							break;
+						case 2 :
+							if(logicManager.validMove(e.getPosX(), e.getPosY() - 1))
+								e.moveDown();
+							else continue;
+							break;
+						case 3 :
+							if(logicManager.validMove(e.getPosX() + 1, e.getPosY()))
+								e.moveRight();
+							else continue;
+							break;
+						case 4 :
+							if(logicManager.validMove(e.getPosX() - 1, e.getPosY()))
+								e.moveLeft();
+							else continue;
+							break;
+						default :
+							;
+					}
+					logicManager.setEnemy(e);
 
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 
-				
+				}
 			}
 		}
 	}

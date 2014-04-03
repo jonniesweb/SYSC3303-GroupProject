@@ -188,7 +188,7 @@ public class LogicManager implements Runnable {
 			enemies = new EnemyManager(this);
 			bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
 			board.set(new PowerUp(6, 5));
-			new Thread(enemies).start();
+			//new Thread(enemies).start();
 		}
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
