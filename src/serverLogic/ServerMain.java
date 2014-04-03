@@ -79,6 +79,16 @@ public class ServerMain {
 		logicManager.setGameBoard(board);
 	}
 
+	
+	public void shutdown(){
+		logicManager.shutdown();
+		networkManager.shutdown();
+		
+		
+		System.out.println("Server shutdown() executed");
+	}
+	
+	
 	/**
 	 * 
 	 * @param args

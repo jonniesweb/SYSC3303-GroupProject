@@ -15,11 +15,21 @@ public class TestDriver implements Runnable {
 	String serverIp = "127.0.0.1";
 	int serverPort = Network.SERVER_PORT_NO;
 	Network net;
+	Thread networkThread;
 
 	public TestDriver(String filename, int port) {
 		this.file = filename;
 		net = new Network(port, new Semaphore(0));
-		new Thread(net).start();
+		networkThread = new Thread(net);
+		networkThread.start();
+		new Thread(this).start();
+	}
+	
+	public TestDriver(String filename, int port, String n){
+		this.file = filename;
+		net = new Network(port, new Semaphore(0), n);
+		networkThread = new Thread(net);
+		networkThread.start();
 		new Thread(this).start();
 	}
 
@@ -64,6 +74,8 @@ public class TestDriver implements Runnable {
 			net.sendMessage(new UserMessage(command, serverIp, serverPort, System
 					.nanoTime()));
 		}
+		
+		System.out.println("TestDriver thread finishing");
 	}
 
 	public void run() {
@@ -72,6 +84,11 @@ public class TestDriver implements Runnable {
 
 	}
 
+	
+	public void shutdown(){
+		net.shutdown();
+	}
+	
 	public static void main(String[] args) {
 		new TestDriver("testNumber1.txt", 8878);
 		// new TestDriver("testNumber2.txt",8869);
