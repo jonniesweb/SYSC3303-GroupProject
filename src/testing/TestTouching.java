@@ -15,7 +15,7 @@ public class TestTouching {
 	int playerOnePort = 8878;
 	int playerTwoPort = 8869;
 	Semaphore testSem = new Semaphore(0);
-	long timeout = 15000;
+	long timeout = 20000;
 	
 	@Test
 	/**
