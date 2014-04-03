@@ -194,8 +194,12 @@ public class LogicManager implements Runnable {
 			enemies = new EnemyManager(this);
 			bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
 			board.set(new PowerUp(6, 5));
+			
 			//Only use enemies if not testing
 			if(testMode == 0) new Thread(enemies).start();
+			//Set a static enemy for when testing for lose scenarios
+			else if(testMode == 1) board.set(new Enemy(2,3));
+			
 			networkManager.sendBoardToAllClients(getBoard());
 		}
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
@@ -388,9 +392,12 @@ public class LogicManager implements Runnable {
 						playerCount--;
 						removePlayerFromGameBoard(u);
 						LOG.info(u.getPlayer().getName() + " removed from board");
-						userManager.moveCurrentToFuture(u);
-						if(testMode==1)
+						//userManager.moveCurrentToFuture(u);
+						
+						if(testMode == 1){
+						
 							testSem.release();
+						}
 					}
 					break;
 				case 1://Moved Safely
