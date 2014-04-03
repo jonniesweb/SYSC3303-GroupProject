@@ -33,6 +33,8 @@ public class GameBoard {
 	private Entity[][] board;
 	private int width;
 	private int height;
+	
+	private int playerCount;
 
 	private static final Logger LOG = Logger.getLogger(GameBoard.class
 			.getName());
@@ -50,6 +52,7 @@ public class GameBoard {
 		//this.randomizeFloor(4);
 		this.generateFloor("FloorTest.txt");
 		//this.initializeDoor();
+		this.playerCount = 1;
 	}
 	
 	/**
@@ -58,8 +61,18 @@ public class GameBoard {
 	 * @param filename
 	 */
 	public GameBoard(String filename) {
+		this.playerCount = 1;
 		generateFloor(filename);
 
+	}
+	
+	/**
+	 * 
+	 * @param filename
+	 * @param players
+	 */
+	public GameBoard(String filename, int players){
+		generateFloor(filename, players);
 	}
 
 	/**
@@ -69,6 +82,7 @@ public class GameBoard {
 	 */
 	public GameBoard(char[] serializedGameBoard) {
 
+		this.playerCount = 0;
 		this.width = 0;
 		this.height = 0;
 		int totalBytes = serializedGameBoard.length;
@@ -103,13 +117,14 @@ public class GameBoard {
 			entity = (char) serializedGameBoard[i];
 
 			if (entity == 'W') {
-				set(new Wall(x, y), x, y);
+				set(new Wall(x, y));
 			} else if (entity == 'P') {
-				set(new Player(x, y, ""), x, y);
+				playerCount++;
+				set(new Player(x, y, ""));
 			} else if (entity == 'D') {
-				set(new Door(x, y), x, y);
+				set(new Door(x, y));
 			}else if(entity == 'O'){
-				set(new Enemy(x,y),x,y);
+				set(new Enemy(x,y));
 			}else if(entity == 'E'){
 				set(new Explosion(x,y));
 			}else if(entity == 'B'){
@@ -120,7 +135,7 @@ public class GameBoard {
 				y++;
 				x = -1;
 			} else {
-				set(new Entity(x, y), x, y);
+				set(new Entity(x, y));
 			}
 
 			x++;
@@ -169,6 +184,29 @@ public class GameBoard {
 		return board[x][y] instanceof PowerUp;
 	}
 
+	
+	/**
+	 * Initialize the playerCount
+	 * @param p
+	 */
+	public void setPlayerCount(int players){
+		this.playerCount = players;
+	}
+	
+	public int getPlayerCount(){
+		return this.playerCount;
+	}
+	
+	/**
+	 * Generate floor from prescribed file
+	 * @param filename
+	 * @param players
+	 */
+	public void generateFloor(String filename, int players){
+		setPlayerCount(players);
+		generateFloor(filename);
+	}
+	
 	/**
 	 * Generate floor from prescribed file
 	 * 
@@ -210,16 +248,22 @@ public class GameBoard {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		placePowerUps();
+		
 	}
 
+	
+	
 	/**
 	 * Initialize with random position of wall. Takes number of player so that
 	 * the player will not be surrounded by wall
 	 * 
-	 * @param playerCount
+	 * @param players
 	 */
-	public void randomizeFloor(int playerCount){
+	public void randomizeFloor(int players){
 		
+		setPlayerCount(players);
 		
 		Random r = new Random();
 		
@@ -254,7 +298,13 @@ public class GameBoard {
 		
 		initializeDoor();
 		
+		placePowerUps();
+	}
+
+	
+	public void placePowerUps(){
 		int powerUpX, powerUpY;
+		Random r = new Random();
 		
 		for (int i = 0; i < playerCount; i++){
 			do{
@@ -268,7 +318,6 @@ public class GameBoard {
 			System.out.println("PowerUp Placed at: ("+powerUpX+","+powerUpY+")");
 		}
 	}
-
 	
 	/**
 	 * Get entity
@@ -377,11 +426,17 @@ public class GameBoard {
 				return true;
 		return false;
 	}
+	private boolean checkEnemy(int x, int y, Enemy[] b ){
+		for(int i=0; i<b.length; i++ )
+			if(b[i].getPosX() == x && b[i].getPosY() == y)
+				return true;
+		return false;
+	}
 	/**
 	 * For testing purposes eg. log into file the board view in string
 	 */
 
-	public String toString(Bomb[] bombs, Explosion[] explos) {
+	public String toString(Bomb[] bombs, Explosion[] explos, Enemy[] enemies) {
 		LOG.info("bombslength: "+bombs.length+" explosion length:"+explos.length);
 		String s = "";
 		for (int y = 0; y < height; y++) {
@@ -390,14 +445,14 @@ public class GameBoard {
 					s+="E";
 				else if(checkBomb(x,y,bombs) && !(board[x][y] instanceof Player))
 					s+="B";
+				else if(checkEnemy(x,y, enemies)&& !(board[x][y] instanceof Player))
+					s+="O";
 				else if (board[x][y] instanceof Wall)
 					s += "W";
 				else if (board[x][y] instanceof Player)
 					s += "P";
 				else if (board[x][y] instanceof Door)
 					s += "D";
-				else if(board[x][y] instanceof Enemy)
-					s+= "O";
 				else if (board[x][y] instanceof PowerUp)
 					s += "U";
 				else

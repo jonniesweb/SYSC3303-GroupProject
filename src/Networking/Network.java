@@ -25,6 +25,8 @@ public class Network extends Thread {
 	int port;
 	private Semaphore inboxLock;
 	private static final Logger LOG = Logger.getLogger(Network.class.getName());
+	
+	private String networkName = "default";
 
 	// constructor
 	public Network(int p, Semaphore lock) {
@@ -35,6 +37,17 @@ public class Network extends Thread {
 		// just incase lock was initialized with number other than 0
 		inboxLock.drainPermits();
 		//Logger log = Logger.getLogger("Global");
+	}
+	
+	public Network(int p, Semaphore lock, String n){
+		this(p, lock);
+		networkName = n;
+	}
+	
+	public void shutdown(){
+		System.out.println("===========Network shutdown : " + networkName);
+		socket.close();
+		pool.shutdown();
 	}
 
 	/**
@@ -76,7 +89,7 @@ public class Network extends Thread {
 			socket = new DatagramSocket(port);
 			acceptLoop();
 		} catch (Exception e) {
-			LOG.error("SOCKET ERROR" + e);
+			LOG.error("SOCKET ERROR ("+port+") ["+networkName+"] " + e);
 		}
 	}
 
@@ -86,7 +99,8 @@ public class Network extends Thread {
 	 */
 	private void acceptLoop() throws IOException {
 		//LOG.info("LISTENING ON PORT : " + port);
-		while (true) {
+		
+		while (!Thread.currentThread().isInterrupted()) {
 			byte[] inBuffer = new byte[1024];
 			
 			final DatagramPacket receivePacket = new DatagramPacket(inBuffer,
@@ -104,7 +118,10 @@ public class Network extends Thread {
 			socket.receive(receivePacket);
 			pool.submit(r1);
 		}
-
+		System.out.println("It got here yay");
+		pool.shutdown();
+		socket.close();
+		System.out.println(networkName + " network has shutdown");
 	}
 
 	/**
