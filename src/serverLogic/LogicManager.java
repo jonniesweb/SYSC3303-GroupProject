@@ -411,7 +411,7 @@ public class LogicManager implements Runnable {
 					//Same as Found Door
 					//Added so that more functionality can be added to either
 					// without affecting the other
-					userManager.moveCurrentToFuture(u);
+					
 					if(testMode==3)
 						testSem.release();
 					break;

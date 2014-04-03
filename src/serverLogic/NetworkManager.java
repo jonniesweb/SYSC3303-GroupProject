@@ -145,7 +145,8 @@ public class NetworkManager implements Runnable{
 			}
 			else if (readCommand(userMessage).equals("END_GAME") && logic.getGameInProgress()){
 				System.out.println("got end game.. game in progress is: "+ logic.getGameInProgress());
-				endGameCommand(userMessage.datagram.getAddress().toString(), userMessage.datagram.getPort());
+				logic.execute(userMessage);
+				//endGameCommand(userMessage.datagram.getAddress().toString(), userMessage.datagram.getPort());
 				continue;
 			}
 			else {
