@@ -53,9 +53,11 @@ public class TestEnemyExistance {
 			} while (enemyNotPlaceable(posX, posY));
 			
 			enemyList.add(new Enemy(posX,posY));
-
+			game.set(enemyList.get(i));
 			
 		}
+		
+		
 		
 		assertEquals(3, enemyCount());
 		

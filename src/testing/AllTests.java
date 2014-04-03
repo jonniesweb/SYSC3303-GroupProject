@@ -8,8 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	TestGameBoard.class       ,
 	TestLog.class             , 
-	AllTests.class            ,
-	TestEnd.class             ,
+	//TestEnd.class             ,
 	TestEnemyExistance.class  ,
 	TestGameBoard.class       ,
 	TestLog.class             ,

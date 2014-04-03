@@ -34,7 +34,7 @@ public class TestEnd {
 		server = new ServerMain(testSem, 3);
 		
 		//Initialize the file to use in the TestDriver
-		String filename = "/TestingFiles/End/SinglePlayerGameSessionEnd";
+		String filename = "./TestingFiles/End/SinglePlayerGameSessionEnd";
 		
 		//Run the TestDriver
 		new TestDriver(filename, playerOnePort);
