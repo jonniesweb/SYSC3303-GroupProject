@@ -1,6 +1,8 @@
 package testing;
 
+import org.junit.After;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 import java.util.concurrent.Semaphore;
@@ -19,7 +21,14 @@ public class TestLose {
 	int playerOnePort = 8878;
 	int playerTwoPort = 8869;
 	Semaphore testSem = new Semaphore(0);
-	long timeout = 5000;
+	long timeout = 15000;
+	
+	@After
+	public void after(){
+		System.out.println("\n\n\n\n\n\n\n\n");
+		System.out.println("==================");
+		
+	}
 	
 	@Test
 	/**
@@ -28,30 +37,96 @@ public class TestLose {
 	public void singlePlayerGameSession(){
 
 		//Start the server
+		testSem = new Semaphore(0);
 		server = new ServerMain(testSem, 1);
 		
 		//Initialize the file to use in the TestDriver
-		String filename = "/TestingFiles/Lose/SinglePlayerGameSessionLose";
+		String filename = "./TestingFiles/Lose/SinglePlayerGameSessionLose";
 		
 		//Run the TestDriver
-		new TestDriver(filename, playerOnePort);
+		TestDriver driverOne = new TestDriver(filename, playerOnePort, "SingleDriver");
 		
+		System.out.println("Sleeping for 15");
 		
-		try{//TODO: Set timeout to a logic length
-			//Waits for the the players to end or the timeout occurs
-			testSem.wait(timeout);
-			
-			//Assert that the player managed to get to the door 
-			//within the specified time.
-			assertEquals(1,testSem.availablePermits());
-			
-			
-		}catch(Exception e){
+		try{
+			Thread.sleep(timeout);
+		}catch (Exception e){
 			e.printStackTrace();
 		}
+		
+		server.shutdown();
+		driverOne.shutdown();
+		assertEquals(1,testSem.availablePermits());
+	}
+	@Test
+	/**
+	 * 
+	 * Test Multiple Players at once. 
+	 * 
+	 * @param mode
+	 */
+	public void TwoPlayersBothLose(){
+		//Start the server		
+		testSem = new Semaphore(0);
+		server = new ServerMain(testSem, 1);
+		playerOnePort = 8879;
+
+		//Initialize the files to use in the TestDrivers		
+		String playerOneFile = "./TestingFiles/Lose/SinglePlayerGameSessionLose";
+		String playerTwoFile = "./TestingFiles/Lose/MultiPlayerGameSessionLose.player2";
+		
+		//Run the TestDrivers
+		TestDriver driverOne = new TestDriver(playerOneFile, playerOnePort, "MultiDriverOne");
+		TestDriver driverTwo = new TestDriver(playerTwoFile, playerTwoPort, "MultiDriverTwo");
+		
+		
+		try{
+			Thread.sleep(20000);
+		}catch(Exception e){
+			e.printStackTrace();
+		}	
+		
+		server.shutdown();
+		driverOne.shutdown();
+		driverTwo.shutdown();
+		assertEquals(2,testSem.availablePermits());
 	}
 	
 	@Test
+	/**
+	 * 
+	 * Test Multiple Players at once. 
+	 * 
+	 * @param mode
+	 */
+	public void TwoPlayersOneLose(){
+		//Start the server		
+		testSem = new Semaphore(0);
+		server = new ServerMain(testSem, 1);
+		playerOnePort = 8879;
+
+		//Initialize the files to use in the TestDrivers		
+		String playerOneFile = "./TestingFiles/Lose/SinglePlayerGameSessionLose";
+		String playerTwoFile = "./TestingFiles/Win/MultiPlayerGameSessionWin.player2";
+		
+		//Run the TestDrivers
+		TestDriver driverOne = new TestDriver(playerTwoFile, playerOnePort, "MultiDriverOne");
+		TestDriver driverTwo = new TestDriver(playerOneFile, playerTwoPort, "MultiDriverTwo");
+		
+		
+		try{
+			Thread.sleep(20000);
+		}catch(Exception e){
+			e.printStackTrace();
+		}	
+		
+		server.shutdown();
+		driverOne.shutdown();
+		driverTwo.shutdown();
+		assertEquals(1,testSem.availablePermits());
+	}
+
+	/*@Test
 	/**
 	 * Testing a multiplayer game
 	 * 	Test both players losing (mode 1)
@@ -59,7 +134,7 @@ public class TestLose {
 	 *
 	 * @param mode
 	 */
-	public void multiPlayerGameSession(int mode){
+	/*public void multiPlayerGameSession(int mode){
 		
 		
 		//Start the server
@@ -72,7 +147,7 @@ public class TestLose {
 		if (mode == 0)
 			playerTwoFile = "TestingFiles/End/MultiPlayerGameSessionEnd.player2";
 		else if(mode == 1)
-			playerTwoFile = "/TestingFiles/Lose/MutliPlayerGameSessionLose.player2";
+			playerTwoFile = "./TestingFiles/Lose/MutliPlayerGameSessionLose.player2";
 		
 		//Run the TestDrivers
 		new TestDriver(playerOneFile, playerOnePort);
@@ -99,6 +174,6 @@ public class TestLose {
 		}
 		
 		
-	}
+	}*/
 
 }

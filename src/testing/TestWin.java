@@ -1,7 +1,6 @@
 package testing;
 
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 
@@ -94,5 +93,39 @@ public class TestWin {
 		driverOne.shutdown();
 		driverTwo.shutdown();
 		assertEquals(2,testSem.availablePermits());
+	}
+	
+	@Test
+	/**
+	 * 
+	 * Test Multiple Players at once. 
+	 * 
+	 * @param mode
+	 */
+	public void TwoPlayersOneWins(){
+		//Start the server		
+		testSem = new Semaphore(0);
+		server = new ServerMain(testSem, 2);
+		playerOnePort = 8879;
+
+		//Initialize the files to use in the TestDrivers		
+		//String playerOneFile = "./TestingFiles/Win/SinglePlayerGameSessionWin";
+		String playerTwoFile = "./TestingFiles/Win/MultiPlayerGameSessionWin.player2";
+		
+		//Run the TestDrivers
+		TestDriver driverOne = new TestDriver(playerTwoFile, playerOnePort, "MultiDriverOne");
+		TestDriver driverTwo = new TestDriver(playerTwoFile, playerTwoPort, "MultiDriverTwo");
+		
+		
+		try{
+			Thread.sleep(20000);
+		}catch(Exception e){
+			e.printStackTrace();
+		}	
+		
+		server.shutdown();
+		driverOne.shutdown();
+		driverTwo.shutdown();
+		assertEquals(1,testSem.availablePermits());
 	}
 }
