@@ -29,8 +29,8 @@ public class EnemyManager implements Runnable {
 		// this.board = board;
 		enemyList = Collections.synchronizedList(new ArrayList<Enemy>());
 
-		enemyList.add(new Enemy(0, 5));
-		enemyList.add(new Enemy(1, 5));
+		enemyList.add(new Enemy(2, 4));
+		enemyList.add(new Enemy(6, 4));
 
 		// log enemy starting positions
 		for (Enemy enemy : enemyList) {

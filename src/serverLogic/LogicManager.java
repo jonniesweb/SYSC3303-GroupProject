@@ -173,7 +173,12 @@ public class LogicManager implements Runnable {
 					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
 				if(i == 2){
-					players.get(i).setPlayer(new Player(6,6,"Player 2"));
+					players.get(i).setPlayer(new Player(0,6,"Player 3"));
+					board.set(players.get(i).getPlayer());
+					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
+				}
+				if(i == 3){
+					players.get(i).setPlayer(new Player(6,0,"Player 4"));
 					board.set(players.get(i).getPlayer());
 					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
