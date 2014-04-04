@@ -26,7 +26,7 @@ public class latencyTest {
 	private Network reciever;
 	private Network sender;
 	@Test
-	public void Latency_level_0() {
+	public void Latency_Local_0() {
 		inboxLock = new Semaphore(0);
 		startListnerAndReciever();
 		// create sender and reciever with 
@@ -37,14 +37,21 @@ public class latencyTest {
 			inboxLock.acquire();
 		}catch(Exception e){System.out.println(e);}
 		m = reciever.getMessage();
-		long dif = System.currentTimeMillis()-Long.valueOf(m.message);
-		System.out.println("Latency in milliseconds for sending and recieving 1 message"+dif);
+		String message2 = new String().valueOf(System.currentTimeMillis());
+		UserMessage m2 = new UserMessage(message2, "127.0.0.1",Network.CLIENT_PORT_NO, System.currentTimeMillis());
+		reciever.sendMessage(m2);
+		try{
+			inboxLock.acquire();
+		}catch(Exception e){}
+		m = sender.getMessage();
+		long time =Long.valueOf( m.message);
+		System.out.println("response time for 1 message : "+ (System.currentTimeMillis()-time));
 		reciever.shutdown();
 		sender.shutdown();
 	}
 	
 	@Test
-	public void Latency_level_1() {
+	public void Latency_Local_1() {
 		System.out.println("waiting for ports to clear...");
 		try{
 		Thread.sleep(2000);
@@ -52,30 +59,37 @@ public class latencyTest {
 		System.out.println("starting test 2");
 		inboxLock = new Semaphore(0);
 		startListnerAndReciever();
-		// create sender and reciever with 
-		long time = System.currentTimeMillis();
-		for(int i = 0; i <10; i++){
-			String message = new String().valueOf(time);
-			UserMessage m = new UserMessage(message, "127.0.0.1",Network.SERVER_PORT_NO, time);
+		long t = System.currentTimeMillis(); 
+		UserMessage m;
+		for(int i= 0; i< 5; i++){
+			String message = new String().valueOf(t);
+			 m = new UserMessage(message, "127.0.0.1",Network.SERVER_PORT_NO, System.currentTimeMillis());
 			sender.sendMessage(m);
 		}
-		UserMessage in = new UserMessage(" ", null, 0, time);
-		for(int i=0; i< 10;i++){
+		for(int i = 0; i< 5; i++){
 			try{
-				boolean rb =inboxLock.tryAcquire(1000, TimeUnit.MILLISECONDS);
-				if(rb == false)
-					break;
+				inboxLock.acquire();
 			}catch(Exception e){System.out.println(e);}
-			in= reciever.getMessage();
+			m = reciever.getMessage();
+			String message2 = new String().valueOf(System.currentTimeMillis());
+			UserMessage m2 = new UserMessage(message2, "127.0.0.1",Network.CLIENT_PORT_NO, System.currentTimeMillis());
+			reciever.sendMessage(m2);
 		}
-		if(in.message == null)
-			fail("there was packetLoss");
-		long dif = System.currentTimeMillis()-Long.valueOf(in.message);
-		System.out.println("Latency in milliseconds for sending and recieving 10 message"+dif);
-		System.out.println("Average latency perMessage: "+dif/10);
+		long time = 0;
+		for(int i =0; i<5; i++){
+			try{
+				inboxLock.acquire();
+			}catch(Exception e){}
+			m = sender.getMessage();
+			 time =Long.valueOf( m.message);
+		}
+		System.out.println("roundtrip for 5 messages : "+ (System.currentTimeMillis()-time));
 		reciever.shutdown();
 		sender.shutdown();
 	}
+	
+	
+	
 	public void startListnerAndReciever(){
 		 reciever = new Network(Network.SERVER_PORT_NO, inboxLock);
 		 sender = new Network(Network.CLIENT_PORT_NO,inboxLock);
