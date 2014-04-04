@@ -214,7 +214,6 @@ public class LogicManager implements Runnable {
 			//Set a static enemy for when testing for lose scenarios
 			//DO NOT CHANGE ENEMY(2,3) TestLose REVOLVES AROUND AN ENEMY AT POSITION (2,3)
 			else if(testMode == 1) board.set(new Enemy(2,3));
-			else ;
 			
 			networkManager.sendBoardToAllClients(getBoard());
 
@@ -482,8 +481,16 @@ public class LogicManager implements Runnable {
 				p.loseLife();
 				if(!p.isAlive()){
 					removePlayerFromGameBoard(users[i]);
-					LOG.info("Player DIED from enemy");
 					playerCount--;
+					currentPlayers--;
+					LOG.info("Player DIED from enemy");
+					if (playerCount == 0){
+						try{
+							commandQueue.put(new Message("EVERYONE_IS_DEAD"));
+						}catch(Exception e){
+							e.printStackTrace();
+						}
+					}
 				}
 			}
 			
@@ -546,6 +553,7 @@ public class LogicManager implements Runnable {
 			
 			while(playerCount > 0){
 				
+				
 				if(currentPlayers == 0){
 					newFloor();
 				}
@@ -581,7 +589,7 @@ public class LogicManager implements Runnable {
 						}
 
 					}
-				}else{
+				}else if (mes instanceof BombMessage){
 					bm = (BombMessage)mes;
 					LOG.info("got bomb command");
 					if(handleBombCommand(bm.message)){
@@ -589,6 +597,8 @@ public class LogicManager implements Runnable {
 						break outerLoop;
 					}
 					
+				} else {
+					break outerLoop;
 				}
 				
 				networkManager.sendBoardToAllClients(board.toString(bombFactory.returnBombs(),bombFactory.returnExplosions(),
