@@ -37,6 +37,7 @@ public class LogicManager implements Runnable {
 	private UserManager userManager;
 	
 	private Integer playerCount;
+	private Integer currentPlayers;
 	
 	private int testMode = 0;
 	
@@ -60,6 +61,7 @@ public class LogicManager implements Runnable {
 		this.board = new GameBoard(7,7);
 		this.userManager = uManager;
 		this.playerCount = uManager.getCurrentPlayerList().size();
+		this.currentPlayers = this.playerCount;
 
 	}
 	/**
@@ -194,8 +196,11 @@ public class LogicManager implements Runnable {
 	public void setGameInProgress(boolean b){
 		gameInProgress = b;
 		if(b){
+			
+			board.randomizeFloor(userManager.getCurrentPlayerList().size());
 			placePlayers(board, userManager);
 			this.playerCount = this.userManager.getCurrentPlayerList().size();
+			this.currentPlayers = this.playerCount;
 			enemies = new EnemyManager(this);
 			bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
 			board.set(new PowerUp(6, 5));
@@ -296,7 +301,7 @@ public class LogicManager implements Runnable {
 			LOG.info(player.getName() + " NEW LOCATION : " + player.getPos());
 			return 1;
 		} else if (board.hasDoor(newPosX, newPosY)){
-			playerCount--;
+			currentPlayers--;
 			LOG.info(player.getName() + "' found the Door");
 			return 2;
 		}
@@ -320,6 +325,7 @@ public class LogicManager implements Runnable {
 						removePlayerFromGameBoard(users[i]);
 						LOG.info("player died from bomb blast");
 						playerCount--;
+						currentPlayers--;
 					}
 				}
 			}	
@@ -379,6 +385,7 @@ public class LogicManager implements Runnable {
 				
 			case "END_GAME":
 				playerCount--;
+				currentPlayers--;
 				playerStatus = 3;
 				break;
 				
@@ -397,9 +404,10 @@ public class LogicManager implements Runnable {
 				case (-1)://Died
 					if(!u.getPlayer().isAlive()){
 						playerCount--;
+						currentPlayers--;
 						removePlayerFromGameBoard(u);
 						LOG.info(u.getPlayer().getName() + " removed from board");
-						//userManager.moveCurrentToFuture(u);
+						
 						
 						if(testMode == 1){
 						
@@ -463,6 +471,29 @@ public class LogicManager implements Runnable {
 		gameInProgress = false;
 		//networkManager.shutdown();
 	}
+	
+	private void newFloor(){
+		if(testMode != 0){
+			playerCount = 0;
+			return;
+		}
+		
+		board = new GameBoard(board.getWidth(),board.getHeight());
+		
+		for(User u: userManager.getFuturePlayerList()){
+			try{
+				userManager.moveFutureToCurrent(u);
+			} catch (Exception e){
+				//kill the game
+				playerCount = 0;
+				e.printStackTrace();
+			}
+		}
+		
+		setGameInProgress(true);
+		
+		LOG.info("NEW FLOOR STARTING");
+	}
 
 	public void run(){
 
@@ -489,6 +520,10 @@ public class LogicManager implements Runnable {
 			outerLoop:
 			
 			while(playerCount > 0){
+				
+				if(currentPlayers == 0){
+					newFloor();
+				}
 				LOG.info("PLAYER COUNT IS: "+playerCount);
 				LOG.info("Attempting to read command ...");
 				//reading command from queue
