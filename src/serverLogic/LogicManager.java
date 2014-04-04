@@ -461,6 +461,26 @@ public class LogicManager implements Runnable {
 			enemies.removeEnemy(x, y);
 		}
 	}
+	/**
+	 * attack Player for Enemy used 
+	 * @param x
+	 * @param y
+	 */
+	public void attackPlayer(int x,int y){
+		User[] users = userManager.getCurrentPlayerList().toArray(new User[0]);
+		for(int i= 0; i < users.length; i++){
+			Player p = users[i].getPlayer();
+			if(p.getPosX() == x && p.getPosY() == y){
+				p.loseLife();
+				if(!p.isAlive()){
+					removePlayerFromGameBoard(users[i]);
+					LOG.info("Player DIED from enemy");
+					playerCount--;
+				}
+			}
+			
+		}
+	}
 	
 	public void shutdown(){
 		System.out.println("==========LogicManager shutdown");
