@@ -10,7 +10,7 @@ import java.util.Map;
 public class UserManager {
 
 	private Map<String, User> currentPlayerList, futurePlayerList,
-			spectatorList, newUsers;
+			spectatorList;
 
 	public static int MAX_PLAYERCOUNT = 2;
 
@@ -25,24 +25,12 @@ public class UserManager {
 		currentPlayerList = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
 		futurePlayerList = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
 		spectatorList = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
-		newUsers = Collections.synchronizedMap(new HashMap<String, User>(numberOfPlayers));
 	}
 
 	public enum Type {
 		PLAYER, SPECTATOR
 	}
 	
-	/**
-	 * Should be called by NetworkManager to add a newly connected user to the
-	 * game. LogicManager then should get a notification to take the user and
-	 * either put it in current or future.
-	 * @param ip
-	 * @param port
-	 */
-	public void addNewPlayer(String ip, int port) {
-		newUsers.put(ip + port, new User(ip+port, ip, port));
-	}
-
 	/**
 	 * Adds a user to the currentPlayerList, automatically giving it a uuid of
 	 * <code>ip+port</code>
@@ -118,6 +106,26 @@ public class UserManager {
 			throws OverwroteUserInMapException {
 		if (spectatorList.put(uuid, new User(uuid, ip, port)) != null) {
 			throw new OverwroteUserInMapException();
+		}
+	}
+	
+	/**
+	 * Removes the user from the system.
+	 * @param user
+	 */
+	public void removeUser(User user) {
+		String uuid = user.getUUID();
+		if (currentPlayerList.containsKey(uuid)) {
+			currentPlayerList.remove(uuid);
+		}
+		if (futurePlayerList.containsKey(uuid)) {
+			futurePlayerList.remove(uuid);
+		}
+		if (spectatorList.containsKey(uuid)) {
+			spectatorList.remove(uuid);
+		}
+		if (currentPlayerList.containsKey(uuid)) {
+			currentPlayerList.remove(uuid);
 		}
 	}
 
