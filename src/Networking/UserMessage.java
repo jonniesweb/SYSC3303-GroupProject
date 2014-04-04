@@ -48,6 +48,8 @@ public class UserMessage extends Message {
 			ip = InetAddress.getByName(hostName);
 		} catch (Exception e) {
 			LOG.error(e);
+
+			
 		}
 		datagram = new DatagramPacket(message.getBytes(), message.getBytes().length, ip, port);
 	}

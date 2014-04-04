@@ -28,8 +28,14 @@ public class EnemyManager implements Runnable {
 		this.logicManager = logicManager;
 		// this.board = board;
 		enemyList = Collections.synchronizedList(new ArrayList<Enemy>());
-		enemyList.add(new Enemy(0,3));
-		enemyList.add(new Enemy(2,4));
+
+		enemyList.add(new Enemy(0, 5));
+		enemyList.add(new Enemy(1, 5));
+
+		// log enemy starting positions
+		for (Enemy enemy : enemyList) {
+			LOG.info("Enemy created at " + enemy.getPos());
+		}
 	}
 
 	public boolean removeEnemy(int x, int y) {
