@@ -19,9 +19,14 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,17 +40,18 @@ public class ClientGUIFrame extends JFrame {
 
 	private int width = 0;
 	private int height = 0;
+	private int tileSize = 50; // change this to change the tile size
 	private JButton[][] buttonGameBoard;
 
 	// define images
-	private Image bombImg;
-	private Image doorImg;
-	private Image enemyImg;
-	private Image floorImg;
-	private Image explosionImg;
-	private Image playerImg;
-	private Image powerupImg;
-	private Image wallImg;
+	private ImageIcon bombImg;
+	private ImageIcon doorImg;
+	private ImageIcon enemyImg;
+	private ImageIcon floorImg;
+	private ImageIcon explosionImg;
+	private ImageIcon playerImg;
+	private ImageIcon powerupImg;
+	private ImageIcon wallImg;
 
 	private JPanel contentPane;
 	private GridLayout layoutManager = new GridLayout();
@@ -54,8 +60,8 @@ public class ClientGUIFrame extends JFrame {
 			ClientGUIFrame.class.getName());
 	
 	public ClientGUIFrame() {
+		initImages();
 		setupContentPane();
-		
 		
 	}
 
@@ -70,7 +76,7 @@ public class ClientGUIFrame extends JFrame {
 
 		buttonGameBoard = new JButton[width][height];
 		
-
+		initImages();
 		setupContentPane();
 
 		/*
@@ -137,23 +143,19 @@ public class ClientGUIFrame extends JFrame {
 	 */
 	private boolean initImages() {
 		try {
+			
+			BufferedImage tiles = ImageIO.read(new File("res/TilesMisc.png"));
+			
+			
 			// initialize icons for buttons
-			bombImg = ImageIO
-					.read(getClass().getResource("resources/bomb.bmp"));
-			doorImg = ImageIO
-					.read(getClass().getResource("resources/door.bmp"));
-			enemyImg = ImageIO.read(getClass().getResource(
-					"resources/enemy.bmp"));
-			floorImg = ImageIO.read(getClass().getResource(
-					"resources/floor.bmp"));
-			explosionImg = ImageIO.read(getClass().getResource(
-					"resources/explosion.bmp"));
-			playerImg = ImageIO.read(getClass().getResource(
-					"resources/player.bmp"));
-			powerupImg = ImageIO.read(getClass().getResource(
-					"resources/powerup.bmp"));
-			wallImg = ImageIO
-					.read(getClass().getResource("resources/wall.bmp"));
+			floorImg = new ImageIcon(tiles.getSubimage(0, 0, 20, 20).getScaledInstance(tileSize, tileSize, Image.SCALE_FAST));
+			wallImg = new ImageIcon(tiles.getSubimage(20, 0, 20, 20).getScaledInstance(tileSize, tileSize, Image.SCALE_FAST));
+			explosionImg = new ImageIcon(tiles.getSubimage(40, 0, 20, 20).getScaledInstance(tileSize, tileSize, Image.SCALE_FAST));
+			powerupImg = new ImageIcon(tiles.getSubimage(60, 0, 20, 20).getScaledInstance(tileSize, tileSize, Image.SCALE_FAST));
+			bombImg = new ImageIcon(tiles.getSubimage(80, 0, 20, 20).getScaledInstance(tileSize, tileSize, Image.SCALE_FAST));
+			doorImg = new ImageIcon(tiles.getSubimage(100, 0, 20, 20).getScaledInstance(tileSize, tileSize, Image.SCALE_FAST));
+			enemyImg = new ImageIcon(tiles.getSubimage(120, 0, 20, 20).getScaledInstance(tileSize, tileSize, Image.SCALE_FAST));
+			playerImg = new ImageIcon(tiles.getSubimage(140, 0, 20, 20).getScaledInstance(tileSize, tileSize, Image.SCALE_FAST));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -162,7 +164,7 @@ public class ClientGUIFrame extends JFrame {
 		return true;
 
 	}
-
+	
 	/**
 	 * updates and draws the GUI gameboard with the current gameboard state
 	 * 
@@ -187,7 +189,7 @@ public class ClientGUIFrame extends JFrame {
 			buttonGameBoard = new JButton[width][height];
 			for (int i = 0; i < buttonGameBoard.length; i++) {
 				for (int j = 0; j < buttonGameBoard[i].length; j++) {
-					buttonGameBoard[j][i] = new JButton("X");
+					buttonGameBoard[j][i] = new ButtonOnDrugs();
 					setButton(buttonGameBoard[j][i]);
 				}
 			}
@@ -203,41 +205,48 @@ public class ClientGUIFrame extends JFrame {
 				JButton button = buttonGameBoard[i][j];
 
 				if (entity instanceof Player) {
-					// button = new JButton(new ImageIcon(playerImg));
-					button.setText("@");
+					button.setIcon(playerImg);
 				} else if (entity instanceof Bomb) {
-					// button = new JButton(new ImageIcon(bombImg));
-					button.setText("B");
+					button.setIcon(bombImg);
 				} else if (entity instanceof Door) {
-					// button = new JButton(new ImageIcon(doorImg));
-					button.setText("D");
+					button.setIcon(doorImg);
 				} else if (entity instanceof Enemy) {
-					// button = new JButton(new ImageIcon(enemyImg));
-					button.setText("E");
+					button.setIcon(enemyImg);
 				} else if (entity instanceof Explosion) {
-					// button = new JButton(new ImageIcon(explosionImg));
-					button.setText("X");
+					button.setIcon(explosionImg);
 				} else if (entity instanceof PowerUp) {
-					// button = new JButton(new ImageIcon(powerupImg));
-					button.setText("P");
+					button.setIcon(powerupImg);
 				} else if (entity instanceof Wall) {
-					// button = new JButton(new ImageIcon(wallImg));
-					button.setText("W");
-//					button.setBackground(new Color(255, 0, 0));
+					button.setIcon(wallImg);
 				} else {
-					// button = new JButton(new ImageIcon(floorImg));
-					button.setText(" ");
-//					button.setBackground(new Color(0, 0, 255));
+					button.setIcon(floorImg);
 				}
 
-//				setButton(button, i, j); // XXX
 			}
 		}
 
 		// set minimum size for frame
-		int minTileSize = 50; // set to this because it doesn't show the text properly if too small
-		setMinimumSize(new Dimension(minTileSize * width, minTileSize * height));
+		setMinimumSize(new Dimension(tileSize * width, tileSize * height));
 		pack();
+	}
+	
+	class ButtonOnDrugs extends JButton {
+		
+		public ButtonOnDrugs() {
+			setStuff();
+		}
+		
+		public ButtonOnDrugs(Icon icon) {
+			super(icon);
+			setStuff();
+		}
+		
+		private void setStuff() {
+			setBorder(BorderFactory.createEmptyBorder());
+			setContentAreaFilled(false);
+			
+		}
+		
 	}
 
 }
