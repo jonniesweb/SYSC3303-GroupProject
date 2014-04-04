@@ -15,7 +15,9 @@ import org.junit.runners.Suite.SuiteClasses;
 	TestLose.class            ,
 	TestPowerUp.class         ,
 	TestTouching.class        ,
-	TestWin.class
+	TestWin.class             ,
+	TestLatency.class         ,
+	TestPacketLoss.class
 })
 public class AllTests {
 
