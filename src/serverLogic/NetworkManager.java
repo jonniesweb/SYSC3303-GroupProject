@@ -16,12 +16,13 @@ import org.apache.log4j.Logger;
 public class NetworkManager implements Runnable{
 	//private boolean gameInProgress;
 	private Semaphore inboxLock;
-	private static Network net;
+	private Network net;
 	private LogicManager logic;
 	private UserManager userManager;
 	public Thread networkThread;
 	public Thread networkManagerThread;
 	public Thread setupThread;
+	private int port;
 	
 	/*
 	 * Create a double buffer out of an ArrayBlockingQueue. This is possible
@@ -44,7 +45,7 @@ public class NetworkManager implements Runnable{
 	 */
 	public NetworkManager(LogicManager logic, UserManager m, int port) {
 		this.logic = logic;
-		
+		this.port = port;
 		
 		inboxLock = new Semaphore(0);
 		net = new Network(port, inboxLock);
@@ -116,7 +117,7 @@ public class NetworkManager implements Runnable{
 		UserMessage userMessage;
 		
 		while(!Thread.currentThread().isInterrupted()){
-			
+			LOG.info("attempting to read server is: "+port);
 			userMessage = readInbox();
 			//log.acceptMessage(new String(message.datagram.getData()));
 			// Logger.acceptMessage("Read data from inbox - " + new String(userMessage.datagram.getData()) + "- from " + userMessage.ip);			

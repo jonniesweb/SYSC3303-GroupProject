@@ -96,9 +96,11 @@ public class ServerMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new ServerMain(8888).logicManager.setGameBoard(new GameBoard(7, 7));
-		new ServerMain(8889).logicManager.setGameBoard(new GameBoard(7, 7));
-		new ServerMain(8887).logicManager.setGameBoard(new GameBoard(7, 7));
+		if(args.length == 0)
+			new ServerMain(8888).logicManager.setGameBoard(new GameBoard(7, 7));
+		for(int i =0; i< args.length;i++)
+		new ServerMain(Integer.parseInt(args[i])).logicManager.setGameBoard(new GameBoard(7, 7));
+		//new ServerMain(8887).logicManager.setGameBoard(new GameBoard(7, 7));
 		
 		
 

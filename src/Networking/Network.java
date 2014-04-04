@@ -59,10 +59,12 @@ public class Network extends Thread {
 	}
 	
 	public UserMessage getMessage(){
-		if(hasMessage())
+		if(hasMessage()){
+			LOG.info("returning message "+ port);
 			return inbox.remove(0);
+		}
 		else{
-			LOG.error("ERROR EMPTY INBOX RETURNING NULL");
+			LOG.error("ERROR EMPTY INBOX RETURNING NULL sever is: "+ port);
 			return null;
 		}
 	}
@@ -105,6 +107,7 @@ public class Network extends Thread {
 			
 			// create socket
 			socket = new DatagramSocket(port);
+			LOG.info("listning on port"+ port);
 			
 			// notify all waiting on the socket to let them know its able to send
 			isReady = true;
@@ -136,7 +139,7 @@ public class Network extends Thread {
 					UserMessage m1 = new UserMessage(receivePacket);
 					String command = new String(receivePacket.getData());
 					//command.trim() will remove all null after the command for better log
-					LOG.info("GOT MESSAGE from Inbox: "+ command.trim());
+					LOG.info("GOT MESSAGE from Inbox: "+ command.trim() +" port is:"+port);
 					inbox.add(m1);
 					inboxLock.release(1);
 				}
