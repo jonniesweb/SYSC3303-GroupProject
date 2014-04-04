@@ -27,11 +27,11 @@ public class TestPacketLoss {
 	private Semaphore inboxLock;
 	private Network reciever;
 	private Network sender;
-	int lossCount = 0;
-	int messagesSent = 100;
-	int messagesReceived = 0;
-	double packetLoss = 0;
-	ArrayList<String> strings = new ArrayList<String>();
+	private int lossCount = 0;
+	private int messagesSent = 100;
+	private int messagesReceived = 0;
+	private double packetLoss = 0;
+	private ArrayList<String> strings = new ArrayList<String>();
 	
 	
 	@Test
