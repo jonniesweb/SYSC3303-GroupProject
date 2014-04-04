@@ -43,6 +43,7 @@ public class EnemyManager implements Runnable {
 			if(enemyList.get(i).getPosX() == x && enemyList.get(i).getPosY() == y){
 				enemyList.get(i).loseLife();
 				LOG.info("Enemy died at " + enemyList.get(i).getPos());
+				enemyList.get(i).setPos(-1, -1);
 				return true;
 			}
 		}

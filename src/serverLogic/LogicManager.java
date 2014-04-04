@@ -214,7 +214,6 @@ public class LogicManager implements Runnable {
 			//Set a static enemy for when testing for lose scenarios
 			//DO NOT CHANGE ENEMY(2,3) TestLose REVOLVES AROUND AN ENEMY AT POSITION (2,3)
 			else if(testMode == 1) board.set(new Enemy(2,3));
-			else ;
 			
 			networkManager.sendBoardToAllClients(getBoard());
 
