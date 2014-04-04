@@ -33,47 +33,63 @@ public class TestPacketLoss {
 	double packetLoss = 0;
 	ArrayList<String> strings = new ArrayList<String>();
 	
+
+	@Test
+	public void test100() {
+		org.apache.log4j.Logger.shutdown();
+		packetLoss = 0;
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		System.out.println("Average packet loss for 100 Messages Transmitted : " + (packetLoss/10.0) + "%");
+	}
+	@Test
+	public void test500() {
+		org.apache.log4j.Logger.shutdown();
+		packetLoss = 0;
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		System.out.println("Average packet loss for 500 Messages Transmitted : " + (packetLoss/10.0) + "%");
+		
+	}
+	@Test
+	public void test1000() {
+		org.apache.log4j.Logger.shutdown();
+		packetLoss = 0;
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		System.out.println("Average packet loss for 1000 Messages Transmitted : " + (packetLoss/10.0) + "%");
+		/*
+		for(String l : strings){
+			System.out.println(l);}*/
+	}
 	
 	@Test
-	public void test() {
-		testMessage(100);
-		testMessage(100);
-		testMessage(100);
-		testMessage(100);
-		testMessage(100);
-		testMessage(100);
-		testMessage(100);
-		testMessage(100);
-		testMessage(100);
-		testMessage(100);
-		strings.add("Average packet loss for 100 Messages Transmitted : " + (packetLoss/10.0) + "%");
-		
-		packetLoss = 0;
-		testMessage(500);
-		testMessage(500);
-		testMessage(500);
-		testMessage(500);
-		testMessage(500);
-		testMessage(500);
-		testMessage(500);
-		testMessage(500);
-		testMessage(500);
-		testMessage(500);
-		strings.add("Average packet loss for 500 Messages Transmitted : " + (packetLoss/10.0) + "%");
-		
-		packetLoss = 0;
-		testMessage(1000);
-		testMessage(1000);
-		testMessage(1000);
-		testMessage(1000);
-		testMessage(1000);
-		testMessage(1000);
-		testMessage(1000);
-		testMessage(1000);
-		testMessage(1000);
-		testMessage(1000);
-		strings.add("Average packet loss for 1000 Messages Transmitted : " + (packetLoss/10.0) + "%");
-		
+	public void testLargeMessages() {
+		org.apache.log4j.Logger.shutdown();
 		packetLoss = 0;
 		testMessage(2000);
 		testMessage(5000);
@@ -85,6 +101,12 @@ public class TestPacketLoss {
 	}
 	
 	public void testMessage(int count){
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		lossCount = 0;
 		messagesSent = count;
 		messagesReceived = 0;
@@ -114,7 +136,7 @@ public class TestPacketLoss {
 			messagesReceived++;
 		}
 		packetLoss += (100 -(messagesReceived/1.0)/messagesSent * 100);
-		strings.add("Messages transmitted : " + count + ", Messages received : " + messagesReceived +" , PACKET LOSS(%) : " + (100 -(messagesReceived/1.0)/messagesSent * 100)  + "%");
+		System.out.println("Messages transmitted : " + count + ", Messages received : " + messagesReceived +" , PACKET LOSS(%) : " + (100 -(messagesReceived/1.0)/messagesSent * 100)  + "%");
 		reciever.shutdown();
 		sender.shutdown();
 	}

@@ -45,7 +45,7 @@ public class Network extends Thread {
 	}
 	
 	public void shutdown(){
-		System.out.println("===========Network shutdown : " + networkName);
+		LOG.info("NETWORK SHUTDOWN : " + networkName);
 		socket.close();
 		pool.shutdown();
 	}
