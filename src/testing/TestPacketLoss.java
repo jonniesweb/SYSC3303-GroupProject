@@ -30,6 +30,7 @@ public class TestPacketLoss {
 	int lossCount = 0;
 	int messagesSent = 100;
 	int messagesReceived = 0;
+	double packetLoss;
 	ArrayList<String> strings = new ArrayList<String>();
 	
 	
@@ -76,8 +77,8 @@ public class TestPacketLoss {
 		if(in.message != null)
 			messagesReceived++;
 		}
-		System.out.println("TOTAL PACKET LOST (%) :"+ (100 -(messagesReceived/1.0)/messagesSent * 100) + "%");
-		strings.add("Messages transmitted : " + count + " ,Messages received : " + messagesReceived +" , PACKET LOSS(%) : " +  (100 -(messagesReceived/1.0)/messagesSent * 100) + "%");
+		packetLoss = (100 -(messagesReceived/1.0)/messagesSent * 100);
+		strings.add("Messages transmitted : " + count + ", Messages received : " + messagesReceived +" , PACKET LOSS(%) : " + packetLoss  + "%");
 		reciever.shutdown();
 		sender.shutdown();
 	}
