@@ -22,6 +22,7 @@ public class Network extends Thread {
 	int port;
 	private Semaphore inboxLock;
 	private static final Logger LOG = Logger.getLogger(Network.class.getName());
+	private int count = 0;
 	
 	private boolean isReady = false;
 	
@@ -86,9 +87,10 @@ public class Network extends Thread {
 				
 				try{
 					socket.send(m.datagram);
+					
 				}catch(Exception e){
-					e.printStackTrace();
-					LOG.error(e);}
+					LOG.error(e);
+				}
 			}
 		};
 		pool.submit(r1);
@@ -147,6 +149,9 @@ public class Network extends Thread {
 		socket.close();
 		System.out.println(networkName + " network has shutdown");
 	}
+	public int getSemCount(){
+		return inboxLock.availablePermits();
+	}
 
 	/**
 	 * start the listen loop in a new thread
@@ -154,8 +159,6 @@ public class Network extends Thread {
 	public void run() {
 		startListening();
 	}
-
-
 
 	/**
 	 * Testing function

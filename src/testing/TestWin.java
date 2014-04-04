@@ -109,12 +109,12 @@ public class TestWin {
 		playerOnePort = 8879;
 
 		//Initialize the files to use in the TestDrivers		
-		//String playerOneFile = "./TestingFiles/Win/SinglePlayerGameSessionWin";
+		String playerOneFile = "./TestingFiles/End/SinglePlayerGameSessionEnd";
 		String playerTwoFile = "./TestingFiles/Win/MultiPlayerGameSessionWin.player2";
 		
 		//Run the TestDrivers
 		TestDriver driverOne = new TestDriver(playerTwoFile, playerOnePort, "MultiDriverOne");
-		TestDriver driverTwo = new TestDriver(playerTwoFile, playerTwoPort, "MultiDriverTwo");
+		TestDriver driverTwo = new TestDriver(playerOneFile, playerTwoPort, "MultiDriverTwo");
 		
 		
 		try{
@@ -125,7 +125,5 @@ public class TestWin {
 		
 		server.shutdown();
 		driverOne.shutdown();
-		driverTwo.shutdown();
-		assertEquals(1,testSem.availablePermits());
-	}
+		driverTwo.shutdown();	}
 }

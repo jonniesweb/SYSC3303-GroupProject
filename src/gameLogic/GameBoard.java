@@ -462,4 +462,29 @@ public class GameBoard {
 		}
 		return s;
 	}
+	
+	/**
+	 * For testing purposes eg. log into file the board view in string
+	 */
+
+	public String toString() {
+		
+		String s = "";
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (board[x][y] instanceof Wall)
+					s += "W";
+				else if (board[x][y] instanceof Player)
+					s += "P";
+				else if (board[x][y] instanceof Door)
+					s += "D";
+				else if (board[x][y] instanceof PowerUp)
+					s += "U";
+				else
+					s += ".";
+			}
+			s += "\n";
+		}
+		return s;
+	}
 }

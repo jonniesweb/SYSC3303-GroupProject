@@ -172,6 +172,11 @@ public class LogicManager implements Runnable {
 					board.set(players.get(i).getPlayer());
 					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
+				if(i == 2){
+					players.get(i).setPlayer(new Player(6,6,"Player 2"));
+					board.set(players.get(i).getPlayer());
+					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
+				}
 		}
 		LOG.info("LogicManager: Current GameBoard\n" + board.toString() );
 	}
@@ -194,13 +199,14 @@ public class LogicManager implements Runnable {
 			enemies = new EnemyManager(this);
 			bombFactory = new BombFactory(userManager.getCurrentPlayerList().toArray(),board.getWidth(),board.getHeight(),this);
 			board.set(new PowerUp(6, 5));
-			
-			//Only use enemies if not testing
+
 			if(testMode == 0) new Thread(enemies).start();
 			//Set a static enemy for when testing for lose scenarios
-			else if(testMode == 1) board.set(new Enemy(2,3));
+			else if(testMode == 1) board.set(new Enemy(0,5));
+			else ;
 			
 			networkManager.sendBoardToAllClients(getBoard());
+
 		}
 		LOG.info("Game in progress has been set to '"+gameInProgress + "'");
 	}
@@ -411,7 +417,7 @@ public class LogicManager implements Runnable {
 					//Same as Found Door
 					//Added so that more functionality can be added to either
 					// without affecting the other
-					userManager.moveCurrentToFuture(u);
+					
 					if(testMode==3)
 						testSem.release();
 					break;
