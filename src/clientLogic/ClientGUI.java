@@ -20,7 +20,6 @@ public class ClientGUI {
 	public ClientGUI() {
 
 		guiFrame = new ClientGUIFrame();
-		guiFrame.setVisible(true);
 
 	}
 

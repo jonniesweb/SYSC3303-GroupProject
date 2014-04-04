@@ -29,8 +29,8 @@ public class EnemyManager implements Runnable {
 		// this.board = board;
 		enemyList = Collections.synchronizedList(new ArrayList<Enemy>());
 
-		enemyList.add(new Enemy(0, 5));
-		enemyList.add(new Enemy(1, 5));
+		enemyList.add(new Enemy(2, 4));
+		enemyList.add(new Enemy(6, 4));
 
 		// log enemy starting positions
 		for (Enemy enemy : enemyList) {
@@ -46,7 +46,7 @@ public class EnemyManager implements Runnable {
 				return true;
 			}
 		}
-		LOG.error("No enemy found at (" + x + "," + y + ")");
+//		LOG.info("No enemy found at (" + x + "," + y + ")"); commented out since it fills up the log fast
 		return false;
 	}
 
@@ -65,6 +65,7 @@ public class EnemyManager implements Runnable {
 		}
 		return false;
 	}
+	
 
 	@Override
 	public void run() {
@@ -77,24 +78,28 @@ public class EnemyManager implements Runnable {
 					r = rand.nextInt(4) + 1;
 					switch (r) {
 					case 1:
-						//TODO this is why the enemies don't kill players
-						if(logicManager.validMove(e.getPosX(), e.getPosY() - 1))
+						
+						if(logicManager.validMove(e.getPosX(), e.getPosY() - 1)){
 							e.moveUp();
+							logicManager.attackPlayer(e.getPosX(), e.getPosY());}
 						else continue;
 						break;
 					case 2 :
-						if(logicManager.validMove(e.getPosX(), e.getPosY() + 1))
+						if(logicManager.validMove(e.getPosX(), e.getPosY() + 1)){
 							e.moveDown();
+						logicManager.attackPlayer(e.getPosX(), e.getPosY());}
 						else continue;
 						break;
 					case 3 :
-						if(logicManager.validMove(e.getPosX() + 1, e.getPosY()))
+						if(logicManager.validMove(e.getPosX() + 1, e.getPosY())){
 							e.moveRight();
+						logicManager.attackPlayer(e.getPosX(), e.getPosY());}
 						else continue;
 						break;
 					case 4 :
-						if(logicManager.validMove(e.getPosX() - 1, e.getPosY()))
+						if(logicManager.validMove(e.getPosX() - 1, e.getPosY())){
 							e.moveLeft();
+						logicManager.attackPlayer(e.getPosX(), e.getPosY());}
 						else continue;
 						break;
 					default :

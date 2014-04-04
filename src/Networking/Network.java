@@ -3,17 +3,14 @@ package Networking;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 import org.apache.log4j.Logger;
-
-import serverLogic.LogicManager;
 
 // TODO: add timestamp to all sent commands, then add to inbox SortedList
 public class Network extends Thread {
@@ -26,6 +23,8 @@ public class Network extends Thread {
 	private Semaphore inboxLock;
 	private static final Logger LOG = Logger.getLogger(Network.class.getName());
 	private int count = 0;
+	
+	private boolean isReady = false;
 	
 	private String networkName = "default";
 
@@ -68,26 +67,52 @@ public class Network extends Thread {
 		}
 	}
 	/**
-	 * sendMessage 
+	 * Queue the specified usermessage to send. checks if the Network is ready
+	 * to send messages, if it is not, it waits until woken up by
+	 * startListening();
 	 * @param m
 	 */
 	public void sendMessage(final UserMessage m) {
 		Runnable r1 = new Runnable(){
 			public void run(){
+				
+				// wait for network to be ready, if its not already
+				while (!isReady) {
+					try {
+						socket.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				
 				try{
 					socket.send(m.datagram);
+					
 				}catch(Exception e){
-					}
+					LOG.error(e);
+				}
 			}
 		};
 		pool.submit(r1);
 	}
 	/**
-	 * listen then start acceptloop
+	 * Starts listening by creating a DatagramSocket, notifies all threads
+	 * that are waiting on the socket to send messages and starts accepting
+	 * messages.
 	 */
 	private void startListening() {
 		try {
+			
+			// create socket
 			socket = new DatagramSocket(port);
+			
+			// notify all waiting on the socket to let them know its able to send
+			isReady = true;
+			synchronized (socket) {
+				socket.notifyAll();
+			}
+			
+			// start accepting messages
 			acceptLoop();
 		} catch (Exception e) {
 			LOG.error("SOCKET ERROR ("+port+") ["+networkName+"] " + e);

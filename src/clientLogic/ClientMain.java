@@ -2,24 +2,16 @@ package clientLogic;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-import Networking.Message;
 import Networking.Network;
-import Networking.UserMessage;
 
 
 public class ClientMain extends SpectatorMain {
 	
-	private static final Logger LOG = Logger.getLogger(
-			ClientMain.class.getName());
-
 	public static void main(String[] args) {
-		Random r = new Random();
-		int port = 8000 + r.nextInt(100);
-		new ClientMain(port);
+		new ClientMain();
 
 	}
 	
@@ -27,8 +19,11 @@ public class ClientMain extends SpectatorMain {
 	 * Starts up a Client with the specified port #
 	 * @param port
 	 */
-	public ClientMain(int port) {
-		super(port, "127.0.0.1", Network.SERVER_PORT_NO);
+	public ClientMain() {
+		super();
+		
+		LOG = Logger.getLogger(ClientMain.class.getName());
+		
 		this.view.guiFrame.addKeyListener(new KeyListener() {
 			
 			@Override
@@ -84,14 +79,19 @@ public class ClientMain extends SpectatorMain {
 		});
 	}
 	
-	/**
-	 * Send a string to the server
-	 * @param data
-	 */
-	void sendMessage(String data) {
-		network.sendMessage(new UserMessage(data, "127.0.0.1", Network.SERVER_PORT_NO, System.nanoTime()));
-		//System.out.println("send command: " + data);
-		LOG.info("SEND COMMAND : " + data);
+	@Override
+	protected void startServer() {
+		// setup network
+		network = new Network(clientPort, inboxLock);
+		new Thread(network).start();
+		view.guiFrame.setVisible(true);
+
+		// connect to server
+		startListening();
+
+		sendMessage("JOIN_GAME");
 	}
 
+	
+	
 }

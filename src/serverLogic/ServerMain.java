@@ -54,7 +54,7 @@ public class ServerMain {
 	public ServerMain(boolean door) {
 		this();
 		
-		GameBoard board = new GameBoard(7, 7);
+		GameBoard board = new GameBoard(20, 20);
 		if (door) {
 			
 			logicManager.setGameBoard(board);

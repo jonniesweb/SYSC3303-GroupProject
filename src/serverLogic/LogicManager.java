@@ -175,7 +175,12 @@ public class LogicManager implements Runnable {
 					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
 				if(i == 2){
-					players.get(i).setPlayer(new Player(6,6,"Player 2"));
+					players.get(i).setPlayer(new Player(0,6,"Player 3"));
+					board.set(players.get(i).getPlayer());
+					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
+				}
+				if(i == 3){
+					players.get(i).setPlayer(new Player(6,0,"Player 4"));
 					board.set(players.get(i).getPlayer());
 					LOG.info(players.get(i).getPlayer().getName() + " SET ON BOARD");
 				}
@@ -462,6 +467,26 @@ public class LogicManager implements Runnable {
 			LOG.info("REMOVED ENEMY ON (" + x + "," + y + ")");
 			board.remove(x, y);
 			enemies.removeEnemy(x, y);
+		}
+	}
+	/**
+	 * attack Player for Enemy used 
+	 * @param x
+	 * @param y
+	 */
+	public void attackPlayer(int x,int y){
+		User[] users = userManager.getCurrentPlayerList().toArray(new User[0]);
+		for(int i= 0; i < users.length; i++){
+			Player p = users[i].getPlayer();
+			if(p.getPosX() == x && p.getPosY() == y){
+				p.loseLife();
+				if(!p.isAlive()){
+					removePlayerFromGameBoard(users[i]);
+					LOG.info("Player DIED from enemy");
+					playerCount--;
+				}
+			}
+			
 		}
 	}
 	
