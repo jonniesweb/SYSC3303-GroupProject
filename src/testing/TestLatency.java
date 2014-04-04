@@ -21,12 +21,12 @@ import java.util.concurrent.TimeUnit;
 import Networking.*;
 
 
-public class latencyTest {
+public class TestLatency {
 	private Semaphore inboxLock;
 	private Network reciever;
 	private Network sender;
 	@Test
-	public void Latency_Local_0() {
+	public void LatencyLocal0() {
 		inboxLock = new Semaphore(0);
 		startListnerAndReciever();
 		// create sender and reciever with 
@@ -51,7 +51,7 @@ public class latencyTest {
 	}
 	
 	@Test
-	public void Latency_Local_1() {
+	public void LatencyLocal1() {
 		System.out.println("waiting for ports to clear...");
 		try{
 		Thread.sleep(2000);
