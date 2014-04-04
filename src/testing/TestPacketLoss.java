@@ -30,15 +30,51 @@ public class TestPacketLoss {
 	int lossCount = 0;
 	int messagesSent = 100;
 	int messagesReceived = 0;
-	double packetLoss;
+	double packetLoss = 0;
 	ArrayList<String> strings = new ArrayList<String>();
 	
 	
 	@Test
 	public void test() {
 		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		testMessage(100);
+		strings.add("Average packet loss for 100 Messages Transmitted : " + (packetLoss/10.0) + "%");
+		
+		packetLoss = 0;
 		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		testMessage(500);
+		strings.add("Average packet loss for 500 Messages Transmitted : " + (packetLoss/10.0) + "%");
+		
+		packetLoss = 0;
 		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		testMessage(1000);
+		strings.add("Average packet loss for 1000 Messages Transmitted : " + (packetLoss/10.0) + "%");
+		
+		packetLoss = 0;
 		testMessage(2000);
 		testMessage(5000);
 		testMessage(10000);
@@ -77,8 +113,8 @@ public class TestPacketLoss {
 		if(in.message != null)
 			messagesReceived++;
 		}
-		packetLoss = (100 -(messagesReceived/1.0)/messagesSent * 100);
-		strings.add("Messages transmitted : " + count + ", Messages received : " + messagesReceived +" , PACKET LOSS(%) : " + packetLoss  + "%");
+		packetLoss += (100 -(messagesReceived/1.0)/messagesSent * 100);
+		strings.add("Messages transmitted : " + count + ", Messages received : " + messagesReceived +" , PACKET LOSS(%) : " + (100 -(messagesReceived/1.0)/messagesSent * 100)  + "%");
 		reciever.shutdown();
 		sender.shutdown();
 	}
