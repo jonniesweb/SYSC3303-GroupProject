@@ -44,7 +44,7 @@ public class EnemyManager implements Runnable {
 				enemyList.get(i).loseLife();
 				LOG.info("Enemy died at " + enemyList.get(i).getPos());
 				enemyList.get(i).setPos(-1, -1);
-				enemyList.remove(i);
+				
 				return true;
 			}
 		}
@@ -84,25 +84,25 @@ public class EnemyManager implements Runnable {
 						if(logicManager.validMove(e.getPosX(), e.getPosY() - 1)){
 							e.moveUp();
 							logicManager.attackPlayer(e.getPosX(), e.getPosY());}
-						else continue;
+						//else continue;
 						break;
 					case 2 :
 						if(logicManager.validMove(e.getPosX(), e.getPosY() + 1)){
 							e.moveDown();
 						logicManager.attackPlayer(e.getPosX(), e.getPosY());}
-						else continue;
+						//else continue;
 						break;
 					case 3 :
 						if(logicManager.validMove(e.getPosX() + 1, e.getPosY())){
 							e.moveRight();
 						logicManager.attackPlayer(e.getPosX(), e.getPosY());}
-						else continue;
+						//else continue;
 						break;
 					case 4 :
 						if(logicManager.validMove(e.getPosX() - 1, e.getPosY())){
 							e.moveLeft();
 						logicManager.attackPlayer(e.getPosX(), e.getPosY());}
-						else continue;
+						//else continue;
 						break;
 					default :
 						break;

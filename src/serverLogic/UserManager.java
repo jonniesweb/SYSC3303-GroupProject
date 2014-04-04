@@ -188,7 +188,7 @@ public class UserManager {
 			throws OverwroteUserInMapException, NoUserExistsWithUUIDException {
 		moveCurrentToFuture(user.getUUID());
 	}
-
+	
 	/**
 	 * Gets all users that are currently playing the game. ie. users that are
 	 * not dead.
