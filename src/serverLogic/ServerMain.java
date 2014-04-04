@@ -9,6 +9,8 @@ import testing.Logger;
 import java.util.Collection;
 import java.util.concurrent.Semaphore;
 
+import Networking.Network;
+
 // TODO: add command line arguments to allow starting up from a predefined,
 // gameboard, or randomly generating one
 
@@ -29,14 +31,14 @@ public class ServerMain {
 	
 	Semaphore testSem;
 	
-	public ServerMain() {
+	public ServerMain(int port) {
 		
 		// initialize all server components
 		
 		userManager = new UserManager(NUM_PLAYERS);
 		logger = new Logger();
 		logicManager = new LogicManager(userManager);
-		networkManager = new NetworkManager(logicManager,userManager);
+		networkManager = new NetworkManager(logicManager,userManager,port);
 		logicManager.setNetworkManager(networkManager);
 		//EnemyManager e = new EnemyManager(logicManager);
 	}
@@ -46,13 +48,13 @@ public class ServerMain {
 		userManager = new UserManager(NUM_PLAYERS);
 		logger = new Logger();
 		logicManager = new LogicManager(userManager, testSem, tMode);
-		networkManager = new NetworkManager(logicManager,userManager);
+		networkManager = new NetworkManager(logicManager,userManager,Network.SERVER_PORT_NO);
 		logicManager.setNetworkManager(networkManager);
 		
 	}
 	
 	public ServerMain(boolean door) {
-		this();
+		this(Network.SERVER_PORT_NO);
 		
 		GameBoard board = new GameBoard(20, 20);
 		if (door) {
@@ -94,7 +96,9 @@ public class ServerMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new ServerMain().logicManager.setGameBoard(new GameBoard(7, 7));
+		new ServerMain(8888).logicManager.setGameBoard(new GameBoard(7, 7));
+		new ServerMain(8889).logicManager.setGameBoard(new GameBoard(7, 7));
+		new ServerMain(8887).logicManager.setGameBoard(new GameBoard(7, 7));
 		
 		
 

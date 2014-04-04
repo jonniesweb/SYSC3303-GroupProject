@@ -42,12 +42,12 @@ public class NetworkManager implements Runnable{
 	/**
 	 * 
 	 */
-	public NetworkManager(LogicManager logic, UserManager m) {
+	public NetworkManager(LogicManager logic, UserManager m, int port) {
 		this.logic = logic;
 		
 		
 		inboxLock = new Semaphore(0);
-		net = new Network(Network.SERVER_PORT_NO, inboxLock);
+		net = new Network(port, inboxLock);
 		
 		userManager = m;
 		networkManagerThread = new Thread(this);
