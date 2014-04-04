@@ -46,7 +46,7 @@ public class EnemyManager implements Runnable {
 				return true;
 			}
 		}
-		LOG.error("No enemy found at (" + x + "," + y + ")");
+//		LOG.info("No enemy found at (" + x + "," + y + ")"); commented out since it fills up the log fast
 		return false;
 	}
 
