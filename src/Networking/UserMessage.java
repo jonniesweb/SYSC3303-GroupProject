@@ -42,9 +42,10 @@ public class UserMessage extends Message {
 		this.port = port;
 		this.message = message;
 		
-		// TODO: Remove dependency on having localhost as the server
-		hostName = "127.0.0.1";
 		try {
+			if (hostName.startsWith("/")) {
+				hostName = hostName.substring(1); // big hack
+			}
 			ip = InetAddress.getByName(hostName);
 		} catch (Exception e) {
 			LOG.error(e);
